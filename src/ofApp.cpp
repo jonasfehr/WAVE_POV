@@ -5,48 +5,52 @@ void ofApp::setup(){
     // Setup cam
     // this uses depth information for occlusion
     // rather than always drawing things on top of each other
-    ofEnableDepthTest();
+//    ofEnableDepthTest();
     
-    cam.setDistance(100);
+//    cam.setDistance(100);
+
+    setupGUI();
+    
+    // Add gates
+    gates.push_back(Gate(GeoLocation(55.681089, 12.595234), 0, 0.0));
+    gates.push_back(Gate(GeoLocation(55.681342, 12.595456), 0, 0.0));
 
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    // Calculate in
-
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     cam.begin();
-    ofRotateX(ofRadToDeg(.5));
-    ofRotateY(ofRadToDeg(-.5));
-        
-    ofSetColor(255,0,0);
-    ofFill();
-    ofDrawBox(30);
-    ofNoFill();
-    ofSetColor(0);
-    ofDrawBox(30);
     
-    ofPushMatrix();
-    ofTranslate(0,0,20);
-    ofSetColor(0,0,255);
-    ofFill();
-    ofDrawBox(5);
-    ofNoFill();
-    ofSetColor(0);
-    ofDrawBox(5);
-    ofPopMatrix();
+    if(drawGates){
+        for(auto g : gates){
+            g.draw();
+        }
+    }
+
+
+    
     cam.end();
+    if(!bHideGui){gui.draw();}
+
+}
+
+//--------------------------------------------------------------
+void ofApp::setupGUI(){
+    bHideGui = false;
+    gui.setup();
+    gui.add(drawGates.set("draw gates", true));
+
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
 }
 
 //--------------------------------------------------------------

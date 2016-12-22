@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGUI.h"
 #include "Plane.h"
 #include "Gate.h"
 #include "Pov.h"
@@ -11,6 +12,8 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+    
+    void setupGUI();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -25,10 +28,13 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     vector<Gate> gates;
-    
     Plane plane;
-    
     Pov pov;
+    
+    // GUI
+    bool bHideGui;
+    ofxPanel gui;
+    ofParameter<bool> drawGates;
     
     ofEasyCam cam;
 		

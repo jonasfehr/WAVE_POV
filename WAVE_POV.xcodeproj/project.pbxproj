@@ -20,6 +20,14 @@
 		BBCA2C041E0C29B300FB5ABB /* UTMLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2BF81E0C29B300FB5ABB /* UTMLocation.cpp */; };
 		BBCA2C051E0C29B300FB5ABB /* UTMLocationBounds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2BF91E0C29B300FB5ABB /* UTMLocationBounds.cpp */; };
 		BBCA2C0A1E0C2A1A00FB5ABB /* GeoLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C061E0C2A1A00FB5ABB /* GeoLocation.cpp */; };
+		BBCA2C221E0C324300FB5ABB /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C111E0C324300FB5ABB /* ofxBaseGui.cpp */; };
+		BBCA2C231E0C324300FB5ABB /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C131E0C324300FB5ABB /* ofxButton.cpp */; };
+		BBCA2C241E0C324300FB5ABB /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C161E0C324300FB5ABB /* ofxGuiGroup.cpp */; };
+		BBCA2C251E0C324300FB5ABB /* ofxLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C181E0C324300FB5ABB /* ofxLabel.cpp */; };
+		BBCA2C261E0C324300FB5ABB /* ofxPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C1A1E0C324300FB5ABB /* ofxPanel.cpp */; };
+		BBCA2C271E0C324300FB5ABB /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C1C1E0C324300FB5ABB /* ofxSlider.cpp */; };
+		BBCA2C281E0C324300FB5ABB /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C1E1E0C324300FB5ABB /* ofxSliderGroup.cpp */; };
+		BBCA2C291E0C324300FB5ABB /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCA2C201E0C324300FB5ABB /* ofxToggle.cpp */; };
 		C9109422648B170B07A778CF /* SyphonNameboundClient.m in Sources */ = {isa = PBXBuildFile; fileRef = E3405C5AE387BDDC2AD19473 /* SyphonNameboundClient.m */; };
 		E1A3FD40C8BCD507345F1126 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D58DCB2C0AEFDE6171E29540 /* Syphon.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -89,6 +97,23 @@
 		BBCA2BFD1E0C29B300FB5ABB /* UTM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UTM.h; sourceTree = "<group>"; };
 		BBCA2C061E0C2A1A00FB5ABB /* GeoLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeoLocation.cpp; sourceTree = "<group>"; };
 		BBCA2C071E0C2A1A00FB5ABB /* GeoLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoLocation.h; sourceTree = "<group>"; };
+		BBCA2C111E0C324300FB5ABB /* ofxBaseGui.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBaseGui.cpp; sourceTree = "<group>"; };
+		BBCA2C121E0C324300FB5ABB /* ofxBaseGui.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxBaseGui.h; sourceTree = "<group>"; };
+		BBCA2C131E0C324300FB5ABB /* ofxButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxButton.cpp; sourceTree = "<group>"; };
+		BBCA2C141E0C324300FB5ABB /* ofxButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxButton.h; sourceTree = "<group>"; };
+		BBCA2C151E0C324300FB5ABB /* ofxGui.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxGui.h; sourceTree = "<group>"; };
+		BBCA2C161E0C324300FB5ABB /* ofxGuiGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxGuiGroup.cpp; sourceTree = "<group>"; };
+		BBCA2C171E0C324300FB5ABB /* ofxGuiGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxGuiGroup.h; sourceTree = "<group>"; };
+		BBCA2C181E0C324300FB5ABB /* ofxLabel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLabel.cpp; sourceTree = "<group>"; };
+		BBCA2C191E0C324300FB5ABB /* ofxLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxLabel.h; sourceTree = "<group>"; };
+		BBCA2C1A1E0C324300FB5ABB /* ofxPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxPanel.cpp; sourceTree = "<group>"; };
+		BBCA2C1B1E0C324300FB5ABB /* ofxPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxPanel.h; sourceTree = "<group>"; };
+		BBCA2C1C1E0C324300FB5ABB /* ofxSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSlider.cpp; sourceTree = "<group>"; };
+		BBCA2C1D1E0C324300FB5ABB /* ofxSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxSlider.h; sourceTree = "<group>"; };
+		BBCA2C1E1E0C324300FB5ABB /* ofxSliderGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSliderGroup.cpp; sourceTree = "<group>"; };
+		BBCA2C1F1E0C324300FB5ABB /* ofxSliderGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxSliderGroup.h; sourceTree = "<group>"; };
+		BBCA2C201E0C324300FB5ABB /* ofxToggle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxToggle.cpp; sourceTree = "<group>"; };
+		BBCA2C211E0C324300FB5ABB /* ofxToggle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxToggle.h; sourceTree = "<group>"; };
 		D58DCB2C0AEFDE6171E29540 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Syphon.framework; path = ../../../addons/ofxSyphon/libs/Syphon/lib/osx/Syphon.framework; sourceTree = "<group>"; };
 		E3405C5AE387BDDC2AD19473 /* SyphonNameboundClient.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = SyphonNameboundClient.m; path = ../../../addons/ofxSyphon/libs/Syphon/src/SyphonNameboundClient.m; sourceTree = SOURCE_ROOT; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -192,6 +217,7 @@
 			children = (
 				7F3C04577424427D348B1425 /* ofxSyphon */,
 				BBCA2BE01E0C29B300FB5ABB /* ofxGeo */,
+				BBCA2C0F1E0C324300FB5ABB /* ofxGui */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -311,6 +337,39 @@
 				BBCA2C071E0C2A1A00FB5ABB /* GeoLocation.h */,
 			);
 			name = Geostuff;
+			sourceTree = "<group>";
+		};
+		BBCA2C0F1E0C324300FB5ABB /* ofxGui */ = {
+			isa = PBXGroup;
+			children = (
+				BBCA2C101E0C324300FB5ABB /* src */,
+			);
+			name = ofxGui;
+			sourceTree = "<group>";
+		};
+		BBCA2C101E0C324300FB5ABB /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BBCA2C111E0C324300FB5ABB /* ofxBaseGui.cpp */,
+				BBCA2C121E0C324300FB5ABB /* ofxBaseGui.h */,
+				BBCA2C131E0C324300FB5ABB /* ofxButton.cpp */,
+				BBCA2C141E0C324300FB5ABB /* ofxButton.h */,
+				BBCA2C151E0C324300FB5ABB /* ofxGui.h */,
+				BBCA2C161E0C324300FB5ABB /* ofxGuiGroup.cpp */,
+				BBCA2C171E0C324300FB5ABB /* ofxGuiGroup.h */,
+				BBCA2C181E0C324300FB5ABB /* ofxLabel.cpp */,
+				BBCA2C191E0C324300FB5ABB /* ofxLabel.h */,
+				BBCA2C1A1E0C324300FB5ABB /* ofxPanel.cpp */,
+				BBCA2C1B1E0C324300FB5ABB /* ofxPanel.h */,
+				BBCA2C1C1E0C324300FB5ABB /* ofxSlider.cpp */,
+				BBCA2C1D1E0C324300FB5ABB /* ofxSlider.h */,
+				BBCA2C1E1E0C324300FB5ABB /* ofxSliderGroup.cpp */,
+				BBCA2C1F1E0C324300FB5ABB /* ofxSliderGroup.h */,
+				BBCA2C201E0C324300FB5ABB /* ofxToggle.cpp */,
+				BBCA2C211E0C324300FB5ABB /* ofxToggle.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxGui/src;
 			sourceTree = "<group>";
 		};
 		E4328144138ABC890047C5CB /* Products */ = {
@@ -445,9 +504,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				BBCA2C271E0C324300FB5ABB /* ofxSlider.cpp in Sources */,
+				BBCA2C251E0C324300FB5ABB /* ofxLabel.cpp in Sources */,
 				BBCA2C031E0C29B300FB5ABB /* GeoUtils.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
+				BBCA2C291E0C324300FB5ABB /* ofxToggle.cpp in Sources */,
 				BBCA2BFE1E0C29B300FB5ABB /* ofRectangled.cpp in Sources */,
+				BBCA2C231E0C324300FB5ABB /* ofxButton.cpp in Sources */,
 				1F558B76FB3412843DDAA031 /* ofxSyphonClient.mm in Sources */,
 				BBCA2C021E0C29B300FB5ABB /* CoordinateBounds.cpp in Sources */,
 				8D60C222CBD3F869382832E9 /* ofxSyphonServer.mm in Sources */,
@@ -456,8 +519,12 @@
 				BBCA2C041E0C29B300FB5ABB /* UTMLocation.cpp in Sources */,
 				BBCA2C051E0C29B300FB5ABB /* UTMLocationBounds.cpp in Sources */,
 				BBCA2C011E0C29B300FB5ABB /* Coordinate.cpp in Sources */,
+				BBCA2C241E0C324300FB5ABB /* ofxGuiGroup.cpp in Sources */,
+				BBCA2C281E0C324300FB5ABB /* ofxSliderGroup.cpp in Sources */,
+				BBCA2C221E0C324300FB5ABB /* ofxBaseGui.cpp in Sources */,
 				11DF9AB1B4EAA63E3B190CA0 /* ofxSyphonServerDirectory.mm in Sources */,
 				C9109422648B170B07A778CF /* SyphonNameboundClient.m in Sources */,
+				BBCA2C261E0C324300FB5ABB /* ofxPanel.cpp in Sources */,
 				BBCA2C0A1E0C2A1A00FB5ABB /* GeoLocation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
