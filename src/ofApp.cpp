@@ -47,10 +47,9 @@ void ofApp::update(){
     planeCenter.align(ofVec3f(0,1,0));
     plane.setCenter(planeCenter);
     
-    
     ofVec3f normal = pov;
     normal.align((ofVec3f(0,1,0)));
-    plane.setNormal(normal);
+    plane.setNormal(-normal);
     
     // Gates
     
@@ -73,7 +72,7 @@ void ofApp::draw(){
     
     if(povCamera){
         camera.setGlobalPosition(pov);
-        camera.lookAt(plane.getCenter());
+        camera.lookAt(ofVec3f(0,1,0));
     }
     
     // Grid
