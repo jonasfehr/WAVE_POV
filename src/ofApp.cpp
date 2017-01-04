@@ -11,7 +11,6 @@ void ofApp::setup(){
     
     ofBackground(100, 100, 100);
     ofEnableSmoothing();
-    //	camera.setCursorDraw(true);
     camera.setCursorDrawEnabled(true);
     camera.setGlobalPosition(31.3198, 28.45, -37.9426);
     
@@ -40,26 +39,32 @@ void ofApp::update(){
     }
     
     // Only update if POV is moved
-    if(lastPov != pov){
-        // Plane
-        float residual = 0.0f;
-        plane.fitToPoints(gates, residual);
-        ofVec3f planeCenter = pov;
-        plane.setCenter(planeCenter);
-        
-        // Gates
-        
-        
-        // Point rays at pov
-        for(auto& r : intersectingRays){
-            bool intersects;
-            ofVec3f intersect;
-            intersects = plane.intersect(r, intersect);
-            r.setEnd(pov);
-        }
-        
-        lastPov = pov;
+    //    if(lastPov != pov){
+    // Plane
+    float residual = 0.0f;
+    plane.fitToPoints(gates, residual);
+    ofVec3f planeCenter = pov;
+    plane.setCenter(planeCenter);
+    
+    // FIXME: rotate normal
+    ofMatrix4x4 rotationMatrix;
+    double angle = pov.angle(ofVec3f(0,0,-1));
+    rotationMatrix.makeRotationMatrix(-angle, 0, 1, 0);
+    plane.setNormal(rotationMatrix * ofVec3f(0,0,1));
+    
+    // Gates
+    
+    
+    // Point rays at pov
+    for(auto& r : intersectingRays){
+        bool intersects;
+        ofVec3f intersect;
+        intersects = plane.intersect(r, intersect);
+        r.setEnd(pov);
     }
+    
+    lastPov = pov;
+    //    }
 }
 
 //--------------------------------------------------------------
@@ -141,6 +146,10 @@ void ofApp::keyPressed(int key){
     
     if(key == 'g' || key == 'G'){
         hideGui = !hideGui;
+    }
+    
+    if(key == 'o' || key == 'O'){
+        povOrbit = !povOrbit;
     }
 }
 
