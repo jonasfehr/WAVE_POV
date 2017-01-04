@@ -2,9 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxGUI.h"
-#include "Plane.h"
-#include "Gate.h"
-#include "Pov.h"
+#include "ofxGrabCam.h"
+#include "ofxRay.h"
 
 class ofApp : public ofBaseApp{
 
@@ -27,15 +26,32 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-    vector<Gate> gates;
-    Plane plane;
-    Pov pov;
+    
+    // Cam
+    ofxGrabCam camera;
     
     // GUI
-    bool bHideGui;
+    bool hideGui = false;
     ofxPanel gui;
+    ofParameter<bool> drawGrid;
     ofParameter<bool> drawGates;
+    ofParameter<bool> drawRays;
+    ofParameter<bool> drawPlane;
+    ofParameter<bool> povCamera;
+    ofParameter<bool> povOrbit;
     
-    ofEasyCam cam;
+    
+    // Plane
+    ofxRay::Plane plane;
+    
+    // POV
+    ofVec3f pov = ofVec3f(-50,1,0);
+    ofVec3f lastPov;
+    
+    // Gates
+    vector<ofVec3f> gates;
+    
+    // Rays
+    vector<ofxRay::Ray> intersectingRays;
 		
 };

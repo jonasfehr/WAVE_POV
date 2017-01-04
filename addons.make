@@ -1,1 +1,3 @@
+ofxGrabCam
+ofxRay
 ofxSyphon
