@@ -44,13 +44,13 @@ void ofApp::update(){
     float residual = 0.0f;
     plane.fitToPoints(gates, residual);
     ofVec3f planeCenter = pov;
+    planeCenter.align(ofVec3f(0,1,0));
     plane.setCenter(planeCenter);
     
-    // FIXME: rotate normal
-    ofMatrix4x4 rotationMatrix;
-    double angle = pov.angle(ofVec3f(0,0,-1));
-    rotationMatrix.makeRotationMatrix(-angle, 0, 1, 0);
-    plane.setNormal(rotationMatrix * ofVec3f(0,0,1));
+    
+    ofVec3f normal = pov;
+    normal.align((ofVec3f(0,1,0)));
+    plane.setNormal(normal);
     
     // Gates
     
@@ -73,6 +73,7 @@ void ofApp::draw(){
     
     if(povCamera){
         camera.setGlobalPosition(pov);
+        camera.lookAt(plane.getCenter());
     }
     
     // Grid
@@ -104,8 +105,6 @@ void ofApp::draw(){
     // Point rays at pov
     if(drawRays){
         for(auto& r : intersectingRays){
-            
-            //            r.draw();
             ofDrawLine(r.getStart(), r.getEnd());
         }
     }
@@ -150,6 +149,11 @@ void ofApp::keyPressed(int key){
     
     if(key == 'o' || key == 'O'){
         povOrbit = !povOrbit;
+    }
+    
+    if(key == ' '){
+        camera.setGlobalPosition(31.3198, 28.45, -37.9426);
+        camera.lookAt(ofVec3f(0,1,0));
     }
 }
 
