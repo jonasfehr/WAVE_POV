@@ -14,7 +14,7 @@ void ofApp::setup(){
     camera.setCursorDrawEnabled(true);
     camera.setGlobalPosition(31.3198, 28.45, -37.9426);
     
-    plane = ofPlane(ofVec3f(1,1,0), ofVec3f(1,0,-1), ofVec3f(0,1,0), ofVec2f(1.6,0.9));
+    plane = ofPlane(ofVec3f(1,0,1), ofVec3f(1,0,-1), ofVec3f(0,1,0), ofVec2f(1.6,0.9));
     
     for(int i = 0; i < 40; i++){
         gates.push_back(Gate(ofVec3f(0,3.6,-40+(i*2)), &pov, &plane));
@@ -38,29 +38,34 @@ void ofApp::update(){
         pov.rotate((ofGetFrameNum() % 360)*0.001, center, ofVec3f(0,1,0));
     }
     
-    // Only update if POV is moved
-    //    if(lastPov != pov){
-    // Plane
-    //    float residual = 0.0f;
-    //    plane.fitToPoints(gates, residual);
-    ofVec3f planeCenter = pov - pov.getNormalized() * 1.5;
-    //    ofVec3f planeCenter = pov - ofVec3f(-1, 0,0) * 1.5;
-    plane.setCenter(planeCenter);
-    
-    // Set normal for plane
-    ofVec3f normal = pov;
-    normal.align((ofVec3f(0,1,0)));
-    plane.setNormal(-normal);
-    
-    // Gates
-    
-    // Point rays at pov
-    for(auto& g : gates){
-        g.update();
+    if(lastPov != pov){     // Only update if POV is moved
+        // Plane
+        ofVec3f planeCenter = pov - pov.getNormalized() * 1.5;
+        plane.setCenter(planeCenter);
+        
+        // Set normal for plane - FIXME: THIS DOESN'T WORK
+        ofVec3f closest;
+        double closestDist = std::numeric_limits<double>::max();
+        
+        for(auto& g : gates){
+            double dist = ofDistSquared(g.top.x, g.top.y, g.top.z, pov.x, pov.y, pov.z);
+            if(dist < closestDist){
+                closestDist = dist;
+                closest = g.top;
+            }
+        }
+        
+        ofVec3f normal = pov;
+        normal.align(closest); // seems to make no difference ???
+        plane.setNormal(-normal);
+        
+        // Gates
+        for(auto& g : gates){
+            g.update();
+        }
+        
+        lastPov = pov;
     }
-    
-    lastPov = pov;
-    //    }
 }
 
 //--------------------------------------------------------------
@@ -76,10 +81,25 @@ void ofApp::draw(){
     // Grid
     if(drawGrid){
         ofPushMatrix();
-        ofSetColor(155,100,100);
+        ofSetColor(ofColor::darkSlateBlue);
         ofDrawGrid(1.0f, 60.0f, true, false, true, false);
         ofPopMatrix();
     }
+    
+    ofVec3f normal = pov;
+    ofVec3f closest;
+    double closestDist = std::numeric_limits<double>::max();
+    
+    for(auto& g : gates){
+        double dist = ofDistSquared(g.top.x, g.top.y, g.top.z, pov.x, pov.y, pov.z);
+        if(dist < closestDist){
+            closestDist = dist;
+            closest = g.top;
+        }
+    }
+    
+    ofDrawSphere(closest, 0.2);
+    
     
     // POV
     if(drawPlane && !povCamera){
@@ -154,7 +174,7 @@ void ofApp::keyPressed(int key){
     if(key == ' '){
         povCamera = false;
         camera.setGlobalPosition(31.3198, 28.45, -37.9426);
-        camera.lookAt(ofVec3f(0,1,0));
+        camera.lookAt(center);
     }
     
     if(key == '1'){
