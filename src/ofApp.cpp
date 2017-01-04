@@ -123,8 +123,8 @@ void ofApp::draw(){
     if(drawRays){
         ofSetColor(155,100,100);
         for(auto& g : gates){
-            for(auto& r : g.rays){
-                ofDrawLine(r.getStart(), r.getEnd());
+            for(auto& e : g.edges){
+                ofDrawLine(e.ray.getStart(), e.ray.getEnd());
             }
         }
     }

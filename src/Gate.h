@@ -19,85 +19,91 @@ public:
         this->plane = plane;
         
         // TOP
-        ofxRay::Ray topRay;
-        topRay.setStart(this->top);
-        topRay.setEnd(*pov);
+        Edge topEdge;
+        topEdge.ray.setStart(this->top);
+        topEdge.ray.setEnd(*pov);
         
         // Left Outer
-        ofxRay::Ray leftOuterRay;
-        ofVec3f leftOuterVec = topRay.getStart();
-        leftOuterVec.y = bottomHeight;
-        leftOuterVec.x = -outerWidth;
-        leftOuterRay.setStart(leftOuterVec);
-        leftOuterRay.setEnd(*pov);
+        Edge leftOuterEdge;
+        leftOuterEdge.pos = topEdge.ray.getStart();
+        leftOuterEdge.pos.y = bottomHeight;
+        leftOuterEdge.pos.x = -outerWidth;
+        leftOuterEdge.ray.setStart(leftOuterEdge.pos);
+        leftOuterEdge.ray.setEnd(*pov);
         
         // Right outer
-        ofxRay::Ray rightOuterRay;
-        ofVec3f rightOuterVec = topRay.getStart();
-        rightOuterVec.y = bottomHeight;
-        rightOuterVec.x = outerWidth;
-        rightOuterRay.setStart(rightOuterVec);
-        rightOuterRay.setEnd(*pov);
+        Edge rightOuterEdge;
+        rightOuterEdge.pos = topEdge.ray.getStart();
+        rightOuterEdge.pos.y = bottomHeight;
+        rightOuterEdge.pos.x = outerWidth;
+        rightOuterEdge.ray.setStart(rightOuterEdge.pos);
+        rightOuterEdge.ray.setEnd(*pov);
         
         // Left Inner
-        ofxRay::Ray leftInnerRay;
-        ofVec3f leftInnerVec = topRay.getStart();
-        leftInnerVec.y = bottomHeight;
-        leftInnerVec.x = -innerWidth;
-        leftInnerRay.setStart(leftInnerVec);
-        leftInnerRay.setEnd(*pov);
+        Edge leftInnerEdge;
+        leftInnerEdge.pos = topEdge.ray.getStart();
+        leftInnerEdge.pos.y = bottomHeight;
+        leftInnerEdge.pos.x = -innerWidth;
+        leftInnerEdge.ray.setStart(leftInnerEdge.pos);
+        leftInnerEdge.ray.setEnd(*pov);
         
         // Right Inner
-        ofxRay::Ray rightInnerRay;
-        ofVec3f rightInnerVec = topRay.getStart();
-        rightInnerVec.y = bottomHeight;
-        rightInnerVec.x = innerWidth;
-        rightInnerRay.setStart(rightInnerVec);
-        rightInnerRay.setEnd(*pov);
+        Edge rightInnerEdge;
+        rightInnerEdge.pos = topEdge.ray.getStart();
+        rightInnerEdge.pos.y = bottomHeight;
+        rightInnerEdge.pos.x = innerWidth;
+        rightInnerEdge.ray.setStart(rightInnerEdge.pos);
+        rightInnerEdge.ray.setEnd(*pov);
         
-        
-        // Add to rays
-        rays.push_back(topRay);
-        rays.push_back(leftOuterRay);
-        rays.push_back(rightOuterRay);
-        rays.push_back(rightInnerRay);
-        rays.push_back(leftInnerRay);
-        
-        
-        
+        // Add to edges
+        edges.push_back(topEdge);
+        edges.push_back(leftOuterEdge);
+        edges.push_back(rightOuterEdge);
+        edges.push_back(rightInnerEdge);
+        edges.push_back(leftInnerEdge);
         
     };
     void update(){
-        for(auto& r : rays){
-            intersects = plane->intersect(r, intersect);
-//            this->intersection = intersect;
-            r.setEnd(*pov);
+        for(auto& e : edges){
+            e.intersects = plane->intersect(e.ray, e.intersect);
+            e.ray.setEnd(*pov);
         }
     };
     void draw(){
         int i = 0;
-        for(auto& r : rays){
-            ofDrawSphere(r.getStart(), 0.05);
+        for(auto& e : edges){
+            ofDrawSphere(e.ray.getStart(), 0.05);
             ofSetColor(ofColor::whiteSmoke);
-            ofDrawBitmapString(ofToString(i), r.getStart());
+            ofDrawBitmapString(ofToString(e.intersect), e.ray.getStart());
             i++;
         }
         // Draw gate
         ofSetColor(ofColor::darkGray);
         ofSetLineWidth(4);
-        ofDrawLine(rays.at(0).getStart(), rays.at(1).getStart());
-        ofDrawLine(rays.at(0).getStart(), rays.at(2).getStart());
-        ofDrawLine(rays.at(1).getStart(), rays.at(4).getStart());
-        ofDrawLine(rays.at(2).getStart(), rays.at(3).getStart());
+        
+        ofDrawLine(edges.at(0).ray.getStart(), edges.at(1).ray.getStart());
+        ofDrawLine(edges.at(0).ray.getStart(), edges.at(2).ray.getStart());
+        ofDrawLine(edges.at(1).ray.getStart(), edges.at(4).ray.getStart());
+        
+        ofDrawLine(edges.at(2).ray.getStart(), edges.at(3).ray.getStart());
+        
         ofSetLineWidth(1);
     };
     
-    bool intersects;
     ofVec3f top;
     ofVec3f* pov;
-    ofVec3f intersect;
     ofxRay::Plane* plane;
-    vector<ofxRay::Ray> rays;
+    
+    struct Edge{
+        bool intersects;
+        ofVec3f intersect;
+        ofxRay::Ray ray;
+        ofVec3f pos;
+        
+    };
+    
+    vector<Edge> edges;
+    
     
     // DIMENSIONS
     const float topHeight = 3.6f;
