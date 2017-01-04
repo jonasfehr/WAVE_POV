@@ -17,16 +17,16 @@ void ofApp::setup(){
     plane = ofPlane(ofVec3f(1,1,0), ofVec3f(1,0,-1), ofVec3f(0,1,0), ofVec2f(1.6,0.9));
     
     for(int i = 0; i < 40; i++){
-        gates.push_back(ofVec3f(0,3.6,-40+(i*2)));
+        gates.push_back(Gate(ofVec3f(0,3.6,-40+(i*2)), &pov, &plane));
     }
     
-    for(auto& g : gates){
-        ofxRay::Ray ray;
-        ray.setStart(g);
-        ray.setEnd(pov);
-        
-        intersectingRays.push_back(ray);
-    }
+    //    for(auto& g : gates){
+    //        ofxRay::Ray ray;
+    //        ray.setStart(g.top);
+    //        ray.setEnd(pov);
+    //
+    //        intersectingRays.push_back(ray);
+    //    }
 }
 
 //--------------------------------------------------------------
@@ -35,31 +35,28 @@ void ofApp::update(){
     
     // POV
     if(povOrbit){
-        pov.rotate((ofGetFrameNum() % 360)*0.001, ofVec3f(0,0,0), ofVec3f(0,1,0));
+        pov.rotate((ofGetFrameNum() % 360)*0.001, center, ofVec3f(0,1,0));
     }
     
     // Only update if POV is moved
     //    if(lastPov != pov){
     // Plane
-    float residual = 0.0f;
-    plane.fitToPoints(gates, residual);
-    ofVec3f planeCenter = pov;
-    planeCenter.align(ofVec3f(0,1,0));
+    //    float residual = 0.0f;
+    //    plane.fitToPoints(gates, residual);
+    ofVec3f planeCenter = pov - pov.getNormalized() * 1.5;
+    //    ofVec3f planeCenter = pov - ofVec3f(-1, 0,0) * 1.5;
     plane.setCenter(planeCenter);
     
+    // Set normal for plane
     ofVec3f normal = pov;
     normal.align((ofVec3f(0,1,0)));
     plane.setNormal(-normal);
     
     // Gates
     
-    
     // Point rays at pov
-    for(auto& r : intersectingRays){
-        bool intersects;
-        ofVec3f intersect;
-        intersects = plane.intersect(r, intersect);
-        r.setEnd(pov);
+    for(auto& g : gates){
+        g.update();
     }
     
     lastPov = pov;
@@ -70,9 +67,10 @@ void ofApp::update(){
 void ofApp::draw(){
     camera.begin();
     
+    // Set pov camera
     if(povCamera){
         camera.setGlobalPosition(pov);
-        camera.lookAt(ofVec3f(0,1,0));
+        camera.lookAt(center);
     }
     
     // Grid
@@ -97,14 +95,17 @@ void ofApp::draw(){
     // Draw gates
     if(drawGates){
         for(auto& g : gates){
-            ofDrawSphere(g, 0.1);
+            g.draw();
         }
     }
     
     // Point rays at pov
     if(drawRays){
-        for(auto& r : intersectingRays){
-            ofDrawLine(r.getStart(), r.getEnd());
+        ofSetColor(155,100,100);
+        for(auto& g : gates){
+            for(auto& r : g.rays){
+                ofDrawLine(r.getStart(), r.getEnd());
+            }
         }
     }
     
@@ -151,8 +152,25 @@ void ofApp::keyPressed(int key){
     }
     
     if(key == ' '){
+        povCamera = false;
         camera.setGlobalPosition(31.3198, 28.45, -37.9426);
         camera.lookAt(ofVec3f(0,1,0));
+    }
+    
+    if(key == '1'){
+        drawGrid = !drawGrid;
+    }
+    
+    if(key == '2'){
+        drawGates = !drawGates;
+    }
+    
+    if(key == '3'){
+        drawRays = !drawRays;
+    }
+    
+    if(key == '4'){
+        drawPlane = !drawPlane;
     }
 }
 

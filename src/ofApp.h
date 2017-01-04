@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGUI.h"
+#include "Gate.h"
 #include "ofxGrabCam.h"
 #include "ofxRay.h"
 
@@ -40,6 +41,8 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> povCamera;
     ofParameter<bool> povOrbit;
     
+    ofVec3f center = ofVec3f(0,1,0);
+    
     
     // Plane
     ofxRay::Plane plane;
@@ -49,9 +52,9 @@ class ofApp : public ofBaseApp{
     ofVec3f lastPov;
     
     // Gates
-    vector<ofVec3f> gates;
+    vector<Gate> gates;
     
     // Rays
-    vector<ofxRay::Ray> intersectingRays;
+//    vector<ofxRay::Ray> intersectingRays;
 		
 };
