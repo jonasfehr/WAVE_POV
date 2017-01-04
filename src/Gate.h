@@ -75,19 +75,21 @@ public:
         }
     };
     void draw(){
+        int i = 0;
         for(auto& r : rays){
             ofDrawSphere(r.getStart(), 0.05);
             ofSetColor(ofColor::whiteSmoke);
-//            ofDrawBitmapString(ofToString(intersect), r.getStart());
+            ofDrawBitmapString(ofToString(i), r.getStart());
+            i++;
         }
         // Draw gate
         ofSetColor(ofColor::darkGray);
+        ofSetLineWidth(4);
         ofDrawLine(rays.at(0).getStart(), rays.at(1).getStart());
         ofDrawLine(rays.at(0).getStart(), rays.at(2).getStart());
-        ofDrawLine(rays.at(1).getStart(), rays.at(3).getStart());
-        ofDrawLine(rays.at(2).getStart(), rays.at(4).getStart());
-        
-        
+        ofDrawLine(rays.at(1).getStart(), rays.at(4).getStart());
+        ofDrawLine(rays.at(2).getStart(), rays.at(3).getStart());
+        ofSetLineWidth(1);
     };
     
     bool intersects;
