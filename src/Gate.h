@@ -10,18 +10,18 @@
 #define Gate_h
 
 #include "ofxRay.h"
+#include "POV.h"
 
 class Gate{
 public:
-    Gate(ofVec3f position, ofVec3f* pov, ofxRay::Plane* plane){
+    Gate(ofVec3f position, POV* pov){
         this->top = ofVec3f(position.x, topHeight, position.z);;
         this->pov = pov;
-        this->plane = plane;
         
         // TOP
         Edge topEdge;
         topEdge.ray.setStart(this->top);
-        topEdge.ray.setEnd(*pov);
+        topEdge.ray.setEnd(pov->position);
         
         // Left Outer
         Edge leftOuterEdge;
@@ -29,7 +29,7 @@ public:
         leftOuterEdge.pos.y = bottomHeight;
         leftOuterEdge.pos.x = -outerWidth;
         leftOuterEdge.ray.setStart(leftOuterEdge.pos);
-        leftOuterEdge.ray.setEnd(*pov);
+        leftOuterEdge.ray.setEnd(pov->position);
         
         // Right outer
         Edge rightOuterEdge;
@@ -37,7 +37,7 @@ public:
         rightOuterEdge.pos.y = bottomHeight;
         rightOuterEdge.pos.x = outerWidth;
         rightOuterEdge.ray.setStart(rightOuterEdge.pos);
-        rightOuterEdge.ray.setEnd(*pov);
+        rightOuterEdge.ray.setEnd(pov->position);
         
         // Left Inner
         Edge leftInnerEdge;
@@ -45,7 +45,7 @@ public:
         leftInnerEdge.pos.y = bottomHeight;
         leftInnerEdge.pos.x = -innerWidth;
         leftInnerEdge.ray.setStart(leftInnerEdge.pos);
-        leftInnerEdge.ray.setEnd(*pov);
+        leftInnerEdge.ray.setEnd(pov->position);
         
         // Right Inner
         Edge rightInnerEdge;
@@ -53,7 +53,7 @@ public:
         rightInnerEdge.pos.y = bottomHeight;
         rightInnerEdge.pos.x = innerWidth;
         rightInnerEdge.ray.setStart(rightInnerEdge.pos);
-        rightInnerEdge.ray.setEnd(*pov);
+        rightInnerEdge.ray.setEnd(pov->position);
         
         // Add to edges
         edges.push_back(topEdge);
@@ -66,7 +66,7 @@ public:
     void update(){
         for(auto& e : edges){
             e.intersects = plane->intersect(e.ray, e.intersect);
-            e.ray.setEnd(*pov);
+            e.ray.setEnd(pov->position);
         }
     };
     void draw(){
@@ -74,7 +74,7 @@ public:
         for(auto& e : edges){
             ofDrawSphere(e.ray.getStart(), 0.05);
             ofSetColor(ofColor::whiteSmoke);
-            ofDrawBitmapString(ofToString(e.intersect), e.ray.getStart());
+//            ofDrawBitmapString(ofToString(e.intersect), e.ray.getStart());
             i++;
         }
         // Draw gate
@@ -91,7 +91,7 @@ public:
     };
     
     ofVec3f top;
-    ofVec3f* pov;
+    POV* pov;
     ofxRay::Plane* plane;
     
     struct Edge{
