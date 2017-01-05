@@ -65,7 +65,7 @@ public:
     };
     void update(){
         for(auto& e : edges){
-            e.intersects = plane->intersect(e.ray, e.intersect);
+            e.intersects = pov->plane.intersect(e.ray, e.intersect);
             e.ray.setEnd(pov->position);
         }
     };
@@ -73,7 +73,7 @@ public:
         int i = 0;
         for(auto& e : edges){
             ofDrawSphere(e.ray.getStart(), 0.05);
-            ofSetColor(ofColor::whiteSmoke);
+//            ofSetColor(ofColor::whiteSmoke);
 //            ofDrawBitmapString(ofToString(e.intersect), e.ray.getStart());
             i++;
         }
@@ -92,7 +92,6 @@ public:
     
     ofVec3f top;
     POV* pov;
-    ofxRay::Plane* plane;
     
     struct Edge{
         bool intersects;

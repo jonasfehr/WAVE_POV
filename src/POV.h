@@ -20,7 +20,7 @@ public:
         plane.setCenter(planeCenter);
         
         ofVec3f normal = position;
-        normal.align(normal); // seems to make no difference ???
+        normal.align(plane.getCenter()); // seems to make no difference ???
         plane.setNormal(-normal);
     };
     void orbit(ofVec3f pivot){
