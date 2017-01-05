@@ -22,6 +22,10 @@ public:
         ofVec3f normal = position;
         normal.align(plane.getCenter()); // seems to make no difference ???
         plane.setNormal(-normal);
+        
+        // project
+        projector.setGlobalPosition(position);
+        projector.lookAt(plane.getNormal());
     };
     void orbit(ofVec3f pivot){
         position.rotate((ofGetFrameNum() % 360)*0.001, pivot, ofVec3f(0,1,0));
@@ -30,6 +34,7 @@ public:
     
     void drawPlane(){
         plane.draw();
+        projector.draw();
     };
     
     void drawPovPoint(){
@@ -45,6 +50,7 @@ public:
     
     // Plane
     ofxRay::Plane plane;
+    ofxRay::Projector projector;
     
     // POV
     ofVec3f position = ofVec3f(-50,1,0);

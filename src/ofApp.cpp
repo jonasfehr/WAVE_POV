@@ -85,17 +85,17 @@ void ofApp::draw(){
     }
     
     //
-//    ofxRay::Ray testRay = ofxRay::Ray(camera.getCursorWorld(),ofVec3f(1,0,0), false);
-//    testRay.draw();
-//    
-//    bool intersects;
-//    ofVec3f intersect;
-//    intersects = pov.plane.intersect(testRay, intersect);
+    ofxRay::Ray testRay = ofxRay::Ray(camera.getCursorWorld(),ofVec3f(1,0,0), false);
+    testRay.draw();
+    
+    bool intersects;
+    ofVec3f intersect;
+    intersects = pov.plane.intersect(testRay, intersect);
     
     
     camera.end();
     
-//    if(intersects){ofDrawBitmapStringHighlight(ofToString(intersect), ofPoint(15,ofGetHeight()-25));}
+    if(intersects){ofDrawBitmapStringHighlight(ofToString(pov.projector.getScreenCoordinateOfWorldPosition(intersect)), ofPoint(15,ofGetHeight()-25));}
     
     // Draw GUI
     drawGUI();
