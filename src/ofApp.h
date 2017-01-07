@@ -6,6 +6,7 @@
 #include "POV.h"
 #include "ofxGrabCam.h"
 #include "ofxRay.h"
+#include "ofxSyphon.h"
 
 class ofApp : public ofBaseApp{
 
@@ -40,10 +41,11 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> drawGates;
     ofParameter<bool> drawRays;
     ofParameter<bool> drawPlane;
+    ofParameter<bool> drawSyphon;
     ofParameter<bool> povCamera;
     ofParameter<bool> povOrbit;
     ofParameter<bool> showGridLabels;
-    ofVec3f center = ofVec3f(0,1,0);
+    ofVec3f center = ofVec3f(0,1, 40);
     
     // POV
     POV pov;
@@ -51,4 +53,19 @@ class ofApp : public ofBaseApp{
     
     // Gates
     vector<Gate> gates;
+    
+    // max Pos for viewDirection
+    ofVec3f *pStartRight, *pStartLeft, *pEndRight, *pEndLeft;
+    ofVec3f *pMaxLeft, *pMaxRight;
+    void findMaxPoints();
+    
+    // Syphon in & out
+    ofxSyphonServerDirectory dir;
+    ofxSyphonClient client;
+    int dirIdx;
+    void drawSyphonIn();
+    void serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg);
+    void serverRetired(ofxSyphonServerDirectoryEventArgs &arg);
+    
 };
+
