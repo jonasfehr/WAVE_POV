@@ -104,9 +104,12 @@ void ofApp::draw(){
         }
         client.getTexture().bind();
         for(auto& g : gates){
-            g.drawMesh();
+            g.drawMeshLed();
         }
         client.getTexture().unbind();
+        for(auto& g : gates){
+            g.drawMeshProfile();
+        }
     }
     
     // Point rays at pov

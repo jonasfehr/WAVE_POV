@@ -66,33 +66,123 @@ public:
         edges.push_back(leftInnerEdge);
         
         
-        // create a mesh to visualize the result
+        // create a meshLed to visualize the result
         
-        float ledHight = 0.05;
-        float triOff = ledHight*0.866;
-        mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-        mesh.addVertex(leftInnerEdge.pos);
-        mesh.addVertex(leftInnerEdge.pos+ofVec3f(0, ledHight, 0.));
-        mesh.addVertex(leftOuterEdge.pos);
-        mesh.addVertex(leftOuterEdge.pos+ofVec3f(triOff*2, ledHight, 0.));
-        mesh.addVertex(topEdge.pos);
-        mesh.addVertex(topEdge.pos+ofVec3f(0, -triOff, 0.));
-        mesh.addVertex(rightOuterEdge.pos);
-        mesh.addVertex(rightOuterEdge.pos+ofVec3f(-triOff*2, ledHight, 0.));
-        mesh.addVertex(rightInnerEdge.pos);
-        mesh.addVertex(rightInnerEdge.pos+ofVec3f(0, ledHight, 0.));
+        float ledHeight = 0.021;
+        float ledWidth = 0.012;
+        float triOff = ledHeight*1.732;
+        float profileHeight = 0.091;
+        float profileWidth = 0.065;
+        float profileOff = profileHeight*1.732;
 
         
-       
-        for(int i = 0; i < 8; i+=2){
-        mesh.addIndex(i+0);
-        mesh.addIndex(i+1);
-        mesh.addIndex(i+2);
-        mesh.addIndex(i+2);
-        mesh.addIndex(i+1);
-        mesh.addIndex(i+3);
-        }
+        meshLed.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(leftInnerEdge.pos+ofVec3f(0, ledHeight, 0.));
+        meshLed.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(leftOuterEdge.pos+ofVec3f(triOff, ledHeight, 0.));
+        meshLed.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(topEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(topEdge.pos+ofVec3f(0, -ledHeight*2, 0.));
+        meshLed.addVertex(topEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(rightOuterEdge.pos+ofVec3f(-triOff, ledHeight, 0.));
+        meshLed.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(rightInnerEdge.pos+ofVec3f(0, ledHeight, 0.));
+        meshLed.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, ledWidth));
         
+
+        for(int i = 0; i < 12; i+=3){
+            meshLed.addIndex(i+0);
+            meshLed.addIndex(i+1);
+            meshLed.addIndex(i+3);
+            meshLed.addIndex(i+3);
+            meshLed.addIndex(i+1);
+            meshLed.addIndex(i+4);
+        }
+
+        for(int i = 0; i < 12; i+=3){
+            meshLed.addIndex(i+2);
+            meshLed.addIndex(i+1);
+            meshLed.addIndex(i+5);
+            meshLed.addIndex(i+5);
+            meshLed.addIndex(i+1);
+            meshLed.addIndex(i+4);
+        }
+        // endCaps
+        meshLed.addIndex(0);
+        meshLed.addIndex(1);
+        meshLed.addIndex(2);
+        meshLed.addIndex(12);
+        meshLed.addIndex(13);
+        meshLed.addIndex(14);
+        
+        
+        
+        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, -profileHeight, -profileWidth));
+        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, -profileHeight, profileWidth));
+        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, ledWidth));
+
+        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(-profileOff, -profileHeight, -profileWidth));
+        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(-profileOff, -profileHeight, profileWidth));
+        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        
+        meshProfile.addVertex(topEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(topEdge.pos+ofVec3f(0, profileHeight*2, -profileWidth));
+        meshProfile.addVertex(topEdge.pos+ofVec3f(0, profileHeight*2, profileWidth));
+        meshProfile.addVertex(topEdge.pos+ofVec3f(0, 0, ledWidth));
+        
+        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(profileOff, -profileHeight, -profileWidth));
+        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(profileOff, -profileHeight, profileWidth));
+        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        
+        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, -profileHeight, -profileWidth));
+        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, -profileHeight, profileWidth));
+        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, ledWidth));
+        
+        
+        for(int i = 0; i < 16; i+=4){
+            meshProfile.addIndex(i+0);
+            meshProfile.addIndex(i+1);
+            meshProfile.addIndex(i+4);
+            meshProfile.addIndex(i+4);
+            meshProfile.addIndex(i+1);
+            meshProfile.addIndex(i+5);
+        }
+        for(int i = 0; i < 16; i+=4){
+            meshProfile.addIndex(i+1);
+            meshProfile.addIndex(i+2);
+            meshProfile.addIndex(i+5);
+            meshProfile.addIndex(i+5);
+            meshProfile.addIndex(i+2);
+            meshProfile.addIndex(i+6);
+        }
+        for(int i = 0; i < 16; i+=4){
+            meshProfile.addIndex(i+2);
+            meshProfile.addIndex(i+3);
+            meshProfile.addIndex(i+6);
+            meshProfile.addIndex(i+6);
+            meshProfile.addIndex(i+3);
+            meshProfile.addIndex(i+7);
+        }
+        meshProfile.addIndex(1);
+        meshProfile.addIndex(0);
+        meshProfile.addIndex(2);
+        meshProfile.addIndex(2);
+        meshProfile.addIndex(0);
+        meshProfile.addIndex(3);
+        meshProfile.addIndex(17);
+        meshProfile.addIndex(16);
+        meshProfile.addIndex(18);
+        meshProfile.addIndex(18);
+        meshProfile.addIndex(16);
+        meshProfile.addIndex(19);
+
         
         
     };
@@ -106,9 +196,10 @@ public:
             e.uv = pov->getUV(e.ray.getStart());
             texCoords.push_back(ofVec2f(e.uv.x*1920,e.uv.y*1080));
             texCoords.push_back(ofVec2f(e.uv.x*1920,e.uv.y*1080));
+            texCoords.push_back(ofVec2f(e.uv.x*1920,e.uv.y*1080));
         }
-        mesh.clearTexCoords();
-        mesh.addTexCoords(texCoords);
+        meshLed.clearTexCoords();
+        meshLed.addTexCoords(texCoords);
     };
     void draw(){
         int i = 0;
@@ -138,11 +229,14 @@ public:
         ofSetLineWidth(1);
     };
     
-    void drawMesh(){
+    void drawMeshLed(){
         ofSetColor(255);
-        mesh.draw();
+        meshLed.draw();
     }
-    
+    void drawMeshProfile(){
+        ofSetColor(0);
+        meshProfile.draw();
+    }
     ofVec3f top;
     POV* pov;
     
@@ -159,8 +253,9 @@ public:
     
     int index;
     
-    ofMesh mesh;
-    
+    ofMesh meshLed;
+    ofMesh meshProfile;
+
     
     // DIMENSIONS
     const float topHeight = 3.6f;
