@@ -52,7 +52,7 @@ public:
     ofxRay::Plane plane;
     
     // POV
-    ofVec3f position = ofVec3f(-50,1,0);
+    ofVec3f position = ofVec3f(-50,1.8,0);
     ofVec3f lastPosition;
     
     

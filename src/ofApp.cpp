@@ -8,35 +8,69 @@ void ofApp::setup(){
     ofEnableSmoothing();
     camera.setCursorDrawEnabled(true);
     camera.setGlobalPosition(31.3198, 28.45, -37.9426);
+    camera.setFov(70);
     
     // Setup plane
     pov = POV();
     
     // Add gates
     for(int i = 0; i < 40; i++){
-        gates.push_back(Gate(ofVec3f(0,3.6, i*2), &pov, i));
+        gates.push_back(Gate(ofVec3f(0,0, i*2), &pov, i));
     }
     
-    // Set start & end points fro pov direction
-    pStartLeft  =  &gates.front().edges.at(1).pos;
-    pStartRight =  &gates.front().edges.at(2).pos;
-    pEndLeft  =  &gates.back().edges.at(1).pos;
-    pEndRight =  &gates.back().edges.at(2).pos;
-    
+    // Set start & end points to calculate pov direction
+    eStartLeft  =  &gates.front().edges.at(1);
+    eStartRight =  &gates.front().edges.at(3);
+    eEndLeft  =  &gates.back().edges.at(1);
+    eEndRight =  &gates.back().edges.at(3);
+    eTopStart = &gates.front().edges.at(2);
+    eTopEnd = &gates.back().edges.at(2);
     // some def
-    pMaxLeft = pStartRight;
-    pMaxRight = pEndRight;
+    eMaxLeft = eStartRight;
+    eMaxRight = eEndRight;
     
     
     // Setup Syphon in
     dir.setup();
-    client.setup();
+    sClient.setup();
     
     //register for our directory's callbacks
     ofAddListener(dir.events.serverAnnounced, this, &ofApp::serverAnnounced);
     ofAddListener(dir.events.serverRetired, this, &ofApp::serverRetired);
     
     dirIdx = -1;
+    
+    outputFbo.allocate(40, 1300);
+    outputFbo.begin();
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    outputFbo.end();
+    sServer.setName("WaveForMapping");
+
+    createOutputMesh();
+    
+    // create presets for camera
+    CameraPos camPos;
+    camPos.name = "in front";
+    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, -2);
+    camPresets.push_back(camPos);
+    
+    camPos.name = "inside";
+    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 30);
+    camPresets.push_back(camPos);
+    
+    camPos.name = "from side";
+    camPos.pos = ofVec3f(10, VIEWER_HEIGHT, 40);
+    camPresets.push_back(camPos);
+    
+    camPos.name = "from back";
+    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 82);
+    camPresets.push_back(camPos);
+    
+    camPos.name = "off side";
+    camPos.pos = ofVec3f(10, VIEWER_HEIGHT, -10);
+    camPresets.push_back(camPos);
+
 
 }
 
@@ -48,81 +82,132 @@ void ofApp::update(){
     
     // calcualte the direction of the pov
     findMaxPoints();
-    viewDirection = (pMaxLeft->operator-(pov.position)).getNormalized() + (pMaxRight->operator-(pov.position)).getNormalized();
-    viewDirection.normalize();
+    ofVec3f pLeft = eMaxLeft->pos;
+    ofVec3f pRight = eMaxRight->pos;
+    pLeft.y = pRight.y = VIEWER_HEIGHT;
     
-    // POV
-    if(povOrbit){
-        pov.orbit(center);
-    }
+    viewDirection = (pLeft.operator-(pov.position)).getNormalized() + (pRight.operator-(pov.position)).getNormalized();
+    viewDirection.normalize();
 
     pov.update(viewDirection);
 
-    
-    if(pov.hasMoved()){     // Only update if POV is moved
-        
-        // Gates
-        for(auto& g : gates){
-            g.update();
-        }
-        
+    // Gates
+    for(auto& g : gates){
+        g.update();
     }
+    vector<ofVec2f> texCoords;
+    
+    switch(mappingIndx){
+        case 0:
+            for(auto& g : gates){
+                for(auto& e : g.edges){
+                    texCoords.push_back(ofVec2f(e.uv.x*sClient.getWidth(),(-e.uv.y+1)*sClient.getHeight()));
+                }
+            }
+            break;
+            
+        case 1:
+            
+            for(auto& g : gates){
+                for(auto& e : g.edges){
+                    ofVec2f uv = e.uv;
+                    uv.x = ofMap(uv.x, eMaxLeft->uv.x, eMaxRight->uv.x, 0, 1.);
+                    if(eTopStart->uv.y < eTopEnd->uv.y ){
+                        if(eMaxLeft->uv.y > eMaxRight->uv.y ){
+                            uv.y = ofMap(uv.y, eMaxLeft->uv.y, eTopStart->uv.y, 0, 1);
+                        } else {
+                            uv.y = ofMap(uv.y, eMaxRight->uv.y, eTopStart->uv.y, 0, 1);
+                        }
+                    } else {
+                        if(eMaxLeft->uv.y > eMaxRight->uv.y ){
+                            uv.y = ofMap(uv.y, eMaxLeft->uv.y, eTopEnd->uv.y, 0, 1);
+                        } else {
+                            uv.y = ofMap(uv.y, eMaxRight->uv.y, eTopEnd->uv.y, 0, 1);
+                        }                    }
+                    texCoords.push_back(ofVec2f(uv.x*sClient.getWidth(),uv.y*sClient.getHeight()));
+                }
+            }
+            break;
+            
+        case 2:
+            float dist = sClient.getWidth()/39;
+            for(int i = 0; i < 40; i++){
+                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*145/1590));
+                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120)/1590));
+                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120+530)/1590));
+                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120+530+530)/1590));
+                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120+530+530+120)/1590));
+            }
+            break;
+    }
+    
+    
+        outputMesh.clearTexCoords();
+        outputMesh.addTexCoords(texCoords);
+    
+    
+    // Create output to be mapped
+        outputFbo.begin();
+        {
+            //ofDisableArbTex();
+            sClient.getTexture().bind();
+            {
+                ofSetColor(255);
+                outputMesh.draw();
+            }
+            sClient.getTexture().unbind();
+        }
+        outputFbo.end();
+  //  }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     camera.begin();
-    
-    
-    // Set pov camera
-    if(povCamera){
-        camera.setGlobalPosition(pov.position);
-        camera.lookAt(pov.position+viewDirection);
-    }
-    
-    // Grid
-    if(drawGrid){
-        ofPushMatrix();
-        ofDrawGrid(1.0f, 180.0f, showGridLabels, false, true, false);
-        ofPopMatrix();
-    }
-    
-    // POV
-    if(drawPlane && !povCamera){
-        pov.drawPovPoint();
-    }
-    
-    // Plane
-    if(drawPlane){
-        pov.drawPlane();
-    }
-    
-    // Draw gates
-    if(drawGates){
-        for(auto& g : gates){
-       //     g.draw();
+    {
+        ofBackground(10);
+        
+        // Grid
+        if(drawFloor){
+            ofSetColor(20);
+            ofPushMatrix();
+            ofRotateX(90);
+            ofDrawPlane(0, 0, 1000, 1000);
+            ofPopMatrix();
         }
-        client.getTexture().bind();
-        for(auto& g : gates){
-            g.drawMeshLed();
+        
+        // Plane
+        if(drawPlane){
+            pov.drawPlane();
         }
-        client.getTexture().unbind();
-        for(auto& g : gates){
-            g.drawMeshProfile();
-        }
-    }
-    
-    // Point rays at pov
-    if(drawRays){
-        ofSetColor(155,100,100);
-        for(auto& g : gates){
-            for(auto& e : g.edges){
-                ofDrawLine(e.ray.getStart(), e.ray.getEnd());
+        
+        // Draw gates
+        if(drawGates){
+            for(auto& g : gates){
+                //     g.draw();
+            }
+            outputFbo.getTexture().bind();
+            for(auto& g : gates){
+                g.drawMeshLed();
+            }
+            outputFbo.getTexture().unbind();
+            for(auto& g : gates){
+                g.drawMeshProfile();
             }
         }
+        
+        // Point rays at pov
+        if(drawRays){
+            ofSetColor(155,100,100);
+            for(auto& g : gates){
+                for(auto& e : g.edges){
+                    ofDrawLine(e.ray.getStart(), e.ray.getEnd());
+                }
+            }
+        }
+        
+        
     }
-    
-    
     camera.end();
     
     // Draw Syphon
@@ -130,19 +215,15 @@ void ofApp::draw(){
         ofPushMatrix();
         {
             float s = 0.2;
-            ofTranslate(0, ofGetHeight()-client.getHeight()*s);
+            ofTranslate(0, ofGetHeight()-sClient.getHeight()*s);
             ofScale(s,s, 0);
             
             drawSyphonIn();
             
             ofSetColor(ofColor::orange);
-            for(auto& g : gates){
-                for(auto& e : g.edges){
-
-                    float px = ofMap(e.uv.x, 0, 1, 0, client.getWidth());
-                    float py = ofMap(e.uv.y, 0, 1, 0, client.getHeight());
-                    ofDrawCircle(px, py, 10);
-                }
+            vector<ofVec2f> pos = outputMesh.getTexCoords();
+            for(auto& p : pos){
+                ofDrawCircle(p.x, -p.y+sClient.getHeight(), 10);
             }
         }
         ofPopMatrix();
@@ -150,19 +231,21 @@ void ofApp::draw(){
     
     // Draw GUI
     drawGUI();
+    
+    
+    // PUBLISH OUTPUT
+    ofFill();
+    sServer.publishTexture(&outputFbo.getTexture());
 }
 
 //--------------------------------------------------------------
 void ofApp::setupGUI(){
     gui.setup();
-    gui.add(drawGrid.set("draw grid", true));
-    gui.add(showGridLabels.set("Show grid labels: ", false));
+    gui.add(drawFloor.set("draw floor", true));
     gui.add(drawGates.set("draw gates", true));
-    gui.add(drawRays.set("draw rays", true));
-    gui.add(drawPlane.set("draw plane", true));
+    gui.add(drawRays.set("draw rays", false));
+    gui.add(drawPlane.set("draw plane", false));
     gui.add(drawSyphon.set("draw syphon in", true));
-    gui.add(povCamera.set("point of view", false));
-    gui.add(povOrbit.set("pov orbit", false));
 }
 
 //--------------------------------------------------------------
@@ -173,6 +256,7 @@ void ofApp::drawGUI(){
         info += "FPS: " + ofToString(ofGetFrameRate());
         info += "\nPOV: " + ofToString(pov.position);
         info += "\nCam: " + ofToString(camera.getGlobalPosition());
+        info += "\nCam: " + ofToString(camPresets[camPresetIndx].name);
         ofDrawBitmapStringHighlight(info, 15, gui.getHeight()+25);
     }
 }
@@ -183,7 +267,7 @@ void ofApp::drawSyphonIn(){
         if(dir.isValidIndex(dirIdx)){
             ofSetColor(255);
             ofFill();
-            client.draw(0, 0);
+            sClient.draw(0, 0);
         }
 
 }
@@ -194,26 +278,12 @@ void ofApp::keyPressed(int key){
         ofToggleFullscreen();
     }
     
-    if(key == 'p' || key == 'P'){
-        pov.position = camera.getCursorWorld();
-    }
-    
     if(key == 'g' || key == 'G'){
         hideGui = !hideGui;
     }
     
-    if(key == 'o' || key == 'O'){
-        povOrbit = !povOrbit;
-    }
-    
-    if(key == ' '){
-        povCamera = false;
-        camera.setGlobalPosition(31.3198, 28.45, -37.9426);
-        camera.lookAt(center);
-    }
-    
     if(key == '1'){
-        drawGrid = !drawGrid;
+        drawFloor = !drawFloor;
     }
     
     if(key == '2'){
@@ -228,6 +298,21 @@ void ofApp::keyPressed(int key){
         drawPlane = !drawPlane;
     }
     
+    if(key == 'm'){
+        mappingIndx++;
+        mappingIndx = mappingIndx%3;
+    }
+    
+    if(key == 'c'){
+        camPresetIndx++;
+        camPresetIndx = camPresetIndx%camPresets.size();
+        camera.setGlobalPosition(camPresets[camPresetIndx].pos );
+        camera.lookAt(center);
+    }
+    if(key == 'x'){
+        pov.position = camera.getPosition();
+    }
+    
     if(key == 's'){
         //press any key to move through all available Syphon servers
         if (dir.size() > 0)
@@ -236,9 +321,9 @@ void ofApp::keyPressed(int key){
             if(dirIdx > dir.size() - 1)
                 dirIdx = 0;
             
-            client.set(dir.getDescription(dirIdx));
-            string serverName = client.getServerName();
-            string appName = client.getApplicationName();
+            sClient.set(dir.getDescription(dirIdx));
+            string serverName = sClient.getServerName();
+            string appName = sClient.getApplicationName();
             
             if(serverName == ""){
                 serverName = "null";
@@ -310,54 +395,54 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 void ofApp::findMaxPoints(){
     
     // Get maxLeft and maxRight to calculate pov direction
-    if(pov.position.z < pStartRight->z){
-        if(pov.position.x > pStartRight->x){
+    if(pov.position.z < eStartRight->pos.z){
+        if(pov.position.x > eStartRight->pos.x){
             // in front on the right of the installation
-            pMaxLeft = pStartLeft;
-            pMaxRight = pEndRight;
+            eMaxLeft = eStartLeft;
+            eMaxRight = eEndRight;
         }
-        else if(pov.position.x < pStartRight->x && pov.position.x > pStartLeft->x){
+        else if(pov.position.x < eStartRight->pos.x && pov.position.x > eStartLeft->pos.x){
             // in front in the middle of the installation
-            pMaxLeft = pStartLeft;
-            pMaxRight = pStartRight;
+            eMaxLeft = eStartLeft;
+            eMaxRight = eStartRight;
         }
-        else if(pov.position.x < pStartLeft->x){
+        else if(pov.position.x < eStartLeft->pos.x){
             // in front on the left of the installation
-            pMaxLeft = pEndLeft;
-            pMaxRight = pStartRight;
+            eMaxLeft = eEndLeft;
+            eMaxRight = eStartRight;
         }
     }
-    else if(pov.position.z > pStartRight->z && pov.position.z < pEndRight->z){
-        if(pov.position.x > pStartRight->x){
+    else if(pov.position.z > eStartRight->pos.z && pov.position.z < eEndRight->pos.z){
+        if(pov.position.x > eStartRight->pos.x){
             // on the right of the installation
-            pMaxLeft = pStartRight;
-            pMaxRight = pEndRight;
+            eMaxLeft = eStartRight;
+            eMaxRight = eEndRight;
         }
-        else if(pov.position.x < pStartRight->x && pov.position.x > pStartLeft->x){
+        else if(pov.position.x < eStartRight->pos.x && pov.position.x > eStartLeft->pos.x){
             // inside the installation
             // HERE WE NEED AN OTHER MODUS -> SPHERICAL MAPPING OF UVs
         }
-        else if(pov.position.x < pStartLeft->x){
+        else if(pov.position.x < eStartLeft->pos.x){
             // on the left of the installation
-            pMaxLeft = pEndLeft;
-            pMaxRight = pStartLeft;
+            eMaxLeft = eEndLeft;
+            eMaxRight = eStartLeft;
         }
     }
-    else if(pov.position.z > pEndRight->z){
-        if(pov.position.x > pStartRight->x){
+    else if(pov.position.z > eEndRight->pos.z){
+        if(pov.position.x > eStartRight->pos.x){
             // behind on the right of the installation
-            pMaxLeft = pStartRight;
-            pMaxRight = pEndLeft;
+            eMaxLeft = eStartRight;
+            eMaxRight = eEndLeft;
         }
-        else if(pov.position.x < pStartRight->x && pov.position.x > pStartLeft->x){
+        else if(pov.position.x < eStartRight->pos.x && pov.position.x > eStartLeft->pos.x){
             // behind in the middle of the installation
-            pMaxLeft = pEndRight;
-            pMaxRight = pEndLeft;
+            eMaxLeft = eEndRight;
+            eMaxRight = eEndLeft;
         }
-        else if(pov.position.x < pStartLeft->x){
+        else if(pov.position.x < eStartLeft->pos.x){
             // behind on the left of the installation
-            pMaxLeft = pEndRight;
-            pMaxRight = pStartLeft;
+            eMaxLeft = eEndRight;
+            eMaxRight = eStartLeft;
         }
     }
 
@@ -380,6 +465,44 @@ void ofApp::serverRetired(ofxSyphonServerDirectoryEventArgs &arg)
     }
     dirIdx = 0;
 }
-//--------------------------------------------------------------
 
+//--------------------------------------------------------------
+void ofApp::createOutputMesh(){
+    for(int i = 0; i <= 40; i++){
+        outputMesh.addVertex(ofVec2f(i,0));
+        outputMesh.addVertex(ofVec2f(i,120));
+        outputMesh.addVertex(ofVec2f(i,650));
+        outputMesh.addVertex(ofVec2f(i,1180));
+        outputMesh.addVertex(ofVec2f(i, 1300));
+    }
+    for(int i = 0; i < 40*5; i+=5){
+        outputMesh.addIndex(i+5);
+        outputMesh.addIndex(i+0);
+        outputMesh.addIndex(i+6);
+        outputMesh.addIndex(i+6);
+        outputMesh.addIndex(i+0);
+        outputMesh.addIndex(i+1);
+        
+        outputMesh.addIndex(i+6);
+        outputMesh.addIndex(i+1);
+        outputMesh.addIndex(i+7);
+        outputMesh.addIndex(i+7);
+        outputMesh.addIndex(i+1);
+        outputMesh.addIndex(i+2);
+        
+        outputMesh.addIndex(i+7);
+        outputMesh.addIndex(i+2);
+        outputMesh.addIndex(i+8);
+        outputMesh.addIndex(i+8);
+        outputMesh.addIndex(i+2);
+        outputMesh.addIndex(i+3);
+        
+        outputMesh.addIndex(i+8);
+        outputMesh.addIndex(i+3);
+        outputMesh.addIndex(i+9);
+        outputMesh.addIndex(i+9);
+        outputMesh.addIndex(i+3);
+        outputMesh.addIndex(i+4);
+    }
+}
 

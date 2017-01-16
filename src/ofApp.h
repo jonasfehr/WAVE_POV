@@ -8,6 +8,8 @@
 #include "ofxRay.h"
 #include "ofxSyphon.h"
 
+#define VIEWER_HEIGHT 1.8
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -37,15 +39,12 @@ class ofApp : public ofBaseApp{
     // GUI
     bool hideGui = false;
     ofxPanel gui;
-    ofParameter<bool> drawGrid;
+    ofParameter<bool> drawFloor;
     ofParameter<bool> drawGates;
     ofParameter<bool> drawRays;
     ofParameter<bool> drawPlane;
     ofParameter<bool> drawSyphon;
-    ofParameter<bool> povCamera;
-    ofParameter<bool> povOrbit;
-    ofParameter<bool> showGridLabels;
-    ofVec3f center = ofVec3f(0,1, 40);
+    ofVec3f center = ofVec3f(0,VIEWER_HEIGHT, 40);
     
     // POV
     POV pov;
@@ -55,17 +54,35 @@ class ofApp : public ofBaseApp{
     vector<Gate> gates;
     
     // max Pos for viewDirection
-    ofVec3f *pStartRight, *pStartLeft, *pEndRight, *pEndLeft;
-    ofVec3f *pMaxLeft, *pMaxRight;
+    Gate::Edge *eStartRight, *eStartLeft, *eEndRight, *eEndLeft;
+    Gate::Edge *eMaxLeft, *eMaxRight;
+    Gate::Edge *eTopStart, *eTopEnd;
+    
     void findMaxPoints();
     
     // Syphon in & out
     ofxSyphonServerDirectory dir;
-    ofxSyphonClient client;
+    ofxSyphonClient sClient;
     int dirIdx;
     void drawSyphonIn();
     void serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg);
     void serverRetired(ofxSyphonServerDirectoryEventArgs &arg);
+    
+    ofxSyphonServer sServer;
+    ofFbo outputFbo;
+    
+    ofMesh outputMesh;
+    void createOutputMesh();
+    
+    // mappings
+    int mappingIndx;
+    
+    struct CameraPos{
+        ofVec3f pos;
+        string name;
+    };
+    vector<CameraPos> camPresets;
+    int camPresetIndx;
     
 };
 
