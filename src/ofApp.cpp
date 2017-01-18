@@ -6,159 +6,96 @@ void ofApp::setup(){
     
     ofBackground(80);
     ofEnableSmoothing();
-    camera.setCursorDrawEnabled(true);
-    camera.setGlobalPosition(31.3198, 28.45, -37.9426);
-    camera.setFov(70);
     
-    // Setup plane
-    pov = POV();
-    
-    // Add gates
-    for(int i = 0; i < 40; i++){
-        gates.push_back(Gate(ofVec3f(0,0, i*2), &pov, i));
-    }
-    
-    // Set start & end points to calculate pov direction
-    eStartLeft  =  &gates.front().edges.at(1);
-    eStartRight =  &gates.front().edges.at(3);
-    eEndLeft  =  &gates.back().edges.at(1);
-    eEndRight =  &gates.back().edges.at(3);
-    eTopStart = &gates.front().edges.at(2);
-    eTopEnd = &gates.back().edges.at(2);
-    // some def
-    eMaxLeft = eStartRight;
-    eMaxRight = eEndRight;
-    
-    
-    // Setup Syphon in
-    dir.setup();
-    sClient.setup();
-    
-    //register for our directory's callbacks
-    ofAddListener(dir.events.serverAnnounced, this, &ofApp::serverAnnounced);
-    ofAddListener(dir.events.serverRetired, this, &ofApp::serverRetired);
-    
-    dirIdx = -1;
-    
-    outputFbo.allocate(40, 1300);
-    outputFbo.begin();
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    outputFbo.end();
-    sServer.setName("WaveForMapping");
-
-    createOutputMesh();
     
     // create presets for camera
     CameraPos camPos;
     camPos.name = "in front";
-    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, -2);
+    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, -5);
     camPresets.push_back(camPos);
     
-    camPos.name = "inside";
-    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 30);
+    camPos.name = "from back";
+    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 85);
     camPresets.push_back(camPos);
     
     camPos.name = "from side";
     camPos.pos = ofVec3f(10, VIEWER_HEIGHT, 40);
     camPresets.push_back(camPos);
     
-    camPos.name = "from back";
-    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 82);
-    camPresets.push_back(camPos);
-    
     camPos.name = "off side";
     camPos.pos = ofVec3f(10, VIEWER_HEIGHT, -10);
     camPresets.push_back(camPos);
-
-
+    
+    camPos.name = "inside";
+    camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 30);
+    camPresets.push_back(camPos);
+    
+    
+    camera.setCursorDrawEnabled(true);
+    camera.setFov(70);
+    camera.setGlobalPosition(camPresets[camPresetIndx].pos );
+    camera.lookAt(center);
+    
+    // Add gates
+    for(int i = 0; i < 40; i++){
+        Gate gate = Gate(ofVec3f(0,0, i*2), i);
+        gates.push_back(gate);
+    }
+    
+    // setup content generators
+    contentPovFree.setup(&gates, camPresets[0].pos, POV_UV);
+    
+    contentPovFront.setup(&gates, camPresets[0].pos, POV_UV);
+    
+    contentPovBack.setup(&gates, camPresets[1].pos, POV_UV);
+    
+    ofImage img;
+    img.load("images/Pass_1.png");
+    contentSlit.setup(img);
+    
+    
+    // setup Syphon
+    syphonIn.setup();
+    syphonOut.setup("WaveForMapping");
+    
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
     
-   
+    contentPovFree.setInputTexture(&syphonIn.getTexture());
+    contentPovFree.update();
     
-    // calcualte the direction of the pov
-    findMaxPoints();
-    ofVec3f pLeft = eMaxLeft->pos;
-    ofVec3f pRight = eMaxRight->pos;
-    pLeft.y = pRight.y = VIEWER_HEIGHT;
+    contentPovFront.setInputTexture(&syphonIn.getTexture());
+    contentPovFront.update();
     
-    viewDirection = (pLeft.operator-(pov.position)).getNormalized() + (pRight.operator-(pov.position)).getNormalized();
-    viewDirection.normalize();
-
-    pov.update(viewDirection);
-
-    // Gates
-    for(auto& g : gates){
-        g.update();
+    contentPovBack.setInputTexture(&syphonIn.getTexture());
+    contentPovBack.update();
+    
+    contentSlit.update();
+    
+    
+    syphonOut.begin();
+    {
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        ofClear(0);
+        ofSetColor(255);
+        contentPovFree.draw();
+//        ofSetColor(255,100,0);
+//        contentPovFront.draw();
+//        ofSetColor(0,100,255);
+//        contentPovBack.draw();
+        ofSetColor(255);
+        contentSlit.draw();
     }
-    vector<ofVec2f> texCoords;
-    
-    switch(mappingIndx){
-        case 0:
-            for(auto& g : gates){
-                for(auto& e : g.edges){
-                    texCoords.push_back(ofVec2f(e.uv.x*sClient.getWidth(),(-e.uv.y+1)*sClient.getHeight()));
-                }
-            }
-            break;
-            
-        case 1:
-            
-            for(auto& g : gates){
-                for(auto& e : g.edges){
-                    ofVec2f uv = e.uv;
-                    uv.x = ofMap(uv.x, eMaxLeft->uv.x, eMaxRight->uv.x, 0, 1.);
-                    if(eTopStart->uv.y < eTopEnd->uv.y ){
-                        if(eMaxLeft->uv.y > eMaxRight->uv.y ){
-                            uv.y = ofMap(uv.y, eMaxLeft->uv.y, eTopStart->uv.y, 0, 1);
-                        } else {
-                            uv.y = ofMap(uv.y, eMaxRight->uv.y, eTopStart->uv.y, 0, 1);
-                        }
-                    } else {
-                        if(eMaxLeft->uv.y > eMaxRight->uv.y ){
-                            uv.y = ofMap(uv.y, eMaxLeft->uv.y, eTopEnd->uv.y, 0, 1);
-                        } else {
-                            uv.y = ofMap(uv.y, eMaxRight->uv.y, eTopEnd->uv.y, 0, 1);
-                        }                    }
-                    texCoords.push_back(ofVec2f(uv.x*sClient.getWidth(),uv.y*sClient.getHeight()));
-                }
-            }
-            break;
-            
-        case 2:
-            float dist = sClient.getWidth()/39;
-            for(int i = 0; i < 40; i++){
-                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*145/1590));
-                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120)/1590));
-                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120+530)/1590));
-                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120+530+530)/1590));
-                texCoords.push_back(ofVec2f(i*dist,sClient.getHeight()*(145+120+530+530+120)/1590));
-            }
-            break;
-    }
+    syphonOut.end();
     
     
-        outputMesh.clearTexCoords();
-        outputMesh.addTexCoords(texCoords);
     
     
-    // Create output to be mapped
-        outputFbo.begin();
-        {
-            //ofDisableArbTex();
-            sClient.getTexture().bind();
-            {
-                ofSetColor(255);
-                outputMesh.draw();
-            }
-            sClient.getTexture().unbind();
-        }
-        outputFbo.end();
-  //  }
 }
 
 //--------------------------------------------------------------
@@ -178,19 +115,19 @@ void ofApp::draw(){
         
         // Plane
         if(drawPlane){
-            pov.drawPlane();
+            contentPovFree.pov.drawPlane();
         }
         
         // Draw gates
         if(drawGates){
-            for(auto& g : gates){
-                //     g.draw();
+            syphonOut.getTexture().bind();
+            {
+                for(auto& g : gates){
+                    g.drawMeshLed();
+                }
             }
-            outputFbo.getTexture().bind();
-            for(auto& g : gates){
-                g.drawMeshLed();
-            }
-            outputFbo.getTexture().unbind();
+            syphonOut.getTexture().unbind();
+            
             for(auto& g : gates){
                 g.drawMeshProfile();
             }
@@ -199,14 +136,10 @@ void ofApp::draw(){
         // Point rays at pov
         if(drawRays){
             ofSetColor(155,100,100);
-            for(auto& g : gates){
-                for(auto& e : g.edges){
-                    ofDrawLine(e.ray.getStart(), e.ray.getEnd());
-                }
+            for(auto& e : contentPovFree.pov.edges){
+                ofDrawLine(e.pos, contentPovFree.pov.position);
             }
         }
-        
-        
     }
     camera.end();
     
@@ -215,15 +148,14 @@ void ofApp::draw(){
         ofPushMatrix();
         {
             float s = 0.2;
-            ofTranslate(0, ofGetHeight()-sClient.getHeight()*s);
+            ofTranslate(0, ofGetHeight()-syphonIn.getHeight()*s);
             ofScale(s,s, 0);
-            
-            drawSyphonIn();
+            syphonIn.draw();
             
             ofSetColor(ofColor::orange);
-            vector<ofVec2f> pos = outputMesh.getTexCoords();
+            vector<ofVec2f> pos = contentPovFree.getTexCoords();
             for(auto& p : pos){
-                ofDrawCircle(p.x, -p.y+sClient.getHeight(), 10);
+                ofDrawCircle(p.x, p.y, 10);
             }
         }
         ofPopMatrix();
@@ -234,8 +166,7 @@ void ofApp::draw(){
     
     
     // PUBLISH OUTPUT
-    ofFill();
-    sServer.publishTexture(&outputFbo.getTexture());
+    syphonOut.publish();
 }
 
 //--------------------------------------------------------------
@@ -254,22 +185,11 @@ void ofApp::drawGUI(){
         gui.draw();
         string info;
         info += "FPS: " + ofToString(ofGetFrameRate());
-        info += "\nPOV: " + ofToString(pov.position);
+        info += "\nPOV: " + ofToString(contentPovFree.pov.position);
         info += "\nCam: " + ofToString(camera.getGlobalPosition());
         info += "\nCam: " + ofToString(camPresets[camPresetIndx].name);
         ofDrawBitmapStringHighlight(info, 15, gui.getHeight()+25);
     }
-}
-
-//--------------------------------------------------------------
-void ofApp::drawSyphonIn(){
-
-        if(dir.isValidIndex(dirIdx)){
-            ofSetColor(255);
-            ofFill();
-            sClient.draw(0, 0);
-        }
-
 }
 
 //--------------------------------------------------------------
@@ -301,6 +221,7 @@ void ofApp::keyPressed(int key){
     if(key == 'm'){
         mappingIndx++;
         mappingIndx = mappingIndx%3;
+        contentPovFree.setMappingType(mappingIndx);
     }
     
     if(key == 'c'){
@@ -310,34 +231,15 @@ void ofApp::keyPressed(int key){
         camera.lookAt(center);
     }
     if(key == 'x'){
-        pov.position = camera.getPosition();
+        contentPovFree.setPov(camera.getPosition());
     }
     
     if(key == 's'){
-        //press any key to move through all available Syphon servers
-        if (dir.size() > 0)
-        {
-            dirIdx++;
-            if(dirIdx > dir.size() - 1)
-                dirIdx = 0;
-            
-            sClient.set(dir.getDescription(dirIdx));
-            string serverName = sClient.getServerName();
-            string appName = sClient.getApplicationName();
-            
-            if(serverName == ""){
-                serverName = "null";
-            }
-            if(appName == ""){
-                appName = "null";
-            }
-            ofSetWindowTitle(serverName + ":" + appName);
-        }
-        else
-        {
-            ofSetWindowTitle("No Server");
-        }
-
+        syphonIn.next();
+    }
+    
+    if(key == 'p'){
+        contentSlit.activate(ofRandom(0,40));
     }
 }
 
@@ -392,117 +294,3 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 //--------------------------------------------------------------
-void ofApp::findMaxPoints(){
-    
-    // Get maxLeft and maxRight to calculate pov direction
-    if(pov.position.z < eStartRight->pos.z){
-        if(pov.position.x > eStartRight->pos.x){
-            // in front on the right of the installation
-            eMaxLeft = eStartLeft;
-            eMaxRight = eEndRight;
-        }
-        else if(pov.position.x < eStartRight->pos.x && pov.position.x > eStartLeft->pos.x){
-            // in front in the middle of the installation
-            eMaxLeft = eStartLeft;
-            eMaxRight = eStartRight;
-        }
-        else if(pov.position.x < eStartLeft->pos.x){
-            // in front on the left of the installation
-            eMaxLeft = eEndLeft;
-            eMaxRight = eStartRight;
-        }
-    }
-    else if(pov.position.z > eStartRight->pos.z && pov.position.z < eEndRight->pos.z){
-        if(pov.position.x > eStartRight->pos.x){
-            // on the right of the installation
-            eMaxLeft = eStartRight;
-            eMaxRight = eEndRight;
-        }
-        else if(pov.position.x < eStartRight->pos.x && pov.position.x > eStartLeft->pos.x){
-            // inside the installation
-            // HERE WE NEED AN OTHER MODUS -> SPHERICAL MAPPING OF UVs
-        }
-        else if(pov.position.x < eStartLeft->pos.x){
-            // on the left of the installation
-            eMaxLeft = eEndLeft;
-            eMaxRight = eStartLeft;
-        }
-    }
-    else if(pov.position.z > eEndRight->pos.z){
-        if(pov.position.x > eStartRight->pos.x){
-            // behind on the right of the installation
-            eMaxLeft = eStartRight;
-            eMaxRight = eEndLeft;
-        }
-        else if(pov.position.x < eStartRight->pos.x && pov.position.x > eStartLeft->pos.x){
-            // behind in the middle of the installation
-            eMaxLeft = eEndRight;
-            eMaxRight = eEndLeft;
-        }
-        else if(pov.position.x < eStartLeft->pos.x){
-            // behind on the left of the installation
-            eMaxLeft = eEndRight;
-            eMaxRight = eStartLeft;
-        }
-    }
-
-}
-
-//--------------------------------------------------------------
-// functions for syphon directory's callbacks
-void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg)
-{
-    for( auto& dir : arg.servers ){
-        ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
-    }
-    dirIdx = 0;
-}
-
-void ofApp::serverRetired(ofxSyphonServerDirectoryEventArgs &arg)
-{
-    for( auto& dir : arg.servers ){
-        ofLogNotice("ofxSyphonServerDirectory Server Retired")<<" Server Name: "<<dir.serverName <<" | App Name: "<<dir.appName;
-    }
-    dirIdx = 0;
-}
-
-//--------------------------------------------------------------
-void ofApp::createOutputMesh(){
-    for(int i = 0; i <= 40; i++){
-        outputMesh.addVertex(ofVec2f(i,0));
-        outputMesh.addVertex(ofVec2f(i,120));
-        outputMesh.addVertex(ofVec2f(i,650));
-        outputMesh.addVertex(ofVec2f(i,1180));
-        outputMesh.addVertex(ofVec2f(i, 1300));
-    }
-    for(int i = 0; i < 40*5; i+=5){
-        outputMesh.addIndex(i+5);
-        outputMesh.addIndex(i+0);
-        outputMesh.addIndex(i+6);
-        outputMesh.addIndex(i+6);
-        outputMesh.addIndex(i+0);
-        outputMesh.addIndex(i+1);
-        
-        outputMesh.addIndex(i+6);
-        outputMesh.addIndex(i+1);
-        outputMesh.addIndex(i+7);
-        outputMesh.addIndex(i+7);
-        outputMesh.addIndex(i+1);
-        outputMesh.addIndex(i+2);
-        
-        outputMesh.addIndex(i+7);
-        outputMesh.addIndex(i+2);
-        outputMesh.addIndex(i+8);
-        outputMesh.addIndex(i+8);
-        outputMesh.addIndex(i+2);
-        outputMesh.addIndex(i+3);
-        
-        outputMesh.addIndex(i+8);
-        outputMesh.addIndex(i+3);
-        outputMesh.addIndex(i+9);
-        outputMesh.addIndex(i+9);
-        outputMesh.addIndex(i+3);
-        outputMesh.addIndex(i+4);
-    }
-}
-

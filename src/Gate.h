@@ -9,62 +9,37 @@
 #ifndef Gate_h
 #define Gate_h
 
-#include "ofxRay.h"
-#include "POV.h"
-
 class Gate{
 public:
-    Gate(ofVec3f position, POV* pov, int index){
+    Gate(ofVec3f position, int index){
         this->pos = position;
-        this->pov = pov;
         this->index = index;
         
         // TOP
-        Edge topEdge;
-        topEdge.pos = pos;
-        topEdge.pos.y = topHeight;
-        topEdge.ray.setStart(topEdge.pos);
-        topEdge.ray.setEnd(pov->position);
-        
+        topEdge = pos;
+        topEdge.y = topHeight;
         
         // Left Outer
-        Edge leftOuterEdge;
-        leftOuterEdge.pos = pos;
-        leftOuterEdge.pos.y = bottomHeight;
-        leftOuterEdge.pos.x = -outerWidth;
-        leftOuterEdge.ray.setStart(leftOuterEdge.pos);
-        leftOuterEdge.ray.setEnd(pov->position);
+        leftOuterEdge = pos;
+        leftOuterEdge.y = bottomHeight;
+        leftOuterEdge.x = -outerWidth;
         
         // Right outer
-        Edge rightOuterEdge;
-        rightOuterEdge.pos = pos;
-        rightOuterEdge.pos.y = bottomHeight;
-        rightOuterEdge.pos.x = outerWidth;
-        rightOuterEdge.ray.setStart(rightOuterEdge.pos);
-        rightOuterEdge.ray.setEnd(pov->position);
+        rightOuterEdge = pos;
+        rightOuterEdge.y = bottomHeight;
+        rightOuterEdge.x = outerWidth;
         
         // Left Inner
-        Edge leftInnerEdge;
-        leftInnerEdge.pos = pos;
-        leftInnerEdge.pos.y = bottomHeight;
-        leftInnerEdge.pos.x = -innerWidth;
-        leftInnerEdge.ray.setStart(leftInnerEdge.pos);
-        leftInnerEdge.ray.setEnd(pov->position);
+        leftInnerEdge = pos;
+        leftInnerEdge.y = bottomHeight;
+        leftInnerEdge.x = -innerWidth;
         
         // Right Inner
-        Edge rightInnerEdge;
-        rightInnerEdge.pos = pos;
-        rightInnerEdge.pos.y = bottomHeight;
-        rightInnerEdge.pos.x = innerWidth;
-        rightInnerEdge.ray.setStart(rightInnerEdge.pos);
-        rightInnerEdge.ray.setEnd(pov->position);
+        rightInnerEdge = pos;
+        rightInnerEdge.y = bottomHeight;
+        rightInnerEdge.x = innerWidth;
         
-        // Add to edges
-        edges.push_back(leftInnerEdge);
-        edges.push_back(leftOuterEdge);
-        edges.push_back(topEdge);
-        edges.push_back(rightOuterEdge);
-        edges.push_back(rightInnerEdge);
+
         
         
         // create a meshLed to visualize the result
@@ -77,25 +52,25 @@ public:
         float profileOff = profileHeight*1.732;
 
         // create led mesh
-        meshLed.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshLed.addVertex(leftInnerEdge.pos+ofVec3f(0, ledHeight, 0.));
-        meshLed.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(leftInnerEdge+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(leftInnerEdge+ofVec3f(0, ledHeight, 0.));
+        meshLed.addVertex(leftInnerEdge+ofVec3f(0, 0, ledWidth));
         
-        meshLed.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshLed.addVertex(leftOuterEdge.pos+ofVec3f(triOff, ledHeight, 0.));
-        meshLed.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(leftOuterEdge+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(leftOuterEdge+ofVec3f(triOff, ledHeight, 0.));
+        meshLed.addVertex(leftOuterEdge+ofVec3f(0, 0, ledWidth));
         
-        meshLed.addVertex(topEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshLed.addVertex(topEdge.pos+ofVec3f(0, -ledHeight*2, 0.));
-        meshLed.addVertex(topEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(topEdge+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(topEdge+ofVec3f(0, -ledHeight*2, 0.));
+        meshLed.addVertex(topEdge+ofVec3f(0, 0, ledWidth));
         
-        meshLed.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshLed.addVertex(rightOuterEdge.pos+ofVec3f(-triOff, ledHeight, 0.));
-        meshLed.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(rightOuterEdge+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(rightOuterEdge+ofVec3f(-triOff, ledHeight, 0.));
+        meshLed.addVertex(rightOuterEdge+ofVec3f(0, 0, ledWidth));
         
-        meshLed.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshLed.addVertex(rightInnerEdge.pos+ofVec3f(0, ledHeight, 0.));
-        meshLed.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshLed.addVertex(rightInnerEdge+ofVec3f(0, 0, -ledWidth));
+        meshLed.addVertex(rightInnerEdge+ofVec3f(0, ledHeight, 0.));
+        meshLed.addVertex(rightInnerEdge+ofVec3f(0, 0, ledWidth));
         
 
         for(int i = 0; i < 12; i+=3){
@@ -142,30 +117,30 @@ public:
         
         
         // create profile mesh
-        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, -profileHeight, -profileWidth));
-        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, -profileHeight, profileWidth));
-        meshProfile.addVertex(leftInnerEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshProfile.addVertex(leftInnerEdge+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(leftInnerEdge+ofVec3f(0, -profileHeight, -profileWidth));
+        meshProfile.addVertex(leftInnerEdge+ofVec3f(0, -profileHeight, profileWidth));
+        meshProfile.addVertex(leftInnerEdge+ofVec3f(0, 0, ledWidth));
 
-        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(-profileOff, -profileHeight, -profileWidth));
-        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(-profileOff, -profileHeight, profileWidth));
-        meshProfile.addVertex(leftOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshProfile.addVertex(leftOuterEdge+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(leftOuterEdge+ofVec3f(-profileOff, -profileHeight, -profileWidth));
+        meshProfile.addVertex(leftOuterEdge+ofVec3f(-profileOff, -profileHeight, profileWidth));
+        meshProfile.addVertex(leftOuterEdge+ofVec3f(0, 0, ledWidth));
         
-        meshProfile.addVertex(topEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshProfile.addVertex(topEdge.pos+ofVec3f(0, profileHeight*2, -profileWidth));
-        meshProfile.addVertex(topEdge.pos+ofVec3f(0, profileHeight*2, profileWidth));
-        meshProfile.addVertex(topEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshProfile.addVertex(topEdge+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(topEdge+ofVec3f(0, profileHeight*2, -profileWidth));
+        meshProfile.addVertex(topEdge+ofVec3f(0, profileHeight*2, profileWidth));
+        meshProfile.addVertex(topEdge+ofVec3f(0, 0, ledWidth));
         
-        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(profileOff, -profileHeight, -profileWidth));
-        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(profileOff, -profileHeight, profileWidth));
-        meshProfile.addVertex(rightOuterEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshProfile.addVertex(rightOuterEdge+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(rightOuterEdge+ofVec3f(profileOff, -profileHeight, -profileWidth));
+        meshProfile.addVertex(rightOuterEdge+ofVec3f(profileOff, -profileHeight, profileWidth));
+        meshProfile.addVertex(rightOuterEdge+ofVec3f(0, 0, ledWidth));
         
-        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, -ledWidth));
-        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, -profileHeight, -profileWidth));
-        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, -profileHeight, profileWidth));
-        meshProfile.addVertex(rightInnerEdge.pos+ofVec3f(0, 0, ledWidth));
+        meshProfile.addVertex(rightInnerEdge+ofVec3f(0, 0, -ledWidth));
+        meshProfile.addVertex(rightInnerEdge+ofVec3f(0, -profileHeight, -profileWidth));
+        meshProfile.addVertex(rightInnerEdge+ofVec3f(0, -profileHeight, profileWidth));
+        meshProfile.addVertex(rightInnerEdge+ofVec3f(0, 0, ledWidth));
         
         
         for(int i = 0; i < 16; i+=4){
@@ -208,42 +183,11 @@ public:
         
         
     };
-    void update(){
-        for(auto& e : edges){
-            //e.intersects = pov->plane.intersect(e.ray, e.intersect);
-            e.intersect = pov->rayPlaneIntersec(e.ray.getStart(), e.ray.getEnd(), pov->plane.getCenter(), pov->plane.getNormal());
-            
-            e.ray.setEnd(pov->position);
-            e.uv = pov->getUV(e.ray.getStart());
-        }
-    };
+
     void draw(){
-        int i = 0;
-        for(auto& e : edges){
-            ofSetColor(ofColor::black);
-            ofDrawSphere(e.ray.getStart(), 0.05);
-            
-            ofSetColor(ofColor::orange);
-            ofDrawSphere(e.intersect, 0.005);
-
-           // ofDrawBitmapString(ofToString(e.uv), e.intersect);
-            
-            i++;
-        }
-        // Draw gate
-        ofSetColor(ofColor::black);
-        ofSetLineWidth(4);
-        
-        ofDrawLine(edges.at(0).ray.getStart(), edges.at(1).ray.getStart());
-        ofDrawLine(edges.at(0).ray.getStart(), edges.at(2).ray.getStart());
-        ofDrawLine(edges.at(1).ray.getStart(), edges.at(4).ray.getStart());
-        
-        ofDrawLine(edges.at(2).ray.getStart(), edges.at(3).ray.getStart());
-        
-
-        
-        ofSetLineWidth(1);
-    };
+        drawMeshLed();
+        drawMeshProfile();
+    }
     
     void drawMeshLed(){
         ofSetColor(255);
@@ -253,19 +197,16 @@ public:
         ofSetColor(0);
         meshProfile.draw();
     }
+    
     ofVec3f pos;
-    POV* pov;
     
-    struct Edge{
-        bool intersects;
-        ofVec3f intersect;
-        ofxRay::Ray ray;
-        ofVec3f pos;
-        ofVec2f uv;
-        
-    };
-    
-    vector<Edge> edges;
+
+    // Add to edges
+    ofVec3f topEdge;
+    ofVec3f leftOuterEdge;
+    ofVec3f rightOuterEdge;
+    ofVec3f leftInnerEdge;
+    ofVec3f rightInnerEdge;
     
     int index;
     
@@ -278,9 +219,6 @@ public:
     const float bottomHeight = 0.3f;
     const float outerWidth = 2.4f;
     const float innerWidth = 1.1f;
-    
-    
-    
 };
 
 

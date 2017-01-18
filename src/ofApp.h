@@ -5,8 +5,9 @@
 #include "Gate.h"
 #include "POV.h"
 #include "ofxGrabCam.h"
-#include "ofxRay.h"
 #include "ofxSyphon.h"
+#include "SyphonUtils.h"
+#include "WaveUtils.h"
 
 #define VIEWER_HEIGHT 1.8
 
@@ -45,38 +46,27 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> drawPlane;
     ofParameter<bool> drawSyphon;
     ofVec3f center = ofVec3f(0,VIEWER_HEIGHT, 40);
-    
-    // POV
-    POV pov;
 
     
     // Gates
     vector<Gate> gates;
     
-    // max Pos for viewDirection
-    Gate::Edge *eStartRight, *eStartLeft, *eEndRight, *eEndLeft;
-    Gate::Edge *eMaxLeft, *eMaxRight;
-    Gate::Edge *eTopStart, *eTopEnd;
-    
-    void findMaxPoints();
-    
     // Syphon in & out
-    ofxSyphonServerDirectory dir;
-    ofxSyphonClient sClient;
-    int dirIdx;
-    void drawSyphonIn();
-    void serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg);
-    void serverRetired(ofxSyphonServerDirectoryEventArgs &arg);
+    SyphonClientDir syphonIn;
+    SyphonFbo syphonOut;
     
-    ofxSyphonServer sServer;
-    ofFbo outputFbo;
+    // create content;
+    WaveOutputGenerator contentPovFree;
     
-    ofMesh outputMesh;
-    void createOutputMesh();
+    WaveOutputGenerator contentPovFront;
+    WaveOutputGenerator contentPovBack;
+    
+    WaveSlitGenerator contentSlit;
     
     // mappings
     int mappingIndx;
     
+    // viewPresets
     struct CameraPos{
         ofVec3f pos;
         string name;
