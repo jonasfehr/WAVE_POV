@@ -10,11 +10,11 @@ uniform sampler2DRect tex3;
 uniform vec2 iResolution;//100,1000;100,1000]
 uniform float iGlobalTime;//0.1,0.,1.]
 uniform float u_density;//0.1,0.,1.]
-uniform float u_contrast;//0.,0.,1.]
 uniform float u_H;//0.,0.,1.]
 uniform float u_S;//0.,0.,1.]
 uniform float u_B;//0.,0.,1.]
-uniform float u_direction;
+uniform float u_contrast;//0.,0.,1.]
+
 uniform float u_mix;
 
 
@@ -22,7 +22,7 @@ uniform float u_mix;
 
 //uniforms
 
-
+// functions
 vec3 hsv2rgb_smooth( in vec3 c ){
     vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 ); 
     rgb = rgb*rgb*(3.0-2.0*rgb); 
@@ -209,30 +209,35 @@ vec3 blendVividLight(vec3 base, vec3 blend, float opacity) {
 
 // ---
 
+vec3 postProcessing(vec3 image, vec3 hsv, float contrast) {
+    image = ((image - vec3(0.5)) * max(contrast+0.5, 0.0)) + vec3(0.5);
+    image *= hsv2rgb(hsv);
+    return image;
+}
+
 void main()
 {
     
     vec2 st = gl_FragCoord.xy;
     vec2 stStretched = st / vec2(3., 1.);
-    
-    vec4 colTex0 = texture2DRect(tex0, stStretched).rgba;
-    vec4 colTex1 = texture2DRect(tex1, st).rgba;
-    vec4 colTex2 = texture2DRect(tex2, stStretched).rgba;
-    vec4 colTex3 = texture2DRect(tex3, stStretched).rgba;
-
-      //float i = impulse(8.,st.x);
-    //float i = 0;//cubicPulse(0.01,0.4,st.y);
-
-
-
-//    vec3 hsv = vec3( u_H, u_S, u_B);
-//    
-//    vec3 rgbMul = hsv2rgb(hsv)*(noise * impulses);
-//    vec3 rgbMax = hsv2rgb(hsv)*max(noise , impulses);
-    
     vec3 mixCol = vec3(0.);
-    mixCol = blendScreen(colTex0.rgb, colTex3.rgb, 1.ppppppppppppppppppppppppppppppp);
-    mixCol = blendAdd(colTex2.rgb, mixCol, 1.);
+
+    
+    vec3 colTex0 = texture2DRect(tex0, stStretched).rgb;
+    vec3 colTex1 = texture2DRect(tex1, st).rgb;
+    vec3 colTex2 = texture2DRect(tex2, stStretched).rgb;
+    vec3 colTex3 = texture2DRect(tex3, stStretched).rgb;
+
+
+
+    colTex3 = postProcessing(colTex3, vec3( 0.5, 0.5, 1.), 0.5);
+    
+    
+    mixCol = colTex0;
+    mixCol = blendAdd( mixCol, colTex1);
+    mixCol = blendAdd( mixCol, colTex2);
+    mixCol = blendScreen( mixCol, colTex3);
+
 
     gl_FragColor =  vec4(mixCol,1.);
 }

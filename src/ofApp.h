@@ -7,7 +7,10 @@
 #include "ofxGrabCam.h"
 #include "ofxSyphon.h"
 #include "SyphonUtils.h"
-#include "WaveUtils.h"
+#include "WavePovContent.h"
+#include "WaveSlitContent.h"
+#include "WaveShaderContent.h"
+#include "TextureMix.h"
 #include "ofxAutoReloadedShader.h"
 
 
@@ -20,7 +23,7 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
     
-    void setupGUI();
+    void setupParameterGroup();
     void drawGUI();
 
 		void keyPressed(int key);
@@ -42,6 +45,9 @@ class ofApp : public ofBaseApp{
     // GUI
     bool hideGui = false;
     ofxPanel gui;
+    ofParameterGroup guiGroup;
+
+    ofParameterGroup paramGroup;
     ofParameter<bool> drawFloor;
     ofParameter<bool> drawGates;
     ofParameter<bool> drawRays;
@@ -59,10 +65,10 @@ class ofApp : public ofBaseApp{
     SyphonFbo syphonSimOut;
     
     // create content;
-    WavePovGenerator contentPovFree;
-    WavePovGenerator contentPovFront;
-    WavePovGenerator contentPovBack;
-    WaveSlitGenerator contentSlit;
+    WavePovContent contentPovFree;
+    WavePovContent contentPovFront;
+    WavePovContent contentPovBack;
+    WaveSlitContent contentSlit;
     WaveShaderContent contentSmoke;
     
     ofxAutoReloadedShader mixShader;
@@ -79,6 +85,6 @@ class ofApp : public ofBaseApp{
     int camPresetIndx;
     
 
-    
+    TextureMix textureMixer;
 };
 

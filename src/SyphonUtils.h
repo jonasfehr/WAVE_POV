@@ -132,9 +132,7 @@ public:
 
 class SyphonFbo : public ofxSyphonServer{
 public:
-    ofFbo fbo;
-    
-    ofMesh outputMesh;
+    ofFbo fbo;    
     ofTexture *texture;
     
     SyphonFbo(){

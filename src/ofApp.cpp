@@ -2,7 +2,6 @@
 ofVec3f viewDirection;
 //--------------------------------------------------------------
 void ofApp::setup(){
-    setupGUI();
     
     ofBackground(80);
     ofEnableSmoothing();
@@ -49,19 +48,35 @@ void ofApp::setup(){
     contentPovBack.setup(&gates, camPresets[1].pos, POV_UV);
     ofImage img;
     img.load("images/Pass_4.png");
-    contentSlit.setup(img);
+    contentSlit.setup(img, "slit");
     contentSmoke.setup("smokeNoise");
+    contentSmoke.update();
     
     mixShader.load("shaders/mixer");
     
     // setup Syphon
     syphonIn.setup();
-    syphonOut.setup("WaveForMapping", 120, 1300);
-    
+    syphonIn.find("Main View", "Modul8");
+
+    syphonOut.setup("WaveForMapping", 120, 1300);    
     syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
     
-    syphonIn.find("Main View", "Modul8");
+    
+    
+    textureMixer.addFboChannel(&contentPovFree.fbo, "PovFree");
+    textureMixer.addFboChannel(&contentSlit.fbo, "slit");
+    textureMixer.addFboChannel(&contentSmoke.fbo, "smoke");
+    textureMixer.setup();
+    
+    setupParameterGroup();
+    guiGroup.setName("ContentControl");
+    guiGroup.add(paramGroup);
+    ofParameterGroup generic = contentSlit.getParameterGroup();
+    guiGroup.add( generic );
+    generic = textureMixer.getParameterGroup();
+    guiGroup.add( generic );
+    gui.setup(guiGroup);
 }
 
 //--------------------------------------------------------------
@@ -86,32 +101,32 @@ void ofApp::update(){
         ofClear(0);
         ofSetColor(255);
         
-        mixShader.begin();
-        {
-        
-            mixShader.setUniform2f("iResolution", syphonOut.getWidth(), syphonOut.getHeight());
-            mixShader.setUniform1f("iGlobalTime", ofGetElapsedTimef()); //tempo p nr 1
-//            mixShader.setUniform1f("u_density", 1.);
-//            mixShader.setUniform1f("u_contrast", 0.5);
-//            mixShader.setUniform1f("u_H", 1.);
-//            mixShader.setUniform1f("u_S", 1.);
-//            mixShader.setUniform1f("u_B", 1.);
-//            mixShader.setUniform1f("u_direction", 1.);
-//            mixShader.setUniform1f("u_mix", 0.5);
-            
-            
-            mixShader.setUniformTexture("tex0", contentPovFree.getTexture(), 0);
-            mixShader.setUniformTexture("tex1", contentPovFront.getTexture(), 1);
-            mixShader.setUniformTexture("tex2", contentSlit.getTexture(), 2);
-            mixShader.setUniformTexture("tex3", contentSmoke.getTexture(), 3);
-            
-            
-            ofSetColor(255,255,255);
-            ofFill();
-            ofDrawRectangle(0, 0, syphonOut.getWidth(), syphonOut.getHeight());
-        }
-        mixShader.end();
-
+//        mixShader.begin();
+//        {
+//        
+//            mixShader.setUniform2f("iResolution", syphonOut.getWidth(), syphonOut.getHeight());
+//            mixShader.setUniform1f("iGlobalTime", ofGetElapsedTimef()); //tempo p nr 1
+////            mixShader.setUniform1f("u_density", 1.);
+////            mixShader.setUniform1f("u_contrast", 0.5);
+////            mixShader.setUniform1f("u_H", .5);
+////            mixShader.setUniform1f("u_S", 1.);
+////            mixShader.setUniform1f("u_B", 1.);
+////            mixShader.setUniform1f("u_direction", 1.);
+////            mixShader.setUniform1f("u_mix", 0.5);
+//            
+//            
+//            mixShader.setUniformTexture("tex0", contentPovFree.getTexture(), 0);
+//            mixShader.setUniformTexture("tex1", contentPovFront.getTexture(), 1);
+//            mixShader.setUniformTexture("tex2", contentSlit.getTexture(), 2);
+//            mixShader.setUniformTexture("tex3", contentSmoke.getTexture(), 3);
+//            
+//            
+//            ofSetColor(255,255,255);
+//            ofFill();
+//            ofDrawRectangle(0, 0, syphonOut.getWidth(), syphonOut.getHeight());
+//        }
+//        mixShader.end();
+        textureMixer.draw(0,0,syphonOut.getWidth(), syphonOut.getHeight());
     }
     syphonOut.end();
     
@@ -201,13 +216,13 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::setupGUI(){
-    gui.setup();
-    gui.add(drawFloor.set("draw floor", true));
-    gui.add(drawGates.set("draw gates", true));
-    gui.add(drawRays.set("draw rays", false));
-    gui.add(drawPlane.set("draw plane", false));
-    gui.add(drawSyphon.set("draw syphon in", true));
+void ofApp::setupParameterGroup(){
+    paramGroup.setName("VIEWs");
+    paramGroup.add(drawFloor.set("draw floor", true));
+    paramGroup.add(drawGates.set("draw gates", true));
+    paramGroup.add(drawRays.set("draw rays", false));
+    paramGroup.add(drawPlane.set("draw plane", false));
+    paramGroup.add(drawSyphon.set("draw syphon in", true));
 }
 
 //--------------------------------------------------------------

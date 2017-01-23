@@ -53,8 +53,10 @@ void main(  ) {
     vec2 st = (gl_FragCoord.xy )/min(iResolution.x,iResolution.y);
     
     st.x *= numGates;
-    st.x = floor(st.x)/20.;
-    st.y*=.5; // ZOOM
+    st.x = floor(st.x)/10.;
+    
+    
+    st.y*=.3; // ZOOM
     
     st.x += iGlobalTime/20.;
     
@@ -74,12 +76,12 @@ void main(  ) {
     
     float f = fbm(c);
     
-    color = vec3(1.);//mix(vec3(.0,.0,.0), vec3(1.,.0,0.0), clamp((f*f),0.6, 1.));
-    //color = mix(vec3(0.1,0.1,0.1), vec3(0.413,0.524,0.880), clamp(length(c.x),0., 1.));
+    color = mix(vec3(1.0,.0,.0), vec3(1.,.0,0.0), clamp((f*f),0.6, 1.));
+    color = mix(vec3(0.5,0.1,0.1), vec3(0.413,0.524,0.880), clamp(length(c.x),0., 1.));
     
-    float contrast = 0.4;
-    float gain = 0.9;
-    f = (f - 0.5) * max(pow(contrast*3., 4.)+0.5, 0.0) + gain;
+    float contrast = .5;
+    float gain = 1.;
+    f = (f - 0.5) * max(pow(contrast*3., 4.)+0.5, 0.0) * gain;
     
     vec3 finalColor = vec3(f*color);
     

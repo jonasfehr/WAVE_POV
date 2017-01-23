@@ -76,8 +76,10 @@ void main()
 //    vec3 mixed = mix(rgbMul,rgbMax, u_mix);
 //
 //    vec3 impulsesColored = impulsesCol*(u_mix);
+    
+    vec3 finalCol = hsv2rgb(vec3(u_H, u_S, u_B)) * tex;
 
-    gl_FragColor =  vec4(tex, brightness(tex));
+    gl_FragColor =  vec4(finalCol, brightness(tex));
 }
 
 
