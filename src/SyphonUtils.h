@@ -84,6 +84,28 @@ public:
         
     }
     
+    void find(string appName, string serverName){
+        string server_Name;
+        string app_Name;
+        for( int i = 0; i < dir.size(); i++){
+            set(dir.getDescription(i));
+            server_Name = getServerName();
+            app_Name = getApplicationName();
+            if(appName == app_Name && serverName == server_Name){
+                dirIdx = i;
+                i = dir.size(); // jump out of the loop
+                
+                if(serverName == ""){
+                    serverName = "null";
+                }
+                if(appName == ""){
+                    appName = "null";
+                }
+                ofSetWindowTitle(serverName + ":" + appName);
+            }
+        }
+    }
+    
     void draw(){
         if(dir.isValidIndex(dirIdx)){
             ofSetColor(255);
@@ -119,11 +141,13 @@ public:
         
     }
     
-    void setup(string name){
-        fbo.allocate(40, 1300);
+    void setup(string name, int width, int height){
+        fbo.allocate(width, height, GL_RGBA32F_ARB);
         fbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
         fbo.end();
         ofxSyphonServer::setName(name);
         
@@ -146,6 +170,9 @@ public:
         fbo.end();
     }
     
+    void draw(){
+        fbo.draw(0,0);
+    }
     
     void begin(){
         fbo.begin();
@@ -162,6 +189,14 @@ public:
     void publish(){
         ofFill();
         publishTexture(&fbo.getTexture());
+    }
+    
+    float getWidth(){
+        return fbo.getWidth();
+    }
+    
+    float getHeight(){
+        return fbo.getHeight();
     }
     
 };

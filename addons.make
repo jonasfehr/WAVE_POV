@@ -1,3 +1,4 @@
+ofxAutoReloadedShader
 ofxGrabCam
-ofxRay
+ofxGui
 ofxSyphon

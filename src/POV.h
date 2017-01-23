@@ -31,11 +31,12 @@ public:
     ofVec3f right;
     
     void recalcUp(){
-        up = up - normal * up.dot(normal);
+        up = ofVec3f(0,1,0) - normal * ofVec3f(0,1,0).dot(normal);
         up.normalize();
     }
     void recalcRight(){
-        right = right - normal * right.dot(normal);
+        right = normal.getCrossed(up);
+        //right = right - normal * right.dot(normal);
         right.normalize();
     }
     
@@ -48,10 +49,11 @@ public:
         ofSetColor(ofColor::orange);
         //ofDrawLine(ofVec3f(0), up);
         ofDrawArrow(ofVec3f(0), up, 0.1);
-        ofSetColor(ofColor::orange);
+        ofSetColor(ofColor::green);
         //ofDrawLine(ofVec3f(0), right);
         ofDrawArrow(ofVec3f(0), right, 0.1);
         ofRotateY(ofVec3f(1,0,0).angle(right));
+
         ofSetColor(ofColor::white, 50);
         ofDrawGrid(1, 1, false, false, false, true);
         ofPopMatrix();
@@ -64,18 +66,26 @@ public:
     POV(){
     };
     
-    void update(){
+    void update(ofCamera *cam){
         
         // recalc the Plane
-        plane.normal = calcViewDirection();
-        plane.center = position + plane.normal * 1.5;
+        viewDirection = calcViewDirection();
+        plane.center = position + viewDirection * 2.1105296161/2;
+        plane.normal = viewDirection * (2-2.1105296161/2);
         plane.recalcUp();
         plane.recalcRight();
         
         // Calculate the UV points
         for(auto& e : edges){
-            e.intersect = rayPlaneIntersec(e.pos, position, plane);
-            e.uv = calcUV(e.pos, plane);
+           // e.intersect = rayPlaneIntersec(e.pos, position, plane);
+           // e.uv = calcUVfromIntersect(e.intersect, plane);
+           // e.uv = calcUV(e.pos, plane);
+            ofVec3f coord = cam->worldToScreen(e.pos);
+            coord.x /= ofGetWidth();
+            coord.y /= ofGetHeight();
+           // coord = (coord * 2) -1;
+            coord.y = 1-coord.y;
+            e.uv = coord;
         }
     };
 
@@ -112,7 +122,7 @@ public:
         float cZ = p.dot(plane.normal);
         float cX = p.dot(plane.right);
         float cY = p.dot(plane.up);
-        return ofVec2f(cX/cZ,cY/cZ); // ofVec2f(cX,cY);//
+        return ofVec2f(cX/cZ,cY/cZ);
     }
 
     ofVec3f rayPlaneIntersec(ofVec3f rayStart, ofVec3f rayEnd, SimplePlane plane)
@@ -123,9 +133,18 @@ public:
     
     
     ofVec2f calcUV(ofVec3f p, SimplePlane plane){
-        ofVec2f coord = povProj(position, plane, p)*-1;
-        //coord.x = coord.x *-1;
+        ofVec2f coord = povProj(position, plane, p);
+        //coord.y = -coord.y;
+        //coord.x = coord.x
         return (coord+1)/2;
+    }
+    
+    ofVec2f calcUVfromIntersect(ofVec3f p, SimplePlane plane){
+        ofVec3f pointer = p-plane.center;
+        ofVec2f uv;
+        uv.x = pointer.dot(plane.right);
+        uv.y = pointer.dot(plane.up);
+        return uv;
     }
     
     void normalizeUV(){
@@ -249,10 +268,93 @@ public:
 
     ofVec3f lastPosition;
     float viewerHeight = 1.8;
+    ofVec3f viewDirection;
     
 
     SimplePlane plane;
     
 };
+
+class CamPOV{
+public:
+    CamPOV(){
+    };
+    
+    ofCamera cam;
+    
+    void setup(){
+    }
+    
+    void update(){
+        
+        // Calculate the UV points
+        for(auto& e : edges){
+            ofVec3f coord = cam.worldToScreen(e.pos);
+            coord.x /= ofGetWidth();
+            coord.y /= ofGetHeight();
+            //coord = (coord * 2) -1;
+            //coord.y *= -1;
+            e.uv = coord;
+        }
+    };
+    
+    bool hasMoved(){
+        bool hasMoved = lastPosition != position;
+        lastPosition = position;
+        return hasMoved;
+    }
+    
+    void normalizeUV(){
+        // find the extreme values
+        float xMin = 1;
+        float yMin = 1;
+        float xMax = 0;
+        float yMax = 0;
+        
+        for(auto& e : edges){
+            if(xMin > e.uv.x) xMin = e.uv.x;
+            if(yMin > e.uv.y) yMin = e.uv.y;
+            if(xMax < e.uv.x) xMax = e.uv.x;
+            if(yMax < e.uv.y) yMax = e.uv.y;
+        }
+        
+        // normalize the UVs
+        for(auto& e : edges){
+            e.uv.x = ofMap(e.uv.x, xMin, xMax, 0, 1);
+            e.uv.y = ofMap(e.uv.y, yMin, yMax, 0, 1);
+        }
+    }
+    
+    
+    // ---   EDGE's the container for the points where the UV's are calculated
+    struct Edge{
+        ofVec3f intersect;
+        ofVec3f pos;
+        ofVec2f uv;
+        
+    };
+    
+    
+    void addEdge(ofVec3f position){
+        Edge edge;
+        edge.pos = position;
+        edges.push_back(edge);
+    }
+    
+    vector <Edge> edges;
+    
+    
+    // ---   all the other variables
+    ofVec3f position = ofVec3f(-50,1.8,0);
+    
+    void setPosition(ofCamera cam){
+        this->cam = cam;
+        position = cam.getPosition();
+    };
+    
+    ofVec3f lastPosition;
+    
+};
+
 
 #endif /* POV_h */

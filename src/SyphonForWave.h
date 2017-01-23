@@ -15,7 +15,7 @@ SyphonForWave(){
     ofMesh outputMesh;
     
     void setup(string name){
-        outputFbo.allocate(40, 1300);
+        outputFbo.allocate(40, 1300, GL_RGBA32F_ARB);
         outputFbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

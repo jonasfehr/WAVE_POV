@@ -99,21 +99,36 @@ public:
         meshLed.addIndex(14);
         
         // TexCoords
-        meshLed.addTexCoord(ofVec2f(index, 0));
-        meshLed.addTexCoord(ofVec2f(index, 0));
-        meshLed.addTexCoord(ofVec2f(index, 0));
-        meshLed.addTexCoord(ofVec2f(index, 120));
-        meshLed.addTexCoord(ofVec2f(index, 120));
-        meshLed.addTexCoord(ofVec2f(index, 120));
-        meshLed.addTexCoord(ofVec2f(index, 650));
-        meshLed.addTexCoord(ofVec2f(index, 650));
-        meshLed.addTexCoord(ofVec2f(index, 650));
-        meshLed.addTexCoord(ofVec2f(index, 1180));
-        meshLed.addTexCoord(ofVec2f(index, 1180));
-        meshLed.addTexCoord(ofVec2f(index, 1180));
-        meshLed.addTexCoord(ofVec2f(index, 1300));
-        meshLed.addTexCoord(ofVec2f(index, 1300));
-        meshLed.addTexCoord(ofVec2f(index, 1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 0/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 0/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 0/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 120/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 120/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 120/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 650/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 650/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 650/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 1180/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 1180/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 1180/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 1300/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 1300/1300));
+//        meshLed.addTexCoord(ofVec2f((index*3+1.5)/120, 1300/1300));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 0));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 0));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 0));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 120));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 120));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 120));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 650));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 650));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 650));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 1180));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 1180));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 1180));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 1300));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 1300));
+        meshLed.addTexCoord(ofVec2f((index*3+1.5), 1300));
         
         
         // create profile mesh

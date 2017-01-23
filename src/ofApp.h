@@ -8,6 +8,8 @@
 #include "ofxSyphon.h"
 #include "SyphonUtils.h"
 #include "WaveUtils.h"
+#include "ofxAutoReloadedShader.h"
+
 
 #define VIEWER_HEIGHT 1.8
 
@@ -54,14 +56,16 @@ class ofApp : public ofBaseApp{
     // Syphon in & out
     SyphonClientDir syphonIn;
     SyphonFbo syphonOut;
+    SyphonFbo syphonSimOut;
     
     // create content;
-    WaveOutputGenerator contentPovFree;
-    
-    WaveOutputGenerator contentPovFront;
-    WaveOutputGenerator contentPovBack;
-    
+    WavePovGenerator contentPovFree;
+    WavePovGenerator contentPovFront;
+    WavePovGenerator contentPovBack;
     WaveSlitGenerator contentSlit;
+    WaveShaderContent contentSmoke;
+    
+    ofxAutoReloadedShader mixShader;
     
     // mappings
     int mappingIndx;
@@ -73,6 +77,8 @@ class ofApp : public ofBaseApp{
     };
     vector<CameraPos> camPresets;
     int camPresetIndx;
+    
+
     
 };
 
