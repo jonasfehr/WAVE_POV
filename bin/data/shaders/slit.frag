@@ -8,27 +8,11 @@ uniform sampler2DRect texCounters;
 //tempodivision 20]
 uniform vec2 u_resolution;//100,1000;100,1000]
 uniform vec2 u_texResolution;
-uniform float u_time;//0.1,0.,1.]
-uniform float u_density;//0.1,0.,1.]
-uniform float u_contrast;//0.,0.,1.]
-uniform float u_H;//0.,0.,1.]
-uniform float u_S;//0.,0.,1.]
-uniform float u_B;//0.,0.,1.]
-uniform float u_direction;
-uniform float u_mix;
+uniform float u_time;
+uniform int u_mode;
 
 
 
-vec3 hsv2rgb_smooth( in vec3 c ){
-    vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 ); 
-    rgb = rgb*rgb*(3.0-2.0*rgb); 
-    return c.z * mix( vec3(1.0), rgb, c.y);}
-
-vec3 hsv2rgb( in vec3 c )
-{
-    vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 );
-    return c.z * mix( vec3(1.0), rgb, c.y);
-}
 
 //  Function from Iñigo Quiles 
 //  www.iquilezles.org/www/articles/functions/functions.htm
@@ -53,6 +37,38 @@ float brightness(vec3 rgb){
     return 0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b;
 }
 
+// --- Easing Functions ---
+// from https://github.com/stackgl/glsl-easings
+float cubicIn(float t) {
+    return t * t * t;
+}
+
+float cubicOut(float t) {
+    float f = t - 1.0;
+    return f * f * f + 1.0;
+}
+
+float cubicInOut(float t) {
+    return t < 0.5
+    ? 4.0 * t * t * t
+    : 0.5 * pow(2.0 * t - 2.0, 3.0) + 1.0;
+}
+//Circular
+float circularIn(float t) {
+    return 1.0 - sqrt(1.0 - t * t);
+}
+
+float easing( int mode, float value){
+    if(mode == 1){
+        return cubicIn( value );
+    }else if(mode == 2){
+        return cubicOut( value );
+    }else if(mode == 3){
+        return cubicInOut( value );
+    }else if(mode == 4){
+        return circularIn( value );
+    }
+}
 
 void main()
 {
@@ -60,26 +76,26 @@ void main()
     vec2 st = gl_FragCoord.xy / u_resolution.xy;
 
     vec2 countersRes = vec2(40,1);
-    float alpha = texture2DRect(texCounters, gl_FragCoord.xx).r;
-
-    vec2 coord = vec2( alpha, st.y);
-  
+    float counter = texture2DRect(texCounters, gl_FragCoord.xx).r;
     
-    vec3 tex = texture2DRect(texForSlit, coord  * vec2(u_texResolution.x, u_texResolution.y-0.5) ).rgb;
-
+    counter = easing(4, counter);
+    
+    vec3 finalCol = vec3(0);
+    
+    if(u_mode == 1){ // TEXTURE SLIT
+        vec2 coord = vec2( counter, st.y);
+        vec3 tex = texture2DRect(texForSlit, coord  * vec2(u_texResolution.x, u_texResolution.y-0.5) ).rgb;
+        finalCol = tex;
+        
+    }else if(u_mode == 2){ // GRADIENT
+        float gradient = (1.-smoothstep(st.y, 0.5, counter/2.+0.5))+(1.-smoothstep(st.y, 0.5, 0.5-counter/2.));
+        finalCol = vec3(gradient);
+    }
     
 
-//    vec3 hsv = vec3( u_H, u_S, u_B);
-//    
-//    vec3 rgbMul = hsv2rgb(hsv)*(noise * impulses);
-//    vec3 rgbMax = hsv2rgb(hsv)*max(noise , impulses);
-//    vec3 mixed = mix(rgbMul,rgbMax, u_mix);
-//
-//    vec3 impulsesColored = impulsesCol*(u_mix);
     
-    vec3 finalCol = hsv2rgb(vec3(u_H, u_S, u_B)) * tex;
+    
 
-    gl_FragColor =  vec4(finalCol, brightness(tex));
-}
+    gl_FragColor =  vec4(finalCol, brightness(finalCol));}
 
 

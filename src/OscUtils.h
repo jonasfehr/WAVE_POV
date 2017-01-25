@@ -20,39 +20,42 @@ class OscReceiver{
     
     void update(){
         //PARSE OSC
-        while( receiver.hasWaitingMessages() ){
+        while(receiver.hasWaitingMessages()){
+            // get the next message
             ofxOscMessage m;
-            receiver.getNextMessage( &m );
+            receiver.getNextMessage(&m);
             
-            string msg_string;
-            msg_string = m.getAddress(); //expect "/BeamBreak/[artnetaddr] [0-1]"
-            msgTokens = ofSplitString(msg_string, "/", true); //ignore (leading) empty token = true
-            
-            if(msgTokens[0] == "Users"){
+            // check for mouse moved message
+            if(m.getAddress() == /Gates){
                 
-                //convert artnet string for easy array access
-                int artnet = ofToInt(msgTokens[1]);
-                //get value of BeamBreak, 0=false, 1=true
-                int value = m.getArgAsInt32(0);
-                
-                //add trigger value and timestamp to sensor@artnetAddr
-                //            gates[artnet].sensor.add(value,timeTriggered);
-                if(value == 1){
-                    gates[artnet].activate(); // activate gate
-                }
-                
-                
-                if(DEBUG){
-                    string tempstr = "obj:";
-                    tempstr += gates[artnet].sensor.toString();
-                    cout << tempstr << "\n";
-                    
-                }
-                msg_string += " value=";
-                msg_string += ofToString(value);
-                msg_string += " time=";
-                msg_string += ofToString(ofGetElapsedTimeMillis());
             }
+            else{
+                // unrecognized message: display on the bottom of the screen
+                string msg_string;
+                msg_string = m.getAddress();
+                msg_string += ": ";
+                for(int i = 0; i < m.getNumArgs(); i++){
+                    // get the argument type
+                    msg_string += m.getArgTypeName(i);
+                    msg_string += ":";
+                    // display the argument - make sure we get the right type
+                    if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+                        msg_string += ofToString(m.getArgAsInt32(i));
+                    }
+                    else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+                        msg_string += ofToString(m.getArgAsFloat(i));
+                    }
+                    else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+                        msg_string += m.getArgAsString(i);
+                    }
+                    else{
+                        msg_string += "unknown";
+                    }
+                }
+                cout << msg_string << endl;
+            }
+            
+        }
     }
         
         

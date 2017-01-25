@@ -1,5 +1,5 @@
 //
-//  Mixer.h
+//  TextureMix.h
 //  WAVE_POV
 //
 //  Created by Jonas Fehr on 23/01/2017.
@@ -12,6 +12,17 @@
 #define STRINGIFY(x) #x
 #include "TextureMixShader.h"
 
+enum BlendModes_Mixer : int {
+    BLEND_ADD = 1,
+    BLEND_MULTIPLY = 2,
+    BLEND_LIGHTEN = 3,
+    BLEND_DARKEN = 4,
+    BLEND_SUBTRACT = 5,
+    BLEND_SCREEN = 6,
+    BLEND_AVERAGE = 7,
+    BLEND_SOFT_LIGHT = 8
+};
+
 class TextureGroup{
 public:
     ofParameterGroup parameters;
@@ -19,31 +30,84 @@ public:
     ofParameter<float> saturation;
     ofParameter<float> brightness;
     ofParameter<float> contrast;
+    ofParameter<float> opacity;
+    ofParameter<float> blendMode;
+    int initialBlendMode = 1;
     
     ofFbo *fbo;
     
     void addParameters(string name){
         parameters.setName(name);
         parameters.add(hue.set("hue", 0., 0., 1.));
-        parameters.add(saturation.set("saturation", 0., 0., 1.));
+        parameters.add(saturation.set("saturation", 1., 0., 1.));
         parameters.add(brightness.set("brightness", 1., 0., 1.));
         parameters.add(contrast.set("contrast", .5, 0., 1.));
+        parameters.add(opacity.set("opacity", 1., 0., 1.));
+        parameters.add(blendMode.set("blendMode", initialBlendMode, 1, 8));
     }
 
 };
 
 class TextureMix{
 public:
+    void draw(int x, int y, int w, int h){
+        shader.begin();
+        {
+            
+            shader.setUniform2f("iResolution", w, h);
+            shader.setUniform1f("iGlobalTime", ofGetElapsedTimef()); //tempo p nr 1
+            
+            for(int i = 0; i < texGroups.size(); i++){
+                shader.setUniformTexture("tex"+ofToString(i), texGroups[i].fbo->getTexture(), i);
+                shader.setUniform1f("u_contrast_"+ofToString(i), texGroups[i].contrast);
+                shader.setUniform1f("u_H_"+ofToString(i), texGroups[i].hue);
+                shader.setUniform1f("u_S_"+ofToString(i), texGroups[i].saturation);
+                shader.setUniform1f("u_B_"+ofToString(i), texGroups[i].brightness);
+                shader.setUniform1f("u_opacity_"+ofToString(i), texGroups[i].opacity);
+                shader.setUniform1i("u_blendMode_"+ofToString(i), texGroups[i].blendMode);
+                shader.setUniform2f("resolution_"+ofToString(i), texGroups[i].fbo->getWidth(), texGroups[i].fbo->getHeight());
+                
+            }
+            
+            ofSetColor(255,255,255);
+            ofFill();
+            ofDrawRectangle(x, x, w, h);
+        }
+        shader.end();
+        
+    }
     
+    void addFboChannel(ofFbo * fbo, string name, int blendMode){
+        TextureGroup texGroup;
+        texGroup.fbo = fbo;
+        texGroup.addParameters(name);
+        texGroups.push_back(texGroup);
+        texGroups.back().initialBlendMode = blendMode;
+        //  parameterGroup.add(texGroups.back().parameters);
+        setup();
+    }
+    
+    ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }
+    
+    vector<ofParameterGroup*> getVectorOfParameterSubgroups(){
+        vector<ofParameterGroup*> paramSubGroups;
+        for(int i = 0; i < texGroups.size(); i++){
+            paramSubGroups.push_back(&texGroups[i].parameters);
+        }
+        return paramSubGroups;
+    }
+
+private:
     vector <TextureGroup> texGroups;
-    ofParameterGroup parameterGroup;
     ofShader shader;
     
+    ofParameterGroup parameterGroup;
+    
     void setup(){
+        parameterGroup.clear();
         parameterGroup.setName("Mixer");
         for(int i = 0; i < texGroups.size(); i++){
             parameterGroup.add(texGroups[i].parameters);
-
         }
         // GENERATE THE SHADER
         stringstream shaderScript;
@@ -61,11 +125,8 @@ public:
         
         shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderScript.str());
         shader.linkProgram();
-        }
-    
-    void update(){
-        
     }
+    
     // function from http://stackoverflow.com/questions/3418231/replace-part-of-a-string-with-another-string
     string replaceAll(std::string str, const std::string& from, const std::string& to) {
         if(from.empty())
@@ -77,42 +138,7 @@ public:
         }
         return str;
     }
-    
-    void draw(int x, int y, int w, int h){
-        shader.begin();
-        {
-            
-            shader.setUniform2f("iResolution", w, h);
-            shader.setUniform1f("iGlobalTime", ofGetElapsedTimef()); //tempo p nr 1
-            
-            for(int i = 0; i < texGroups.size(); i++){
-                shader.setUniformTexture("tex"+ofToString(i), texGroups[i].fbo->getTexture(), i);
-                shader.setUniform1f("u_contrast_"+ofToString(i), texGroups[i].contrast);
-                shader.setUniform1f("u_H_"+ofToString(i), texGroups[i].hue);
-                shader.setUniform1f("u_S_"+ofToString(i), texGroups[i].saturation);
-                shader.setUniform1f("u_B_"+ofToString(i), texGroups[i].brightness);
-            }
-            
-            ofSetColor(255,255,255);
-            ofFill();
-            ofDrawRectangle(x, x, w, h);
-        }
-        shader.end();
-
-    }
-    
-    void addFboChannel(ofFbo * fbo, string name){
-        TextureGroup texGroup;
-        texGroup.fbo = fbo;
-        texGroup.addParameters(name);
-        texGroups.push_back(texGroup);
-        
-      //  parameterGroup.add(texGroups.back().parameters);
-    }
-    
-    ofParameterGroup getParameterGroup(){ return parameterGroup; }
-
-    
 };
+
 
 #endif /* TextureMix_h */

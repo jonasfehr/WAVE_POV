@@ -21,13 +21,15 @@ public:
     ofFbo fbo;
     ofMesh mesh;
     ofTexture *texture;
-    POV pov;
+    ofCamera pov;
     vector<Gate> * gates;
     int mappingType = TUBE;
     
-    void setPov(ofVec3f position){ pov.setPosition(position); };
     void setMappingType(int mappingType){ this->mappingType = mappingType; };
     
+    void setPov(ofCamera cam){
+        pov = cam;
+    }
     
     WavePovContent(){
         
@@ -37,7 +39,7 @@ public:
         //this->pov = pov;
         this->gates = gates;
         this->mappingType = mappingType;
-        pov.setPosition(povPosition);
+        //pov.setPosition(povPosition);
         
         fbo.allocate(120, 1300, GL_RGB16);
         fbo.begin();
@@ -49,19 +51,27 @@ public:
         
         // setup POV
         for(auto& gate : *gates){
-            pov.addEdge(gate.leftInnerEdge);
-            pov.addEdge(gate.leftOuterEdge);
-            pov.addEdge(gate.topEdge);
-            pov.addEdge(gate.rightOuterEdge);
-            pov.addEdge(gate.rightInnerEdge);
+            addEdge(gate.leftInnerEdge);
+            addEdge(gate.leftOuterEdge);
+            addEdge(gate.topEdge);
+            addEdge(gate.rightOuterEdge);
+            addEdge(gate.rightInnerEdge);
         }
-        
+
     }
     
     
     
-    void update(ofCamera * cam){
-        pov.update(cam);
+    void update(){
+        // Calculate the UV points
+        for(auto& e : edges){
+            ofVec3f coord = pov.worldToScreen(e.pos);
+            coord.x /= ofGetWidth();
+            coord.y /= ofGetHeight();
+            if((e.pos-pov.getPosition()).dot(pov.getLookAtDir())>0) coord.y = 1-coord.y;
+            e.uv = coord;
+        }
+        
         calcMapping();
         
         fbo.begin();
@@ -93,32 +103,35 @@ public:
     
     ofTexture getTexture(){ return fbo.getTexture(); }
     
+    
+    
+    
     void calcMapping(){
         
         vector<ofVec2f> texCoords;
         
         switch(mappingType){
             case POV_UV:
-                for(auto& e : pov.edges){
+                for(auto& e : edges){
                     texCoords.push_back(ofVec2f(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
                 }
                 break;
                 
             case POV_UV_NORMALIZED:
-                pov.normalizeUV();
-                for(auto& e : pov.edges){
+                normalizeUV();
+                for(auto& e : edges){
                     texCoords.push_back(ofVec2f(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
                 }
                 break;
                 
             case TUBE:
-                float dist = 1/40;
+                float dist = texture->getWidth()/40;
                 for(int i = 0; i <= 40; i++){
-                    texCoords.push_back(ofVec2f(i*dist,145/1590));
-                    texCoords.push_back(ofVec2f(i*dist,(145+120)/1590));
-                    texCoords.push_back(ofVec2f(i*dist,(145+120+530)/1590));
-                    texCoords.push_back(ofVec2f(i*dist,(145+120+530+530)/1590));
-                    texCoords.push_back(ofVec2f(i*dist,(145+120+530+530+120)/1590));
+                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*145/1590));
+                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120)/1590));
+                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120+530)/1590));
+                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120+530+530)/1590));
+                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120+530+530+120)/1590));
                 }
                 break;
         }
@@ -127,6 +140,26 @@ public:
         mesh.addTexCoords(texCoords);
     }
     
+    void normalizeUV(){
+        // find the extreme values
+        float xMin = 1;
+        float yMin = 1;
+        float xMax = 0;
+        float yMax = 0;
+        
+        for(auto& e : edges){
+            if(xMin > e.uv.x) xMin = e.uv.x;
+            if(yMin > e.uv.y) yMin = e.uv.y;
+            if(xMax < e.uv.x) xMax = e.uv.x;
+            if(yMax < e.uv.y) yMax = e.uv.y;
+        }
+        
+        // normalize the UVs
+        for(auto& e : edges){
+            e.uv.x = ofMap(e.uv.x, xMin, xMax, 0, 1);
+            e.uv.y = ofMap(e.uv.y, yMin, yMax, 0, 1);
+        }
+    }
     
     void createMesh(){
         for(int i = 0; i <= 40; i++){
@@ -166,6 +199,23 @@ public:
             mesh.addIndex(i+4);
         }
     }
+    
+    // ---   EDGE's the container for the points where the UV's are calculated
+    struct Edge{
+        ofVec3f intersect;
+        ofVec3f pos;
+        ofVec2f uv;
+        
+    };
+    
+    
+    void addEdge(ofVec3f position){
+        Edge edge;
+        edge.pos = position;
+        edges.push_back(edge);
+    }
+    
+    vector <Edge> edges;
     
 };
 

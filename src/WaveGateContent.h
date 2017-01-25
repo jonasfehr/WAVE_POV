@@ -1,13 +1,13 @@
 //
-//  WaveSlitContent.h
+//  WaveGateContent.h
 //  WAVE_POV
 //
 //  Created by Jonas Fehr on 23/01/2017.
 //
 //
 
-#ifndef WaveSlitContent_h
-#define WaveSlitContent_h
+#ifndef WaveGateContent_h
+#define WaveGateContent_h
 #include "ofxAutoReloadedShader.h"
 
 
@@ -43,7 +43,7 @@ public:
     }
 };
 
-class WaveSlitContent{
+class WaveGateContent{
 public:
     ofFbo fbo;
     ofImage image;
@@ -71,6 +71,7 @@ public:
     
     void update(){
         for(auto& c : counters){
+            c.increase = speed;
             c.update();
         }
         fbo.begin();
@@ -90,21 +91,16 @@ public:
             
             shader.begin();
             {
-                shader.setUniform2f("u_resolution", fbo.getWidth(), fbo.getHeight());
-                shader.setUniform2f("u_texResolution", image.getWidth(), image.getHeight());
-                //                shader.setUniform1f("u_time", counter); //tempo p nr 1
-                //                shader.setUniform1f("u_density", density);
-                //                shader.setUniform1f("u_contrast", contrast);
-                                shader.setUniform1f("u_H", hue);
-                                shader.setUniform1f("u_S", saturation);
-                                shader.setUniform1f("u_B", brightness);
-                //                shader.setUniform1f("u_direction", direction);
-                //                shader.setUniform1f("u_mix", mix);
-                
                 
                 shader.setUniformTexture("texForSlit", image.getTexture(), 1);
                 shader.setUniformTexture("texCounters", imgCounters.getTexture(), 2);
                 
+                shader.setUniform2f("u_resolution", fbo.getWidth(), fbo.getHeight());
+                shader.setUniform2f("u_texResolution", image.getWidth(), image.getHeight());
+                shader.setUniform1f("u_time", ofGetElapsedTimef());
+                shader.setUniform1i("u_mode", (int)mode);
+                shader.setUniform1i("u_easing", (int)easing);
+
                 ofSetColor(255,255,255);
                 ofFill();
                 ofDrawRectangle(0, 0, fbo.getWidth(), fbo.getHeight());
@@ -125,20 +121,20 @@ public:
     
     
     ofParameterGroup paramGroup;
-    ofParameter<float> hue;
-    ofParameter<float> saturation;
-    ofParameter<float> brightness;
+    ofParameter<float> speed;
+    ofParameter<float> mode;
+    ofParameter<float> easing;
 
     
     void setupGuiGroup(string name){
         paramGroup.setName(name);
-        paramGroup.add(hue.set("hue", 0., 0., 1.));
-        paramGroup.add(saturation.set("saturation", 0., 0., 1.));
-        paramGroup.add(brightness.set("brightness", 1., 0., 1.));
+        paramGroup.add(speed.set("speed", 0.01, 0., 0.2));
+        paramGroup.add(mode.set("mode", 1, 1., 2));
+        paramGroup.add(easing.set("easing", 1, 1., 2));
     }
     
-    ofParameterGroup getParameterGroup(){ return paramGroup; }
+    ofParameterGroup* getPointerToParameterGroup(){ return &paramGroup; }
     
 };
 
-#endif /* WaveSlitContent_h */
+#endif /* WaveGateContent_h */

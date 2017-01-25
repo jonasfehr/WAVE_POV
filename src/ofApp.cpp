@@ -46,13 +46,14 @@ void ofApp::setup(){
     contentPovFree.setup(&gates, camPresets[0].pos, POV_UV);
     contentPovFront.setup(&gates, camPresets[0].pos, POV_UV);
     contentPovBack.setup(&gates, camPresets[1].pos, POV_UV);
+    
     ofImage img;
     img.load("images/Pass_4.png");
-    contentSlit.setup(img, "slit");
+    contentGate.setup(img, "gate");
     contentSmoke.setup("smokeNoise");
-    contentSmoke.update();
     
-    mixShader.load("shaders/mixer");
+    contentImpulses.setup("impulses");
+    
     
     // setup Syphon
     syphonIn.setup();
@@ -63,36 +64,65 @@ void ofApp::setup(){
     
     
     
-    
-    textureMixer.addFboChannel(&contentPovFree.fbo, "PovFree");
-    textureMixer.addFboChannel(&contentSlit.fbo, "slit");
-    textureMixer.addFboChannel(&contentSmoke.fbo, "smoke");
-    textureMixer.setup();
+    textureMixer.addFboChannel(&contentSmoke.fbo, "Smoke", BLEND_SCREEN);
+    textureMixer.addFboChannel(&contentPovFree.fbo, "PovFree", BLEND_LIGHTEN);
+    textureMixer.addFboChannel(&contentGate.fbo, "Gate", BLEND_ADD);
     
     setupParameterGroup();
     guiGroup.setName("ContentControl");
     guiGroup.add(paramGroup);
-    ofParameterGroup generic = contentSlit.getParameterGroup();
-    guiGroup.add( generic );
-    generic = textureMixer.getParameterGroup();
-    guiGroup.add( generic );
+    guiGroup.add(paramsWekinator);
+    // guiGroup.add(wekinatorTestOut);
+    guiGroup.add( *contentGate.getPointerToParameterGroup() );
+    guiGroup.add( *textureMixer.getPointerToParameterGroup() );
+    
+    wekinator.setup(&paramsWekinator, textureMixer.getVectorOfParameterSubgroups());
+
+    
     gui.setup(guiGroup);
+    
+    gui.loadFromFile("settings.xml");
+    
+    oscFromSensorFuse.setup(49162);
+    
+    // ADD POCKETS
+    std::unique_ptr<Pocket> p1 = std::unique_ptr<Pocket>(new PocketPov(100.));
+    pockets.push_back(std::move(p1));
+    std::unique_ptr<Pocket> p2 = std::unique_ptr<Pocket>(new PocketZone(10, 15));
+    pockets.push_back(std::move(p2));
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
     
+    wekinator.update();
+    receiveFromSensorFuse();
+    
+    for(auto & u : users){
+        u.second.update();
+        
+        if(u.second.isDead()) {
+            users.erase(u.first);
+            return;
+        }
+    }
+    
+    for(auto & p : pockets){
+        p->update();
+    }
+    
+    
     contentPovFree.setInputTexture(&syphonIn.getTexture());
-    contentPovFree.update(&camera);
+    contentPovFree.update();
     
     contentPovFront.setInputTexture(&syphonIn.getTexture());
-    contentPovFront.update(&camera);
+    contentPovFront.update();
     
     contentPovBack.setInputTexture(&syphonIn.getTexture());
-    contentPovBack.update(&camera);
+    contentPovBack.update();
     
-    contentSlit.update();
+    contentGate.update();
     contentSmoke.update();
 
     
@@ -100,32 +130,6 @@ void ofApp::update(){
     {
         ofClear(0);
         ofSetColor(255);
-        
-//        mixShader.begin();
-//        {
-//        
-//            mixShader.setUniform2f("iResolution", syphonOut.getWidth(), syphonOut.getHeight());
-//            mixShader.setUniform1f("iGlobalTime", ofGetElapsedTimef()); //tempo p nr 1
-////            mixShader.setUniform1f("u_density", 1.);
-////            mixShader.setUniform1f("u_contrast", 0.5);
-////            mixShader.setUniform1f("u_H", .5);
-////            mixShader.setUniform1f("u_S", 1.);
-////            mixShader.setUniform1f("u_B", 1.);
-////            mixShader.setUniform1f("u_direction", 1.);
-////            mixShader.setUniform1f("u_mix", 0.5);
-//            
-//            
-//            mixShader.setUniformTexture("tex0", contentPovFree.getTexture(), 0);
-//            mixShader.setUniformTexture("tex1", contentPovFront.getTexture(), 1);
-//            mixShader.setUniformTexture("tex2", contentSlit.getTexture(), 2);
-//            mixShader.setUniformTexture("tex3", contentSmoke.getTexture(), 3);
-//            
-//            
-//            ofSetColor(255,255,255);
-//            ofFill();
-//            ofDrawRectangle(0, 0, syphonOut.getWidth(), syphonOut.getHeight());
-//        }
-//        mixShader.end();
         textureMixer.draw(0,0,syphonOut.getWidth(), syphonOut.getHeight());
     }
     syphonOut.end();
@@ -151,10 +155,6 @@ void ofApp::draw(){
                 ofPopMatrix();
             }
             
-            // Plane
-            if(drawPlane){
-                contentPovFree.pov.drawPlane();
-            }
             
             // Draw gates
             if(drawGates){
@@ -170,14 +170,6 @@ void ofApp::draw(){
                     g.drawMeshProfile();
                 }
             }
-            
-            // Point rays at pov
-            if(drawRays){
-                ofSetColor(155,100,100);
-                for(auto& e : contentPovFree.pov.edges){
-                    ofDrawLine(e.pos, contentPovFree.pov.position);
-                }
-            }
         }
         camera.end();
     }
@@ -189,11 +181,11 @@ void ofApp::draw(){
     if(drawSyphon){
         ofPushMatrix();
         {
-//            float s = 0.2;
-//            ofTranslate(0, ofGetHeight()-syphonIn.getHeight()*s);
-//            ofScale(s,s, 0);
-            ofSetColor(255,10);
-            ofScale(ofGetWidth()/syphonIn.getWidth(), ofGetHeight()/syphonIn.getHeight());
+            float s = 0.2;
+            ofTranslate(0, ofGetHeight()-syphonIn.getHeight()*s);
+            ofScale(s,s, 0);
+//            ofSetColor(255,10);
+//            ofScale(ofGetWidth()/syphonIn.getWidth(), ofGetHeight()/syphonIn.getHeight());
             syphonIn.draw();
             
             ofSetColor(ofColor::orange);
@@ -220,9 +212,18 @@ void ofApp::setupParameterGroup(){
     paramGroup.setName("VIEWs");
     paramGroup.add(drawFloor.set("draw floor", true));
     paramGroup.add(drawGates.set("draw gates", true));
-    paramGroup.add(drawRays.set("draw rays", false));
-    paramGroup.add(drawPlane.set("draw plane", false));
     paramGroup.add(drawSyphon.set("draw syphon in", true));
+    
+    paramsWekinator.setName("WekinatorInputs");
+    paramsWekinator.add(in_1.set("wekIn_1", 0., 0., 1.));
+    paramsWekinator.add(in_2.set("wekIn_2", 0., 0., 1.));
+    paramsWekinator.add(in_3.set("wekIn_3", 0., 0., 1.));
+    paramsWekinator.add(in_4.set("wekIn_4", 0., 0., 1.));
+    
+    wekinatorTestOut.setName("WekinatorOutputs");
+    wekinatorTestOut.add(out_1.set("wekOut_1", 0., 0., 1.));
+    wekinatorTestOut.add(out_2.set("wekOut_2", 0., 0., 1.));
+    wekinatorTestOut.add(out_3.set("wekOut_3", 0., 0., 1.));
 }
 
 //--------------------------------------------------------------
@@ -231,7 +232,7 @@ void ofApp::drawGUI(){
         gui.draw();
         string info;
         info += "FPS: " + ofToString(ofGetFrameRate());
-        info += "\nPOV: " + ofToString(contentPovFree.pov.position);
+        info += "\nPOV: " + ofToString(contentPovFree.pov.getPosition());
         info += "\nCam: " + ofToString(camera.getGlobalPosition());
         info += "\nCam: " + ofToString(camPresets[camPresetIndx].name);
         ofDrawBitmapStringHighlight(info, 15, gui.getHeight()+25);
@@ -240,28 +241,29 @@ void ofApp::drawGUI(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == 'f' || key == 'F'){
-        ofToggleFullscreen();
-    }
     
     if(key == 'g' || key == 'G'){
         hideGui = !hideGui;
     }
     
     if(key == '1'){
-        drawFloor = !drawFloor;
+        if(!wekinator.bIsRunning) {
+            wekinator.startRunning();
+        }else if(wekinator.bIsRunning) {
+            wekinator.stopRunning();
+        }
     }
     
     if(key == '2'){
-        drawGates = !drawGates;
+        wekinator.startRecording();
     }
     
     if(key == '3'){
-        drawRays = !drawRays;
+        wekinator.train();
     }
     
     if(key == '4'){
-        drawPlane = !drawPlane;
+        wekinator.deleteTraining();
     }
     
     if(key == 'm'){
@@ -277,10 +279,7 @@ void ofApp::keyPressed(int key){
         camera.lookAt(center);
     }
     if(key == 'x'){
-        contentPovFree.setPov(camera.getPosition());
-        contentPovFree.update(&camera);
-        camera.lookAt(contentPovFree.pov.viewDirection+camera.getPosition());
-
+        contentPovFree.setPov(camera);
     }
     
     if(key == 's'){
@@ -288,13 +287,15 @@ void ofApp::keyPressed(int key){
     }
     
     if(key == 'p'){
-        contentSlit.activate(ofRandom(0,40));
+        contentGate.activate(ofRandom(0,40));
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    
+    if(key == '2'){
+        wekinator.stopRecording();
+    }
 }
 
 //--------------------------------------------------------------
@@ -343,3 +344,57 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 //--------------------------------------------------------------
+void ofApp::receiveFromSensorFuse(){
+    //PARSE OSC
+    while(oscFromSensorFuse.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        oscFromSensorFuse.getNextMessage(&m);
+        
+        std::vector<std::string> address = ofSplitString(m.getAddress(),"/",true);
+
+        
+        // check for mouse moved message
+        if(address[0] == "Gate"){
+            contentGate.activate(ofToInt(address[1]));
+            
+            // loop throug all pocketZone
+            
+            
+        }else if(address[0] == "User"){
+            users[ofToInt(address[1])].setPosition(m.getArgAsFloat(0));
+            
+            // loop throug all pocketPov
+
+            
+            
+        }else{
+            // unrecognized message: display on the bottom of the screen
+            string msg_string;
+            msg_string = m.getAddress();
+            msg_string += ": ";
+            for(int i = 0; i < m.getNumArgs(); i++){
+                // get the argument type
+                msg_string += m.getArgTypeName(i);
+                msg_string += ":";
+                // display the argument - make sure we get the right type
+                if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+                    msg_string += ofToString(m.getArgAsInt32(i));
+                }
+                else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+                    msg_string += ofToString(m.getArgAsFloat(i));
+                }
+                else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+                    msg_string += m.getArgAsString(i);
+                }
+                else{
+                    msg_string += "unknown";
+                }
+            }
+            cout << msg_string << endl;
+        }
+        
+    }
+
+
+}

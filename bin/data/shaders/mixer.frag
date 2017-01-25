@@ -54,7 +54,7 @@ float mapNum(float s, float a1, float a2, float b1, float b2)
 }
 
 
-// BLEND FUNCTIONS FROM https://github.com/jamieowen/glsl-blend/blob/master/glow.glsl
+// BLEND FUNCTIONS FROM https://github.com/jamieowen/glsl-blend
 vec3 blendMultiply(vec3 base, vec3 blend) {
     return base*blend;
 }

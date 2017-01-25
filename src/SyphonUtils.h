@@ -152,22 +152,6 @@ public:
     }
     
     
-    
-    void update(){
-        fbo.begin();
-        {
-            glClearColor(0.0, 0.0, 0.0, 0.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            texture->bind();
-            {
-                ofSetColor(255);
-                outputMesh.draw();
-            }
-            texture->unbind();
-        }
-        fbo.end();
-    }
-    
     void draw(){
         fbo.draw(0,0);
     }

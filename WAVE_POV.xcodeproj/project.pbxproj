@@ -147,9 +147,13 @@
 		F3CFD94F37ABC9182A320B79 /* ofxAutoReloadedShader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxAutoReloadedShader.h; path = ../../../addons/ofxAutoReloadedShader/src/ofxAutoReloadedShader.h; sourceTree = SOURCE_ROOT; };
 		F4F5B6B8BA2BD52C646ED908 /* OscException.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscException.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscException.h; sourceTree = SOURCE_ROOT; };
 		F7FBC56859535E597B24BB91 /* NetworkingUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = NetworkingUtils.h; path = ../../../addons/ofxOsc/libs/oscpack/src/ip/NetworkingUtils.h; sourceTree = SOURCE_ROOT; };
+		FF0C306F1E38ED5200544362 /* Pocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Pocket.h; sourceTree = "<group>"; };
+		FF108ECF1E37914100311510 /* Wekinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wekinator.h; sourceTree = "<group>"; };
+		FF108ED41E37C3AA00311510 /* Users.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Users.h; sourceTree = "<group>"; };
+		FF108ED81E37D32C00311510 /* WavePositionalContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WavePositionalContent.h; sourceTree = "<group>"; };
 		FFC948CC1E3657A100BF4C09 /* OscUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscUtils.h; sourceTree = "<group>"; };
 		FFC948D21E36659700BF4C09 /* WavePovContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WavePovContent.h; sourceTree = "<group>"; };
-		FFC948D31E3665C000BF4C09 /* WaveSlitContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveSlitContent.h; sourceTree = "<group>"; };
+		FFC948D31E3665C000BF4C09 /* WaveGateContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveGateContent.h; sourceTree = "<group>"; };
 		FFC948D81E36885600BF4C09 /* TextureMix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureMix.h; sourceTree = "<group>"; };
 		FFC948DA1E368D1000BF4C09 /* TextureMixShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureMixShader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -408,15 +412,11 @@
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				644116E8707DBCFCCA9B44A7 /* Gate.h */,
-				F031C55D08CE01C7D9E32320 /* POV.h */,
-				281E94A75EB337A8B28FB2E6 /* SyphonForWave.h */,
-				62A7D3876D35D8E8584FF6E7 /* SyphonUtils.h */,
-				5985FF7CCBF8114D0E4C426B /* WaveShaderContent.h */,
-				FFC948D31E3665C000BF4C09 /* WaveSlitContent.h */,
-				FFC948D21E36659700BF4C09 /* WavePovContent.h */,
-				FFC948CC1E3657A100BF4C09 /* OscUtils.h */,
-				FFC948D81E36885600BF4C09 /* TextureMix.h */,
-				FFC948DA1E368D1000BF4C09 /* TextureMixShader.h */,
+				FF108ED41E37C3AA00311510 /* Users.h */,
+				FF0C306F1E38ED5200544362 /* Pocket.h */,
+				FF108ED11E3791ED00311510 /* Utilities */,
+				FF108ED01E3791D400311510 /* WaveContent */,
+				FF108ED61E37CA3600311510 /* Unused */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -446,6 +446,38 @@
 				411825D206FEFBA451C69368 /* ofxGrabCam.h */,
 			);
 			name = src;
+			sourceTree = "<group>";
+		};
+		FF108ED01E3791D400311510 /* WaveContent */ = {
+			isa = PBXGroup;
+			children = (
+				5985FF7CCBF8114D0E4C426B /* WaveShaderContent.h */,
+				FFC948D31E3665C000BF4C09 /* WaveGateContent.h */,
+				FF108ED81E37D32C00311510 /* WavePositionalContent.h */,
+				FFC948D21E36659700BF4C09 /* WavePovContent.h */,
+			);
+			name = WaveContent;
+			sourceTree = "<group>";
+		};
+		FF108ED11E3791ED00311510 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FF108ECF1E37914100311510 /* Wekinator.h */,
+				281E94A75EB337A8B28FB2E6 /* SyphonForWave.h */,
+				62A7D3876D35D8E8584FF6E7 /* SyphonUtils.h */,
+				FFC948D81E36885600BF4C09 /* TextureMix.h */,
+				FFC948DA1E368D1000BF4C09 /* TextureMixShader.h */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
+		FF108ED61E37CA3600311510 /* Unused */ = {
+			isa = PBXGroup;
+			children = (
+				F031C55D08CE01C7D9E32320 /* POV.h */,
+				FFC948CC1E3657A100BF4C09 /* OscUtils.h */,
+			);
+			name = Unused;
 			sourceTree = "<group>";
 		};
 		FF8CDF57858E9B94E3237115 /* ip */ = {
