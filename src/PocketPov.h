@@ -28,7 +28,7 @@ public:
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         
-        povMappedContent.setup(gates, povPosition, texture, TUBE);
+        povMappedContent.setup(gates, povPosition, texture, POV_UV);
     }
     
     void setup( float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName){
@@ -36,7 +36,7 @@ public:
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         
-        povMappedContent.setup(gates, povPosition, shaderName, ofVec2f(512), TUBE);
+        povMappedContent.setup(gates, povPosition, shaderName, ofVec2f(512), POV_UV);
     }
     
     void update(){
@@ -55,6 +55,8 @@ public:
                 return;
             }
             oldUserLifespan = user->getLifespan();
+            
+            
             
             povMappedContent.setVisible();
             ofVec3f newPos = ofVec3f(0, 1.72, user->getPosition());

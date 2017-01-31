@@ -6,4 +6,8 @@
 		<imageIndex>1</imageIndex>
 	</gate>
 <ContentControls/>
+<Ghosts>
+		<mode>1</mode>
+		<imageIndex>0</imageIndex>
+	</Ghosts>
 </ContentControls>

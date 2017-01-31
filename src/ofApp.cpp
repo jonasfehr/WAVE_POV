@@ -43,7 +43,7 @@ void ofApp::setup(){
     }
     
     // setup content generators
-    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
+    contentPovFree.setup(&gates, camPresets[0].pos, "electric", ofVec2f(512), TUBE);
     
     //load images
     ofImage img;
@@ -65,7 +65,7 @@ void ofApp::setup(){
     img.load("images/img3.png");
     imgPosContent.push_back(img);
     
-    contentPosGhosts.setup("Ghosts", &imgPosContent, &objects);
+    contentPosGhosts.setup("Ghosts", &imgPosContent, &users);
 
     
     contentShaderSmoke.setup("smokeNoise");
@@ -79,8 +79,8 @@ void ofApp::setup(){
     syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
     // add POCKETS
-    pocketZone_1.setup(10, 25, "electric", ofVec2f(512));
-    pocketPov_1.setup(5., &gates, camPresets[0].pos, "electric");
+    pocketZone_1.setup(10, 20, "stars", ofVec2f(512));
+    pocketPov_1.setup(2., &gates, camPresets[0].pos, "electric");
     pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
     
     
@@ -92,7 +92,7 @@ void ofApp::setup(){
     textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
     textureMixer.addFboChannel(contentGate.getFboPtr(), "Gate", BLEND_ADD);
     textureMixer.addFboChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
-    textureMixer.addFboChannel(pocketPovPos_1.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
+    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
     textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
     
     setupParameterGroup();
@@ -409,8 +409,8 @@ void ofApp::receiveFromSensorFuse(){
                 pocketPov_1.setUser(&users[ ofToInt(address[1]) ]);
             }
             
-            if( pocketPovPos_1.getMinLifespan() < m.getArgAsFloat(1) ){
-                pocketPovPos_1.setUser(&users[ ofToInt(address[1]) ]);
+            if( pocketPovPos_2.getMinLifespan() < m.getArgAsFloat(1) ){
+                pocketPovPos_2.setUser(&users[ ofToInt(address[1]) ]);
             }
             
         }else if(address[0] == "soundObject"){

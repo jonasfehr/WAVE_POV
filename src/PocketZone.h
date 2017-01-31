@@ -28,6 +28,8 @@ public:
 
     vector<int> activatedGates;
     
+    float timeOfActivation = 0;
+    
     PocketZone(){};
     
     void setup( int start, int stop, ofTexture *texture){
@@ -120,12 +122,17 @@ public:
         fbo.end();
         
 
-    
+        // if activated for more than 30 secs, turn off
+        if(timeOfActivation - ofGetElapsedTimef() > 30) isActive = false;
+
         
     }
     
     void gateActivated(int g){
-        if(g == start) isActive = true;
+        if(g == start){
+            isActive = true;
+            timeOfActivation = ofGetElapsedTimef();
+        }
         if(g == stop) isActive = false;
     };
     

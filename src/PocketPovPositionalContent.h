@@ -37,7 +37,7 @@ public:
         this->objects = objects;
         this->povMappedContent.setInvisible(0.);
         
-        povMappedContent.setup(gates, povPosition, &fboContent.getTexture(), TUBE);
+        povMappedContent.setup(gates, povPosition, &fboContent.getTexture(), POV_UV);
         
         fboContent.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA32F_ARB);
 
@@ -45,8 +45,7 @@ public:
     
     
     void update(){
-        
-        
+    
         // move pov if active
         if(isActive){
             

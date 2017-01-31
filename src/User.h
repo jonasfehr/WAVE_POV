@@ -12,7 +12,7 @@ class User{
 public:
     
     void updateValues(float position, float lifespan, float velocity){
-        this->position = position;
+        this->position.x = position;
         this->lifespan = lifespan;
         this->velocity = velocity;
         
@@ -27,14 +27,14 @@ public:
         return lastUpdate > 10;
     }
     
-    float getPosition(){ return position; }
+    float getPosition(){ return position.x; }
     float getLifespan(){ return lifespan; }
     float getVelocity(){ return velocity; }
     
-private:
     float lastUpdate = 0.;
     
-    float position = 0.;
+    ofVec3f position = ofVec3f(0.);
+    ofVec3f size = ofVec3f(200);
     float lifespan = 0.;
     float velocity = 0.;
 };

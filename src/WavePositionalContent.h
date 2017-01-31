@@ -23,7 +23,7 @@ public:
     ofVbo vbo;
     
     // Positions
-    map<int, Objects> * objects;
+    map<int, User> * objects;
     
     // parameters
     ofParameter<int> mode;
@@ -38,10 +38,25 @@ public:
     
     
     // SETUP
-    void setup(string name, vector<ofImage> *images, map<int, Objects> *objects){
+//    void setup(string name, vector<ofImage> *images, map<int, User> *objects){
+//        this->images = images;
+//        this->name = name;
+//        this->objects = objects;
+//        fbo.allocate(120, 1300, GL_RGBA32F_ARB);
+//        fboShader.allocate(78*130, 10*130, GL_RGBA32F_ARB);
+//        
+//        shader.load("shaders/WavePositionalContent");
+//        
+//        setupParameterGroup(name);
+//        
+//        createMesh();
+//        
+//    }
+    
+    void setup(string name, vector<ofImage> *images, map<int, User> *users){
         this->images = images;
         this->name = name;
-        this->objects = objects;
+        this->objects = users;
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fboShader.allocate(78*130, 10*130, GL_RGBA32F_ARB);
         
@@ -52,6 +67,7 @@ public:
         createMesh();
         
     }
+    
     
     // UPDATE
     void update(){
