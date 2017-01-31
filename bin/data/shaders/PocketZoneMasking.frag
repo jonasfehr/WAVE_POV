@@ -34,11 +34,10 @@ void main()
 
   vec2 st = gl_FragCoord.xy/iResolution;
 
-    //float mask = cubicPulse(0.5,0.20,st.x);
     float mask = cubicPulse(u_center,u_width,st.x);
 
     vec3 colTex0 = texture2DRect(tex0, st*texResolution).rgb;
-    vec3 finalColor = colTex0 * mask;// * u_opacity + colTex0 * (1.0 - u_opacity));
+    vec3 finalColor = colTex0 * mask * u_opacity;
 
 
 

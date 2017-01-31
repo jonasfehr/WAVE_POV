@@ -14,7 +14,7 @@ uniform int u_mode;
 
 
 
-//  Function from Iñigo Quiles 
+//  Function from Iñigo Quiles
 //  www.iquilezles.org/www/articles/functions/functions.htm
 float impulse( float k, float x){
     float h = k*x;
@@ -59,9 +59,11 @@ float circularIn(float t) {
 }
 
 float easing( int mode, float value){
-    if(mode == 1){
-        return cubicIn( value );
-    }else if(mode == 2){
+  if(mode == 0){
+      return value;
+  }else if(mode == 1){
+      return cubicIn( value );
+  }else if(mode == 2){
         return cubicOut( value );
     }else if(mode == 3){
         return cubicInOut( value );
@@ -72,30 +74,28 @@ float easing( int mode, float value){
 
 void main()
 {
-    
+
     vec2 st = gl_FragCoord.xy / u_resolution.xy;
 
     vec2 countersRes = vec2(40,1);
     float counter = texture2DRect(texCounters, gl_FragCoord.xx).r;
-    
+
     counter = easing(4, counter);
-    
+
     vec3 finalCol = vec3(0);
-    
+
     if(u_mode == 1){ // TEXTURE SLIT
         vec2 coord = vec2( counter, st.y);
         vec3 tex = texture2DRect(texForSlit, coord  * vec2(u_texResolution.x, u_texResolution.y-0.5) ).rgb;
         finalCol = tex;
-        
+
     }else if(u_mode == 2){ // GRADIENT
         float gradient = (1.-smoothstep(st.y, 0.5, counter/2.+0.5))+(1.-smoothstep(st.y, 0.5, 0.5-counter/2.));
         finalCol = vec3(gradient);
     }
-    
 
-    
-    
+
+
+
 
     gl_FragColor =  vec4(finalCol, brightness(finalCol));}
-
-

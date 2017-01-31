@@ -49,7 +49,7 @@ public:
                 
         fbo.allocate(120,1300, GL_RGBA32F_ARB);
         
-        shader.load("shaders/masking");
+        shader.load("shaders/PocketZoneMasking");
         inputShader.load("shaders/"+shaderName);
         
         fboShader.allocate(shaderSize.x, shaderSize.y, GL_RGB);

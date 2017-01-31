@@ -159,6 +159,8 @@
 		FF3ACCF31E40AC7400EAFA5C /* WaveContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveContent.h; sourceTree = "<group>"; };
 		FF5804541E3F487A00E8300C /* PocketPov.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PocketPov.h; sourceTree = "<group>"; };
 		FF5804551E3F48A000E8300C /* PocketZone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PocketZone.h; sourceTree = "<group>"; };
+		FF7C77551E40EE99000567FE /* PocketPovPositionalContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PocketPovPositionalContent.h; sourceTree = "<group>"; };
+		FF7C77561E40EFE0000567FE /* Objects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Objects.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -415,9 +417,10 @@
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				644116E8707DBCFCCA9B44A7 /* Gate.h */,
+				AEE368D4C907572305D34DFE /* User.h */,
+				FF7C77561E40EFE0000567FE /* Objects.h */,
 				FFA8830D1E3BA66F00A7B247 /* Content */,
 				FFA8830B1E3BA64800A7B247 /* Utils */,
-				AEE368D4C907572305D34DFE /* User.h */,
 				FFA8830C1E3BA65000A7B247 /* Unused */,
 			);
 			path = src;
@@ -456,6 +459,7 @@
 				11369A6B87E423D92CA89912 /* Pocket.h */,
 				FF5804541E3F487A00E8300C /* PocketPov.h */,
 				FF5804551E3F48A000E8300C /* PocketZone.h */,
+				FF7C77551E40EE99000567FE /* PocketPovPositionalContent.h */,
 			);
 			name = Pockets;
 			sourceTree = "<group>";
@@ -488,6 +492,7 @@
 		FFA8830C1E3BA65000A7B247 /* Unused */ = {
 			isa = PBXGroup;
 			children = (
+				281E94A75EB337A8B28FB2E6 /* SyphonForWave.h */,
 				EC94B242248307E4D22C3F7F /* OscUtils.h */,
 				F031C55D08CE01C7D9E32320 /* POV.h */,
 			);
@@ -498,7 +503,6 @@
 			isa = PBXGroup;
 			children = (
 				FF5804531E3F486500E8300C /* Pockets */,
-				281E94A75EB337A8B28FB2E6 /* SyphonForWave.h */,
 				FF3ACCF31E40AC7400EAFA5C /* WaveContent.h */,
 				7A19B7CC9524C734799ACB3F /* InputToWaveContent.h */,
 				0D22F69848AE5937D268CDAF /* WaveGateContent.h */,

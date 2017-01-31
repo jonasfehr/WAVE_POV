@@ -58,9 +58,18 @@ void ofApp::setup(){
     
     contentGate.setup("gate", &imgGateContent);
     
+    img.load("images/img1.png");
+    imgPosContent.push_back(img);
+    img.load("images/img2.png");
+    imgPosContent.push_back(img);
+    img.load("images/img3.png");
+    imgPosContent.push_back(img);
+    
+    contentPosGhosts.setup("Ghosts", &imgPosContent, &objects);
+
+    
     contentShaderSmoke.setup("smokeNoise");
     contentShaderLines.setup("lines");
-    contentPosGhosts.setup("Ghosts");
     
     
     // setup Syphon
@@ -72,6 +81,7 @@ void ofApp::setup(){
     // add POCKETS
     pocketZone_1.setup(10, 25, "electric", ofVec2f(512));
     pocketPov_1.setup(5., &gates, camPresets[0].pos, "electric");
+    pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
     
     
     
@@ -79,10 +89,11 @@ void ofApp::setup(){
     textureMixer.addFboChannel(contentPovFree.getFboPtr(), "PovFree", BLEND_LIGHTEN);
     textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
     textureMixer.addFboChannel(contentShaderLines.getFboPtr(), "Lines", BLEND_SCREEN);
-    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
-    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
     textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
     textureMixer.addFboChannel(contentGate.getFboPtr(), "Gate", BLEND_ADD);
+    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
+    textureMixer.addFboChannel(pocketPovPos_1.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
+    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
     
     setupParameterGroup();
     guiGroup.setName("General");
@@ -91,6 +102,7 @@ void ofApp::setup(){
     ofParameterGroup paramsControls;
     paramsControls.setName("ContentControls");
     paramsControls.add(contentGate.parameterGroup);
+    paramsControls.add(contentPosGhosts.parameterGroup);
     guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
     guiWekinator.setup(paramsWekinator);
@@ -137,7 +149,7 @@ void ofApp::update(){
     // UPDATE POCKETS
     pocketZone_1.update();
     pocketPov_1.update();
-    
+    pocketPovPos_2.update();
     
     
     syphonOut.begin();
@@ -396,10 +408,15 @@ void ofApp::receiveFromSensorFuse(){
             if( pocketPov_1.getMinLifespan() < m.getArgAsFloat(1) ){
                 pocketPov_1.setUser(&users[ ofToInt(address[1]) ]);
             }
+            
+            if( pocketPovPos_1.getMinLifespan() < m.getArgAsFloat(1) ){
+                pocketPovPos_1.setUser(&users[ ofToInt(address[1]) ]);
+            }
+            
         }else if(address[0] == "soundObject"){
             // Do something with SoundObjects id = address[1]
-            contentPosGhosts.updatePosition(ofToInt(address[1]), ofVec2f(m.getArgAsFloat(0), m.getArgAsFloat(1)));
-            
+ 
+                objects[ofToInt(address[1])].setPosition(ofVec3f(m.getArgAsFloat(0),1.8, m.getArgAsFloat(1)));
             
         }else{
             // unrecognized message: display on the bottom of the screen

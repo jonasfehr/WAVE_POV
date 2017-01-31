@@ -13,6 +13,7 @@
 
 #include "PocketPov.h"
 #include "PocketZone.h"
+#include "PocketPovPositionalContent.h"
 
 #include "InputToWaveContent.h"
 #include "WaveGateContent.h"
@@ -119,13 +120,17 @@ class ofApp : public ofBaseApp{
     
 
     PocketZone pocketZone_1;
+    
     PocketPov pocketPov_1;
-
+    PocketPovPositionalContent pocketPovPos_2;
     
     // Images to be loaded
     vector<ofImage> imgGateContent;
     vector<ofImage> imgPosContent;
     
+    // Objects
+    map<int, Objects> objects;
+
 
 };
 

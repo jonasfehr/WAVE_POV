@@ -46,7 +46,7 @@ public:
 
 class WaveGateContent : public WaveContent{
 public:
-    vector<ofImage> *image;
+    vector<ofImage> *images;
     UpDownCounter counters[40];
     ofFloatImage imgCounters;
     
@@ -57,16 +57,17 @@ public:
 
     
     WaveGateContent(){};
-    void setup(string name, vector<ofImage> *image){
-        this->image = image;
-        
+    void setup(string name, vector<ofImage> *images){
+        this->images = images;
+        this->name = name;
+
         fbo.allocate(40, 1300, GL_RGBA32F_ARB);
         fbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         fbo.end();
         
-        shader.load("shaders/slit");
+        shader.load("shaders/WaveGateContent");
         
         setupParameterGroup(name);
         
@@ -99,11 +100,11 @@ public:
             
             shader.begin();
             {
-                shader.setUniformTexture("texForSlit", image->at(imageIndex-1).getTexture(), 1);
+                shader.setUniformTexture("texForSlit", images->at(imageIndex).getTexture(), 1);
                 shader.setUniformTexture("texCounters", imgCounters.getTexture(), 2);
                 
                 shader.setUniform2f("u_resolution", fbo.getWidth(), fbo.getHeight());
-                shader.setUniform2f("u_texResolution", image->at(imageIndex).getWidth(), image->at(imageIndex).getHeight());
+                shader.setUniform2f("u_texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
                 shader.setUniform1f("u_time", ofGetElapsedTimef());
                 shader.setUniform1i("u_mode", (int)mode);
                 shader.setUniform1i("u_easing", (int)easing);
@@ -121,10 +122,10 @@ public:
 
     void setupParameterGroup(string name){
         parameterGroup.setName(name);
-        parameterGroup.add(speed.set("speed", 0.01, 0., 0.2));
+        parameterGroup.add(speed.set("speed", 0.01, 0., 0.1));
         parameterGroup.add(mode.set("mode", 1, 1, 2));
-        parameterGroup.add(easing.set("easing", 1, 1, 2));
-        parameterGroup.add(imageIndex.set("imageIndex", 1, 1, image->size()));
+        parameterGroup.add(easing.set("easing", 1, 0, 2));
+        parameterGroup.add(imageIndex.set("imageIndex", 0, 0, images->size()-1));
     }
     
     ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }
