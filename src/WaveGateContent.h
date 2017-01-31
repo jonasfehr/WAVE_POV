@@ -8,7 +8,8 @@
 
 #ifndef WaveGateContent_h
 #define WaveGateContent_h
-#include "ofxAutoReloadedShader.h"
+
+#include "WaveContent.h"
 
 
 class UpDownCounter{
@@ -43,26 +44,34 @@ public:
     }
 };
 
-class WaveGateContent{
+class WaveGateContent : public WaveContent{
 public:
-    ofFbo fbo;
-    ofImage image;
+    vector<ofImage> *image;
     UpDownCounter counters[40];
-    ofxAutoReloadedShader shader;
+    ofFloatImage imgCounters;
     
-    void setup(ofImage image, string name){
+    ofParameter<float> speed;
+    ofParameter<int> mode;
+    ofParameter<int> easing;
+    ofParameter<int> imageIndex;
+
+    
+    WaveGateContent(){};
+    void setup(string name, vector<ofImage> *image){
         this->image = image;
         
         fbo.allocate(40, 1300, GL_RGBA32F_ARB);
         fbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
         fbo.end();
         
         shader.load("shaders/slit");
         
-        setupGuiGroup(name);
+        setupParameterGroup(name);
+        
+        imgCounters.allocate(40, 1, OF_IMAGE_GRAYSCALE);
+        
     }
     
     void activate(int index){
@@ -80,8 +89,7 @@ public:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
             
-            ofFloatImage imgCounters;
-            imgCounters.allocate(40, 1, OF_IMAGE_GRAYSCALE);
+
             int i = 0;
             while ( i < imgCounters.getPixels().size() ) {
                 imgCounters.getPixels()[i] = counters[i].get();
@@ -91,12 +99,11 @@ public:
             
             shader.begin();
             {
-                
-                shader.setUniformTexture("texForSlit", image.getTexture(), 1);
+                shader.setUniformTexture("texForSlit", image->at(imageIndex-1).getTexture(), 1);
                 shader.setUniformTexture("texCounters", imgCounters.getTexture(), 2);
                 
                 shader.setUniform2f("u_resolution", fbo.getWidth(), fbo.getHeight());
-                shader.setUniform2f("u_texResolution", image.getWidth(), image.getHeight());
+                shader.setUniform2f("u_texResolution", image->at(imageIndex).getWidth(), image->at(imageIndex).getHeight());
                 shader.setUniform1f("u_time", ofGetElapsedTimef());
                 shader.setUniform1i("u_mode", (int)mode);
                 shader.setUniform1i("u_easing", (int)easing);
@@ -111,30 +118,21 @@ public:
         fbo.end();
     }
     
-    void draw(){
-        fbo.draw(0,0, 120, 1300);
+
+    void setupParameterGroup(string name){
+        parameterGroup.setName(name);
+        parameterGroup.add(speed.set("speed", 0.01, 0., 0.2));
+        parameterGroup.add(mode.set("mode", 1, 1, 2));
+        parameterGroup.add(easing.set("easing", 1, 1, 2));
+        parameterGroup.add(imageIndex.set("imageIndex", 1, 1, image->size()));
     }
     
-    ofTexture getTexture(){
-        return fbo.getTexture();
-    }
-    
-    
-    ofParameterGroup paramGroup;
-    ofParameter<float> speed;
-    ofParameter<float> mode;
-    ofParameter<float> easing;
+    ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }
+
 
     
-    void setupGuiGroup(string name){
-        paramGroup.setName(name);
-        paramGroup.add(speed.set("speed", 0.01, 0., 0.2));
-        paramGroup.add(mode.set("mode", 1, 1., 2));
-        paramGroup.add(easing.set("easing", 1, 1., 2));
-    }
-    
-    ofParameterGroup* getPointerToParameterGroup(){ return &paramGroup; }
-    
+private:
+
 };
 
 #endif /* WaveGateContent_h */

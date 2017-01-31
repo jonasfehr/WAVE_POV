@@ -43,53 +43,72 @@ void ofApp::setup(){
     }
     
     // setup content generators
-    contentPovFree.setup(&gates, camPresets[0].pos, POV_UV);
-    contentPovFront.setup(&gates, camPresets[0].pos, POV_UV);
-    contentPovBack.setup(&gates, camPresets[1].pos, POV_UV);
+    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
     
+    //load images
     ofImage img;
+    img.load("images/Pass_1.png");
+    imgGateContent.push_back(img);
+    img.load("images/Pass_2.png");
+    imgGateContent.push_back(img);
+    img.load("images/Pass_3.png");
+    imgGateContent.push_back(img);
     img.load("images/Pass_4.png");
-    contentGate.setup(img, "gate");
-    contentSmoke.setup("smokeNoise");
+    imgGateContent.push_back(img);
     
-    contentImpulses.setup("impulses");
+    contentGate.setup("gate", &imgGateContent);
+    
+    contentShaderSmoke.setup("smokeNoise");
+    contentShaderLines.setup("lines");
+    contentPosGhosts.setup("Ghosts");
     
     
     // setup Syphon
     syphonIn.setup();
     syphonIn.find("Main View", "Modul8");
-
-    syphonOut.setup("WaveForMapping", 120, 1300);    
+    syphonOut.setup("WaveForMapping", 120, 1300);
     syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
+    // add POCKETS
+    pocketZone_1.setup(10, 25, "electric", ofVec2f(512));
+    pocketPov_1.setup(5., &gates, camPresets[0].pos, "electric");
     
     
-    textureMixer.addFboChannel(&contentSmoke.fbo, "Smoke", BLEND_SCREEN);
-    textureMixer.addFboChannel(&contentPovFree.fbo, "PovFree", BLEND_LIGHTEN);
-    textureMixer.addFboChannel(&contentGate.fbo, "Gate", BLEND_ADD);
+    
+    // setup Mixer
+    textureMixer.addFboChannel(contentPovFree.getFboPtr(), "PovFree", BLEND_LIGHTEN);
+    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
+    textureMixer.addFboChannel(contentShaderLines.getFboPtr(), "Lines", BLEND_SCREEN);
+    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
+    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
+    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
+    textureMixer.addFboChannel(contentGate.getFboPtr(), "Gate", BLEND_ADD);
     
     setupParameterGroup();
-    guiGroup.setName("ContentControl");
+    guiGroup.setName("General");
     guiGroup.add(paramGroup);
-    guiGroup.add(paramsWekinator);
-    // guiGroup.add(wekinatorTestOut);
-    guiGroup.add( *contentGate.getPointerToParameterGroup() );
-    guiGroup.add( *textureMixer.getPointerToParameterGroup() );
+    
+    ofParameterGroup paramsControls;
+    paramsControls.setName("ContentControls");
+    paramsControls.add(contentGate.parameterGroup);
+    guiControls.setup( paramsControls );
+    guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
+    guiWekinator.setup(paramsWekinator);
+    
     
     wekinator.setup(&paramsWekinator, textureMixer.getVectorOfParameterSubgroups());
-
     
-    gui.setup(guiGroup);
     
-    gui.loadFromFile("settings.xml");
+    guiGeneral.setup(guiGroup);
+    
+    
+    guiGeneral.loadFromFile("settingsGeneral.xml");
+    guiMixer.loadFromFile("settingsMixer.xml");
+    guiControls.loadFromFile("settingsControls.xml");
     
     oscFromSensorFuse.setup(49162);
     
-    // ADD POCKETS
-    std::unique_ptr<Pocket> p1 = std::unique_ptr<Pocket>(new PocketPov(100.));
-    pockets.push_back(std::move(p1));
-    std::unique_ptr<Pocket> p2 = std::unique_ptr<Pocket>(new PocketZone(10, 15));
-    pockets.push_back(std::move(p2));
+
 }
 
 //--------------------------------------------------------------
@@ -108,23 +127,18 @@ void ofApp::update(){
         }
     }
     
-    for(auto & p : pockets){
-        p->update();
-    }
-    
-    
-    contentPovFree.setInputTexture(&syphonIn.getTexture());
-    contentPovFree.update();
-    
-    contentPovFront.setInputTexture(&syphonIn.getTexture());
-    contentPovFront.update();
-    
-    contentPovBack.setInputTexture(&syphonIn.getTexture());
-    contentPovBack.update();
-    
-    contentGate.update();
-    contentSmoke.update();
 
+    contentPovFree.update();
+    contentGate.update();
+    contentShaderSmoke.update();
+    contentShaderLines.update();
+    contentPosGhosts.update();
+    
+    // UPDATE POCKETS
+    pocketZone_1.update();
+    pocketPov_1.update();
+    
+    
     
     syphonOut.begin();
     {
@@ -184,8 +198,8 @@ void ofApp::draw(){
             float s = 0.2;
             ofTranslate(0, ofGetHeight()-syphonIn.getHeight()*s);
             ofScale(s,s, 0);
-//            ofSetColor(255,10);
-//            ofScale(ofGetWidth()/syphonIn.getWidth(), ofGetHeight()/syphonIn.getHeight());
+            //            ofSetColor(255,10);
+            //            ofScale(ofGetWidth()/syphonIn.getWidth(), ofGetHeight()/syphonIn.getHeight());
             syphonIn.draw();
             
             ofSetColor(ofColor::orange);
@@ -204,7 +218,7 @@ void ofApp::draw(){
     // PUBLISH OUTPUT
     syphonOut.publish();
     syphonSimOut.publish();
-    
+    //syphonLayerPreview.publish();
 }
 
 //--------------------------------------------------------------
@@ -219,23 +233,27 @@ void ofApp::setupParameterGroup(){
     paramsWekinator.add(in_2.set("wekIn_2", 0., 0., 1.));
     paramsWekinator.add(in_3.set("wekIn_3", 0., 0., 1.));
     paramsWekinator.add(in_4.set("wekIn_4", 0., 0., 1.));
-    
-    wekinatorTestOut.setName("WekinatorOutputs");
-    wekinatorTestOut.add(out_1.set("wekOut_1", 0., 0., 1.));
-    wekinatorTestOut.add(out_2.set("wekOut_2", 0., 0., 1.));
-    wekinatorTestOut.add(out_3.set("wekOut_3", 0., 0., 1.));
 }
 
 //--------------------------------------------------------------
 void ofApp::drawGUI(){
     if(!hideGui){
-        gui.draw();
+        guiGeneral.draw();
+        guiControls.setPosition(guiGeneral.getPosition().x, guiGeneral.getPosition().y + guiGeneral.getHeight() + 15);
+        guiControls.draw();
+        guiWekinator.setPosition(guiControls.getPosition().x, guiControls.getPosition().y + guiControls.getHeight() + 15);
+        guiWekinator.draw();
+        
+        //right side
+        guiMixer.setPosition(ofGetWidth()-guiMixer.getWidth()-15, 15);
+        guiMixer.draw();
+
         string info;
         info += "FPS: " + ofToString(ofGetFrameRate());
         info += "\nPOV: " + ofToString(contentPovFree.pov.getPosition());
         info += "\nCam: " + ofToString(camera.getGlobalPosition());
         info += "\nCam: " + ofToString(camPresets[camPresetIndx].name);
-        ofDrawBitmapStringHighlight(info, 15, gui.getHeight()+25);
+        ofDrawBitmapStringHighlight(info, 15, ofGetHeight()-4*15);
     }
 }
 
@@ -288,6 +306,17 @@ void ofApp::keyPressed(int key){
     
     if(key == 'p'){
         contentGate.activate(ofRandom(0,40));
+    }
+    
+    if(key == 'q'){
+        guiGeneral.loadFromFile("settingsGeneral.xml");
+        guiMixer.loadFromFile("settingsMixer.xml");
+        guiControls.loadFromFile("settingsControls.xml");
+    }
+    if(key == 'w'){
+        guiGeneral.saveToFile("settingsGeneral.xml");
+        guiMixer.saveToFile("settingsMixer.xml");
+        guiControls.saveToFile("settingsControls.xml");
     }
 }
 
@@ -352,20 +381,24 @@ void ofApp::receiveFromSensorFuse(){
         oscFromSensorFuse.getNextMessage(&m);
         
         std::vector<std::string> address = ofSplitString(m.getAddress(),"/",true);
-
+        
         
         // check for mouse moved message
         if(address[0] == "Gate"){
             contentGate.activate(ofToInt(address[1]));
             
-            // loop throug all pocketZone
-            
+            pocketZone_1.gateActivated(ofToInt(address[1]));
             
         }else if(address[0] == "User"){
-            users[ofToInt(address[1])].setPosition(m.getArgAsFloat(0));
+            users[ofToInt(address[1])].updateValues(m.getArgAsFloat(0), m.getArgAsFloat(1), m.getArgAsFloat(2));
             
-            // loop throug all pocketPov
-
+            //cout << "User #" << address[1] << " pos " << m.getArgAsFloat(0) << " life " << m.getArgAsFloat(1) << " vel " << m.getArgAsFloat(2) << endl;
+            if( pocketPov_1.getMinLifespan() < m.getArgAsFloat(1) ){
+                pocketPov_1.setUser(&users[ ofToInt(address[1]) ]);
+            }
+        }else if(address[0] == "soundObject"){
+            // Do something with SoundObjects id = address[1]
+            contentPosGhosts.updatePosition(ofToInt(address[1]), ofVec2f(m.getArgAsFloat(0), m.getArgAsFloat(1)));
             
             
         }else{
@@ -395,6 +428,6 @@ void ofApp::receiveFromSensorFuse(){
         }
         
     }
-
-
+    
+    
 }

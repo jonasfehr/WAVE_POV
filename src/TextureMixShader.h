@@ -36,12 +36,51 @@ STRINGIFY(
           vec3 hsv2rgb_smooth( in vec3 c ){
               vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 );
               rgb = rgb*rgb*(3.0-2.0*rgb);
-              return c.z * mix( vec3(1.0), rgb, c.y);}
+              return c.z * mix( vec3(1.0), rgb, c.y);
+          }
           
           vec3 hsv2rgb( in vec3 c ){
               vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 );
               return c.z * mix( vec3(1.0), rgb, c.y);
           }
+          
+          mat4 brightnessMatrix( float brightness ){
+              return mat4( 1, 0, 0, 0,
+                          0, 1, 0, 0,
+                          0, 0, 1, 0,
+                          brightness, brightness, brightness, 1 );
+          }
+          
+          mat4 contrastMatrix( float contrast ){
+              float t = ( 1.0 - contrast ) / 2.0;
+              
+              return mat4( contrast, 0, 0, 0,
+                          0, contrast, 0, 0,
+                          0, 0, contrast, 0,
+                          t, t, t, 1 );
+              
+          }
+          
+          mat4 saturationMatrix( float saturation ){
+              vec3 luminance = vec3( 0.3086, 0.6094, 0.0820 );
+              
+              float oneMinusSat = 1.0 - saturation;
+              
+              vec3 red = vec3( luminance.x * oneMinusSat );
+              red+= vec3( saturation, 0, 0 );
+              
+              vec3 green = vec3( luminance.y * oneMinusSat );
+              green += vec3( 0, saturation, 0 );
+              
+              vec3 blue = vec3( luminance.z * oneMinusSat );
+              blue += vec3( 0, 0, saturation );
+              
+              return mat4( red,     0,
+                          green,   0,
+                          blue,    0,
+                          0, 0, 0, 1 );
+          }
+          
           
           //  Function from Iñigo Quiles
           //  www.iquilezles.org/www/articles/functions/functions.htm
@@ -116,43 +155,57 @@ STRINGIFY(
               return vec3(blendSoftLight(base.r,blend.r),blendSoftLight(base.g,blend.g),blendSoftLight(base.b,blend.b));
           }
           
+          // Overlay
+          float blendOverlay(float base, float blend) {
+              return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
+          }
+          
+          vec3 blendOverlay(vec3 base, vec3 blend) {
+              return vec3(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b));
+          }
+          
           
           // BLEND FUNCTION
-          vec3 blendMode( int mode, vec3 base, vec3 blend, float opacity ){
-              
+          vec4 blendMode( int mode, vec4 base, vec4 blend, float opacity ){
               if( mode == 1 ){
-                  return (blendAdd(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendAdd(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
                   
               }else if( mode == 2 ){
-                  return (blendMultiply(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendMultiply(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
                   
               }else if( mode == 3 ){
-                  return (blendLighten(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendLighten(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
                   
               }else if( mode == 4 ){
-                  return (blendDarken(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendDarken(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
                   
               }else if( mode == 5 ){
-                  return (blendSubtract(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendSubtract(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
                   
               }else if( mode == 6 ){
-                  return (blendScreen(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendScreen(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
                   
               }else if( mode == 7 ){
-                  return (blendAverage(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendAverage(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
                   
               }else if( mode == 8 ){
-                  return (blendSoftLight(base, blend) * opacity + base * (1.0 - opacity));
+                  return vec4(blendSoftLight(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  
+              }else if( mode == 9 ){
+                  return vec4(blendOverlay(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  
+              }else if( mode == 10 ){
+                  return vec4(blend * blend.a * opacity + base*(1.-(blend.a*opacity)));
               }
           }
           
           // ---
           
-          vec3 postProcessing(vec3 image, vec3 hsv, float contrast) {
-              image = ((image - vec3(0.5)) * max(contrast+0.5, 0.0)) + vec3(0.5);
-              image *= hsv2rgb(hsv);
-              return image;
-          }
+//          vec4 postProcessing(vec4 image, vec3 hsv, float contrast) {
+//              image = ((image - vec4(0.5)) * max(contrast+0.5, 0.0)) + vec4(0.5);
+//              image *= hsv2rgb(hsv);
+//              return image;
+//          }
 
 
           );
@@ -163,20 +216,24 @@ STRINGIFY(
           void main(){
     
               vec2 st = gl_FragCoord.xy / iResolution.xy;
-              vec3 mixCol = vec3(0.);
+              vec4 mixCol = vec4(0.);
           );
               
 static string channel =
 STRINGIFY(
-          vec3 colTex$0 = texture2DRect(tex$0, resolution_$0 * st ).rgb;
-          vec3 hsv_$0 = vec3( u_H_$0, u_S_$0, u_B_$0);
-          colTex$0 = postProcessing(colTex$0, hsv_$0, u_contrast_$0);
-          mixCol = blendMode( u_blendMode_$0, mixCol, colTex$0, u_opacity_$0 );
+          vec4 colTex_$0 = texture2DRect(tex$0, resolution_$0 * st );
+          vec3 rgb_$0 = hsv2rgb_smooth(vec3( u_H_$0, u_S_$0, u_B_$0));
+          
+          colTex_$0 *= vec4(rgb_$0,1.);
+          
+          colTex_$0 = contrastMatrix( 1.+u_contrast_$0*2. ) * colTex_$0;
+          
+          mixCol = blendMode( u_blendMode_$0, mixCol, colTex_$0, u_opacity_$0 );
         );
 
 static string output =
 STRINGIFY(
-              gl_FragColor =  vec4(mixCol,1.);
+              gl_FragColor =  vec4(mixCol);
           }
           );
 
@@ -206,18 +263,7 @@ STRINGIFY(
 //                  return (blendExclusion(base, blend) * opacity + base * (1.0 - opacity));
 //              }
 //              
-//              
-//              float blendOverlay(float base, float blend) {
-//                  return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
-//              }
-//              
-//              vec3 blendOverlay(vec3 base, vec3 blend) {
-//                  return vec3(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b));
-//              }
-//              
-//              vec3 blendOverlay(vec3 base, vec3 blend, float opacity) {
-//                  return (blendOverlay(base, blend) * opacity + base * (1.0 - opacity));
-//              }
+
 //              
 //              
 //              float blendColorBurn(float base, float blend) {

@@ -24,8 +24,8 @@ uniform float u_mix;
 
 // functions
 vec3 hsv2rgb_smooth( in vec3 c ){
-    vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 ); 
-    rgb = rgb*rgb*(3.0-2.0*rgb); 
+    vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
     return c.z * mix( vec3(1.0), rgb, c.y);}
 
 vec3 hsv2rgb( in vec3 c )
@@ -34,7 +34,7 @@ vec3 hsv2rgb( in vec3 c )
     return c.z * mix( vec3(1.0), rgb, c.y);
 }
 
-//  Function from Iñigo Quiles 
+//  Function from Iñigo Quiles
 //  www.iquilezles.org/www/articles/functions/functions.htm
 float impulse( float k, float x){
     float h = k*x;
@@ -217,12 +217,12 @@ vec3 postProcessing(vec3 image, vec3 hsv, float contrast) {
 
 void main()
 {
-    
+
     vec2 st = gl_FragCoord.xy;
     vec2 stStretched = st / vec2(3., 1.);
     vec3 mixCol = vec3(0.);
 
-    
+
     vec3 colTex0 = texture2DRect(tex0, stStretched).rgb;
     vec3 colTex1 = texture2DRect(tex1, st).rgb;
     vec3 colTex2 = texture2DRect(tex2, stStretched).rgb;
@@ -231,8 +231,8 @@ void main()
 
 
     colTex3 = postProcessing(colTex3, vec3( 0.5, 0.5, 1.), 0.5);
-    
-    
+
+
     mixCol = colTex0;
     mixCol = blendAdd( mixCol, colTex1);
     mixCol = blendAdd( mixCol, colTex2);
@@ -241,5 +241,3 @@ void main()
 
     gl_FragColor =  vec4(mixCol,1.);
 }
-
-

@@ -1,47 +1,53 @@
 //
-//  WavePovContent.h
+//  InputToWaveContent.h
 //  WAVE_POV
 //
 //  Created by Jonas Fehr on 23/01/2017.
 //
 //
 
-#ifndef WavePovContent_h
-#define WavePovContent_h
+#ifndef InputToWaveContent_h
+#define InputToWaveContent_h
+#include "ofxAutoReloadedShader.h"
+
+
 enum waveOutputMappingType : int {
     POV_UV,
     POV_UV_NORMALIZED,
     TUBE
 };
 
-class WavePovContent{
+
+
+class InputToWaveContent{
 public:
     
     
     ofFbo fbo;
+    ofFbo fboShader;
     ofMesh mesh;
     ofTexture *texture;
     ofCamera pov;
     vector<Gate> * gates;
     int mappingType = TUBE;
     
-    void setMappingType(int mappingType){ this->mappingType = mappingType; };
+    ofxAutoReloadedShader shader;
     
-    void setPov(ofCamera cam){
-        pov = cam;
-    }
+    bool isVisible = true;
+    float alpha = 1.;
     
-    WavePovContent(){
-        
-    }
+    int inputType = 0;
     
-    void setup(vector<Gate> * gates, ofVec3f povPosition, int mappingType){
+    InputToWaveContent(){}
+    
+    void setup(vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, int mappingType){
         //this->pov = pov;
         this->gates = gates;
         this->mappingType = mappingType;
+        this->texture = texture;
         //pov.setPosition(povPosition);
         
-        fbo.allocate(120, 1300, GL_RGB16);
+        fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -57,12 +63,75 @@ public:
             addEdge(gate.rightOuterEdge);
             addEdge(gate.rightInnerEdge);
         }
-
+        
+        inputType = INPUT_EXTERNAL;
     }
+    
+    void setup(vector<Gate> * gates, ofVec3f povPosition, string shaderName, ofVec2f shaderSize, int mappingType){
+        //this->pov = pov;
+        this->gates = gates;
+        this->mappingType = mappingType;
+        this->shader.load("shaders/"+shaderName);
+
+        //pov.setPosition(povPosition);
+        
+        fbo.allocate(120, 1300, GL_RGBA32F_ARB);
+        fbo.begin();
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        fbo.end();
+        
+        createMesh();
+        
+        // setup POV
+        for(auto& gate : *gates){
+            addEdge(gate.leftInnerEdge);
+            addEdge(gate.leftOuterEdge);
+            addEdge(gate.topEdge);
+            addEdge(gate.rightOuterEdge);
+            addEdge(gate.rightInnerEdge);
+        }
+        
+        fboShader.allocate(shaderSize.x, shaderSize.y, GL_RGB);
+        fboShader.begin();
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        fboShader.end();
+        
+        texture = &fboShader.getTexture();
+        
+        inputType = INPUT_SHADER;
+    }
+
+    
+    void setMappingType(int mappingType){ this->mappingType = mappingType; };
+    
+    void setPov(ofCamera cam){
+        pov = cam;
+    }
+    
+    ofCamera* getPovPtr(){ return &pov; }
+    
+    void setPovPosition(ofVec3f pos){
+        pov.setPosition(pos);
+    }
+    
+
+    void setVisible(){ isVisible = true; }
+    void setInvisible(){ isVisible = false; }
+    void setInvisible(float alpha){
+        isVisible = false;
+        alpha = 0;
+    }
+
+    
     
     
     
     void update(){
+        if(isVisible && alpha < 1.) alpha += 0.1;
+        else if( !isVisible && alpha > 0) alpha -= 0.01;
+        
         // Calculate the UV points
         for(auto& e : edges){
             ofVec3f coord = pov.worldToScreen(e.pos);
@@ -78,12 +147,46 @@ public:
         {
             glClearColor(0.0, 0.0, 0.0, 0.0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            texture->bind();
-            {
-                ofSetColor(255);
-                mesh.draw();
+            switch (inputType) {
+                    
+                    // EXTERNAL TEXTURE
+                case INPUT_EXTERNAL:
+                    texture->bind();{
+                        ofSetColor(255, alpha*255);
+                        mesh.draw();
+                    }
+                    texture->unbind();
+                    break;
+                    
+                    
+                    // SHADER CALCULATES TEXTURE
+                case INPUT_SHADER:
+                    fboShader.begin();{
+                        glClearColor(0.0, 0.0, 0.0, 0.0);
+                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                        shader.begin();{
+                            shader.setUniform2f("iResolution", fboShader.getWidth(), fboShader.getHeight());
+                            shader.setUniform1f("iGlobalTime",     ofGetElapsedTimef() ) ;//counter);
+                            ofSetColor(255,255,255);
+                            ofFill();
+                            ofDrawRectangle(0, 0, fboShader.getWidth(), fboShader.getHeight());
+                        }
+                        shader.end();
+                    }
+                    fboShader.end();
+                    
+                    texture->bind();{
+                        ofSetColor(255, alpha*255);
+                        mesh.draw();
+                    }
+                    texture->unbind();
+                    break;
+                    
+                default:
+                    break;
             }
-            texture->unbind();
+
         }
         fbo.end();
     }
@@ -103,7 +206,7 @@ public:
     
     ofTexture getTexture(){ return fbo.getTexture(); }
     
-    
+    ofFbo* getFboPtr(){ return &fbo; }
     
     
     void calcMapping(){
@@ -126,12 +229,12 @@ public:
                 
             case TUBE:
                 float dist = texture->getWidth()/40;
-                for(int i = 0; i <= 40; i++){
-                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*145/1590));
-                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120)/1590));
-                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120+530)/1590));
-                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120+530+530)/1590));
-                    texCoords.push_back(ofVec2f(i*dist,texture->getHeight()*(145+120+530+530+120)/1590));
+                for(int i = 0; i <= 39; i++){
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*145/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120)/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530)/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530)/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530+120)/1590));
                 }
                 break;
         }
@@ -217,6 +320,10 @@ public:
     
     vector <Edge> edges;
     
+    enum povInputType : int {
+        INPUT_EXTERNAL = 1,
+        INPUT_SHADER = 2,
+    };
 };
 
-#endif /* WavePovContent_h */
+#endif /* InputToWaveContent_h */

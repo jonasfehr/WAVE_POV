@@ -20,7 +20,7 @@
 			<hue>0.635568</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
-			<contrast>0</contrast>
+			<contrast>0.658163</contrast>
 			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</Smoke>
@@ -37,11 +37,11 @@
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0</opacity>
+			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</PovPocket>
 		<Gate>
-			<hue>0</hue>
+			<hue>0.122449</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
@@ -53,7 +53,7 @@
 			<saturation>0.458559</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0</opacity>
+			<opacity>0.683673</opacity>
 			<blendMode>3</blendMode>
 		</Lines>
 	<Ghosts>

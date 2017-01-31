@@ -134,6 +134,7 @@ class SyphonFbo : public ofxSyphonServer{
 public:
     ofFbo fbo;    
     ofTexture *texture;
+    int mode = 0;
     
     SyphonFbo(){
         
@@ -149,6 +150,14 @@ public:
         fbo.end();
         ofxSyphonServer::setName(name);
         
+        mode = 0;
+    }
+    
+    void setup(string name, ofTexture *texture){
+        this->texture = texture;
+        ofxSyphonServer::setName(name);
+        
+        mode = 1;
     }
     
     
@@ -170,7 +179,11 @@ public:
     
     void publish(){
         ofFill();
-        publishTexture(&fbo.getTexture());
+        if(mode == 1){
+            ofxSyphonServer::publishTexture(texture);
+        }else {
+            ofxSyphonServer::publishTexture(&fbo.getTexture());
+        }
     }
     
     float getWidth(){
@@ -179,6 +192,10 @@ public:
     
     float getHeight(){
         return fbo.getHeight();
+    }
+    
+    ofFbo* getFboPtr(){
+        return &fbo;
     }
     
 };

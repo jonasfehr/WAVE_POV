@@ -20,7 +20,9 @@ enum BlendModes_Mixer : int {
     BLEND_SUBTRACT = 5,
     BLEND_SCREEN = 6,
     BLEND_AVERAGE = 7,
-    BLEND_SOFT_LIGHT = 8
+    BLEND_SOFT_LIGHT = 8,
+    BLEND_OVERLAY = 9,
+    BLEND_ONTOP = 10
 };
 
 class TextureGroup{
@@ -31,19 +33,23 @@ public:
     ofParameter<float> brightness;
     ofParameter<float> contrast;
     ofParameter<float> opacity;
-    ofParameter<float> blendMode;
-    int initialBlendMode = 1;
+    ofParameter<int> blendMode;
     
     ofFbo *fbo;
     
-    void addParameters(string name){
+    TextureGroup(string name, int blendMode, ofFbo *fbo){
+        addParameters(name, blendMode);
+        this->fbo = fbo;
+    }
+    
+    void addParameters(string name, int initialBlendMode){
         parameters.setName(name);
-        parameters.add(hue.set("hue", 0., 0., 1.));
+        parameters.add(hue.set("hue", ofRandom(1.), 0., 1.));
         parameters.add(saturation.set("saturation", 1., 0., 1.));
         parameters.add(brightness.set("brightness", 1., 0., 1.));
         parameters.add(contrast.set("contrast", .5, 0., 1.));
         parameters.add(opacity.set("opacity", 1., 0., 1.));
-        parameters.add(blendMode.set("blendMode", initialBlendMode, 1, 8));
+        parameters.add(blendMode.set("blendMode", initialBlendMode, 1, 10));
     }
 
 };
@@ -78,19 +84,17 @@ public:
     }
     
     void addFboChannel(ofFbo * fbo, string name, int blendMode){
-        TextureGroup texGroup;
-        texGroup.fbo = fbo;
-        texGroup.addParameters(name);
-        texGroups.push_back(texGroup);
-        texGroups.back().initialBlendMode = blendMode;
-        //  parameterGroup.add(texGroups.back().parameters);
+        TextureGroup texGroup = TextureGroup(name, blendMode, fbo);
+        texGroups.push_back( texGroup );
         setup();
     }
     
     ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }
     
     vector<ofParameterGroup*> getVectorOfParameterSubgroups(){
+        
         vector<ofParameterGroup*> paramSubGroups;
+        
         for(int i = 0; i < texGroups.size(); i++){
             paramSubGroups.push_back(&texGroups[i].parameters);
         }
@@ -104,11 +108,14 @@ private:
     ofParameterGroup parameterGroup;
     
     void setup(){
+        
+        //ParameterGroup
         parameterGroup.clear();
         parameterGroup.setName("Mixer");
         for(int i = 0; i < texGroups.size(); i++){
             parameterGroup.add(texGroups[i].parameters);
         }
+        
         // GENERATE THE SHADER
         stringstream shaderScript;
         shaderScript << "#version 120" << endl;

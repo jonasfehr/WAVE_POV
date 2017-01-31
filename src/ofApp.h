@@ -2,23 +2,28 @@
 
 #include "ofMain.h"
 #include "ofxGUI.h"
-#include "Gate.h"
-#include "POV.h"
-#include "Users.h"
-#include "Pocket.h"
 #include "ofxGrabCam.h"
 #include "ofxSyphon.h"
-#include "SyphonUtils.h"
-#include "WavePovContent.h"
+#include "ofxAutoReloadedShader.h"
+
+
+#include "Gate.h"
+#include "POV.h"
+#include "User.h"
+
+#include "PocketPov.h"
+#include "PocketZone.h"
+
+#include "InputToWaveContent.h"
 #include "WaveGateContent.h"
 #include "WaveShaderContent.h"
 #include "WavePositionalContent.h"
+
 #include "TextureMix.h"
-#include "ofxAutoReloadedShader.h"
+#include "SyphonUtils.h"
 #include "Wekinator.h"
 
-
-#define VIEWER_HEIGHT 1.8
+#define VIEWER_HEIGHT 1.73
 
 class ofApp : public ofBaseApp{
 
@@ -48,7 +53,11 @@ class ofApp : public ofBaseApp{
     
     // GUI
     bool hideGui = false;
-    ofxPanel gui;
+    ofxPanel guiGeneral;
+    ofxPanel guiMixer;
+    ofxPanel guiControls;
+    ofxPanel guiWekinator;
+
     ofParameterGroup guiGroup;
 
     ofParameterGroup paramGroup;
@@ -64,10 +73,6 @@ class ofApp : public ofBaseApp{
     ofParameter<float> in_3;
     ofParameter<float> in_4;
 
-    ofParameterGroup wekinatorTestOut;
-    ofParameter<float> out_1;
-    ofParameter<float> out_2;
-    ofParameter<float> out_3;
     
     // Gates
     vector<Gate> gates;
@@ -75,16 +80,16 @@ class ofApp : public ofBaseApp{
     // Syphon in & out
     SyphonClientDir syphonIn;
     SyphonFbo syphonOut;
+    SyphonFbo syphonLayerPreview;
     SyphonFbo syphonSimOut;
     
     // create content;
-    WavePovContent contentPovFree;
-    WavePovContent contentPovFront;
-    WavePovContent contentPovBack;
+    InputToWaveContent contentPovFree;
     WaveGateContent contentGate;
-    WaveShaderContent contentSmoke;
-    WavePositionalContent contentImpulses;
-        
+    WaveShaderContent contentShaderSmoke;
+    WaveShaderContent contentShaderLines;
+    WavePositionalContent contentPosGhosts;
+    
     // mappings
     int mappingIndx;
     
@@ -108,13 +113,18 @@ class ofApp : public ofBaseApp{
 
     
     // Users
-    map<int, Users> users;
+    map<int, User> users;
     
     // Pockets
     
 
-    vector <std::unique_ptr<Pocket>> pockets;
+    PocketZone pocketZone_1;
+    PocketPov pocketPov_1;
 
+    
+    // Images to be loaded
+    vector<ofImage> imgGateContent;
+    vector<ofImage> imgPosContent;
     
 
 };

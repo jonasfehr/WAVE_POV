@@ -1,0 +1,8 @@
+<General>
+	<VIEWs>
+		<draw_floor>1</draw_floor>
+		<draw_gates>1</draw_gates>
+		<draw_syphon_in>1</draw_syphon_in>
+	</VIEWs>
+<General/>
+</General>

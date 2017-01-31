@@ -8,18 +8,18 @@
 
 #ifndef WaveShaderContent_h
 #define WaveShaderContent_h
+
 #include "ofxAutoReloadedShader.h"
+#include "WaveContent.h"
 
 
-
-
-
-class WaveShaderContent{
+class WaveShaderContent  : public WaveContent{
 public:
-    ofFbo fbo;
-    ofxAutoReloadedShader shader;
+
     //float counter = 0.;
     //float increment = 0.1;
+    
+    WaveShaderContent(){}
     void setup(string shaderName){
         
         fbo.allocate(40, 1300, GL_RGBA32F_ARB);
@@ -27,7 +27,6 @@ public:
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         fbo.end();
-        fbo.draw(0,0, 120, 1300);
         
         shader.load("shaders/"+shaderName);
     }
@@ -67,13 +66,6 @@ public:
     
  //   void setIncrement( float value ){ increment = value;}
     
-    void draw(){
-        fbo.draw(0,0, 120, 1300);
-    }
-    
-    ofTexture getTexture(){
-        return fbo.getTexture();
-    }
 };
 
 #endif /* WaveShaderContent_h */
