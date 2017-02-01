@@ -47,6 +47,23 @@ public:
         cout << "Wekinator setup: " << inParameters->size() << " inputs | " << numOfOutputs << " outputs" << endl;
     }
     
+    void setup(ofParameterGroup * inParameters, ofParameterGroup* outParameterGroup){
+        this->inParameters = inParameters;
+        this->outParameterGroups.push_back( outParameterGroup );
+        
+        sender.setup("127.0.0.1", SEND_PORT);
+        receiver.setup(RECEIVE_PORT);
+        
+        bIsRunning = false;
+        
+        int numOfOutputs = 0;
+        for(auto & outParameterGroup : this->outParameterGroups){
+            numOfOutputs += outParameterGroup->size();
+        }
+        
+        cout << "Wekinator setup: " << inParameters->size() << " inputs | " << numOfOutputs << " outputs" << endl;
+    }
+    
     void update(){
         if( ofGetFrameNum()%6 == 0) send();
         
@@ -57,8 +74,6 @@ public:
             if( ofGetFrameNum()%6 == 0) sendOutputs();
             
         }
-
-        
     }
     
     void receive(){
@@ -71,7 +86,9 @@ public:
             if(m.getAddress() == WEK_OUT_ADDRESS){
                 int i = 0;
                 for(auto & outParameterGroup : outParameterGroups){
-                    outParameterGroup->getFloat(i) = m.getArgAsFloat(i);
+                    for(int j = 0; j < outParameterGroup->size(); j++){
+                        outParameterGroup->getFloat(j) = m.getArgAsFloat(i+j);
+                    }
                     i++;
                 }
             }

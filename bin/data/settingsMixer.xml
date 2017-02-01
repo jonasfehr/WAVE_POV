@@ -45,16 +45,16 @@
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0.637755</opacity>
+			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</Gate>
 	<Lines>
-			<hue>0.586735</hue>
-			<saturation>0.458559</saturation>
+			<hue>0.484694</hue>
+			<saturation>0.622449</saturation>
 			<brightness>1</brightness>
-			<contrast>0.5</contrast>
+			<contrast>0</contrast>
 			<opacity>1</opacity>
-			<blendMode>3</blendMode>
+			<blendMode>1</blendMode>
 		</Lines>
 	<Ghosts>
 			<hue>0.377551</hue>
@@ -88,6 +88,14 @@
 			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</PovZone_1>
+	<SyphonInPovFree>
+			<hue>0.705525</hue>
+			<saturation>1</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>0</opacity>
+			<blendMode>1</blendMode>
+		</SyphonInPovFree>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

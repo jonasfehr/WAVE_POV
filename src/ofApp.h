@@ -68,11 +68,13 @@ class ofApp : public ofBaseApp{
     ofVec3f center = ofVec3f(0,VIEWER_HEIGHT, 40);
     
     
-    ofParameterGroup paramsWekinator;
+    ofParameterGroup paramsWekinatorIn;
     ofParameter<float> in_1;
     ofParameter<float> in_2;
     ofParameter<float> in_3;
     ofParameter<float> in_4;
+    ofParameterGroup paramsWekinatorOut;
+
 
     
     // Gates
@@ -81,15 +83,14 @@ class ofApp : public ofBaseApp{
     // Syphon in & out
     SyphonClientDir syphonIn;
     SyphonFbo syphonOut;
-    SyphonFbo syphonLayerPreview;
-    SyphonFbo syphonSimOut;
+//    SyphonFbo syphonSimOut;
     
     // create content;
     InputToWaveContent contentPovFree;
-    WaveGateContent contentGate;
-    WaveShaderContent contentShaderSmoke;
     WaveShaderContent contentShaderLines;
-    WavePositionalContent contentPosGhosts;
+    WaveGateContent contentGate;
+//    WaveShaderContent contentShaderSmoke;
+//    WavePositionalContent contentPosGhosts;
     
     // mappings
     int mappingIndx;
@@ -117,10 +118,7 @@ class ofApp : public ofBaseApp{
     map<int, User> users;
     
     // Pockets
-    
-
     PocketZone pocketZone_1;
-    
     PocketPov pocketPov_1;
     PocketPovPositionalContent pocketPovPos_2;
     

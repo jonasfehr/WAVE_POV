@@ -36,14 +36,15 @@ void ofApp::setup(){
     camera.setGlobalPosition(camPresets[camPresetIndx].pos );
     camera.lookAt(center);
     
-    // Add gates
+    // SETUP THE GATES
     for(int i = 0; i < 40; i++){
         Gate gate = Gate(ofVec3f(0,0, i*2), i);
         gates.push_back(gate);
     }
     
     // setup content generators
-    contentPovFree.setup(&gates, camPresets[0].pos, "electric", ofVec2f(512), TUBE);
+    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
+    contentShaderLines.setup("lines");
     
     //load images
     ofImage img;
@@ -57,58 +58,69 @@ void ofApp::setup(){
     imgGateContent.push_back(img);
     
     contentGate.setup("gate", &imgGateContent);
+    //
+    //    img.load("images/img1.png");
+    //    imgPosContent.push_back(img);
+    //    img.load("images/img2.png");
+    //    imgPosContent.push_back(img);
+    //    img.load("images/img3.png");
+    //    imgPosContent.push_back(img);
+    //
+    //    contentPosGhosts.setup("Ghosts", &imgPosContent, &users);
     
-    img.load("images/img1.png");
-    imgPosContent.push_back(img);
-    img.load("images/img2.png");
-    imgPosContent.push_back(img);
-    img.load("images/img3.png");
-    imgPosContent.push_back(img);
     
-    contentPosGhosts.setup("Ghosts", &imgPosContent, &users);
-
-    
-    contentShaderSmoke.setup("smokeNoise");
-    contentShaderLines.setup("lines");
+    //    contentShaderSmoke.setup("smokeNoise");
     
     
     // setup Syphon
     syphonIn.setup();
     syphonIn.find("Main View", "Modul8");
     syphonOut.setup("WaveForMapping", 120, 1300);
-    syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
+    //    syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
     // add POCKETS
     pocketZone_1.setup(10, 20, "stars", ofVec2f(512));
-    pocketPov_1.setup(2., &gates, camPresets[0].pos, "electric");
-    pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
+    pocketPov_1.setup(10., &gates, camPresets[0].pos, "electric");
+    //    pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
     
     
     
     // setup Mixer
-    textureMixer.addFboChannel(contentPovFree.getFboPtr(), "PovFree", BLEND_LIGHTEN);
-    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
+    textureMixer.addFboChannel(contentPovFree.getFboPtr(), "SyphonInPovFree", BLEND_ADD);
     textureMixer.addFboChannel(contentShaderLines.getFboPtr(), "Lines", BLEND_SCREEN);
-    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
+    
+    //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
+    //    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
     textureMixer.addFboChannel(contentGate.getFboPtr(), "Gate", BLEND_ADD);
     textureMixer.addFboChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
-    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
-    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
+    //    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
+    //    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
     
     setupParameterGroup();
     guiGroup.setName("General");
     guiGroup.add(paramGroup);
     
-    ofParameterGroup paramsControls;
-    paramsControls.setName("ContentControls");
-    paramsControls.add(contentGate.parameterGroup);
-    paramsControls.add(contentPosGhosts.parameterGroup);
-    guiControls.setup( paramsControls );
+    //    ofParameterGroup paramsControls;
+    //    paramsControls.setName("ContentControls");
+    //    paramsControls.add(contentGate.parameterGroup);
+    //    paramsControls.add(contentPosGhosts.parameterGroup);
+    //    guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
+    
+    
+    // setup Wekinator
+    for(auto & paramsTextureMixerChannel : textureMixer.getVectorOfParameterSubgroups()){
+        paramsWekinatorOut.add(paramsTextureMixerChannel->get("saturation"));
+        paramsWekinatorOut.add(paramsTextureMixerChannel->get("brightness"));
+        
+    }
+    
+    wekinator.setup(&paramsWekinatorIn, &paramsWekinatorOut);
+    ofParameterGroup paramsWekinator;
+    paramsWekinator.setName("Wekinator");
+    paramsWekinator.add(paramsWekinatorIn);
+    paramsWekinator.add(paramsWekinatorOut);
     guiWekinator.setup(paramsWekinator);
-    
-    
-    wekinator.setup(&paramsWekinator, textureMixer.getVectorOfParameterSubgroups());
     
     
     guiGeneral.setup(guiGroup);
@@ -120,16 +132,19 @@ void ofApp::setup(){
     
     oscFromSensorFuse.setup(49162);
     
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
     
+    // RECEIVE DATA FROM OUTSIDE
     wekinator.update();
     receiveFromSensorFuse();
     
+    
+    // UPDATE USERS
     for(auto & u : users){
         u.second.update();
         
@@ -139,19 +154,22 @@ void ofApp::update(){
         }
     }
     
-
+    
+    // UPDATE ALL THE CONTENT
     contentPovFree.update();
-    contentGate.update();
-    contentShaderSmoke.update();
     contentShaderLines.update();
-    contentPosGhosts.update();
-    
-    // UPDATE POCKETS
-    pocketZone_1.update();
+    contentGate.update();
+    //    contentShaderSmoke.update();
+    //    contentPosGhosts.update();
+    //
+    //    // UPDATE POCKETS
+    //    pocketZone_1.update();
     pocketPov_1.update();
-    pocketPovPos_2.update();
+    //    pocketPovPos_2.update();
     
     
+    
+    // CREATE THE OUTPUT TO MADMAPPER
     syphonOut.begin();
     {
         ofClear(0);
@@ -160,48 +178,46 @@ void ofApp::update(){
     }
     syphonOut.end();
     
-    
-    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    syphonSimOut.begin();
+    //    syphonSimOut.begin();
+    //    {
+    camera.begin();
     {
-        camera.begin();
-        {
-            ofBackground(10);
-            
-            // Grid
-            if(drawFloor){
-                ofSetColor(20);
-                ofPushMatrix();
-                ofRotateX(90);
-                ofDrawPlane(0, 0, 1000, 1000);
-                ofPopMatrix();
-            }
-            
-            
-            // Draw gates
-            if(drawGates){
-                syphonOut.getTexture().bind();
-                {
-                    for(auto& g : gates){
-                        g.drawMeshLed();
-                    }
-                }
-                syphonOut.getTexture().unbind();
-                
+        ofBackground(10);
+        
+        // Grid
+        if(drawFloor){
+            ofSetColor(20);
+            ofPushMatrix();
+            ofRotateX(90);
+            ofDrawPlane(0, 0, 1000, 1000);
+            ofPopMatrix();
+        }
+        
+        
+        // Draw gates
+        if(drawGates){
+            syphonOut.getTexture().bind();
+            {
                 for(auto& g : gates){
-                    g.drawMeshProfile();
+                    g.drawMeshLed();
                 }
+            }
+            syphonOut.getTexture().unbind();
+            
+            for(auto& g : gates){
+                g.drawMeshProfile();
             }
         }
-        camera.end();
     }
-    syphonSimOut.end();
-    ofSetColor(255);
-    syphonSimOut.draw();
+    camera.end();
+    //    }
+    //    syphonSimOut.end();
+    //    ofSetColor(255);
+    //    syphonSimOut.draw();
     
     // Draw Syphon
     if(drawSyphon){
@@ -229,7 +245,7 @@ void ofApp::draw(){
     
     // PUBLISH OUTPUT
     syphonOut.publish();
-    syphonSimOut.publish();
+    //    syphonSimOut.publish();
     //syphonLayerPreview.publish();
 }
 
@@ -240,11 +256,11 @@ void ofApp::setupParameterGroup(){
     paramGroup.add(drawGates.set("draw gates", true));
     paramGroup.add(drawSyphon.set("draw syphon in", true));
     
-    paramsWekinator.setName("WekinatorInputs");
-    paramsWekinator.add(in_1.set("wekIn_1", 0., 0., 1.));
-    paramsWekinator.add(in_2.set("wekIn_2", 0., 0., 1.));
-    paramsWekinator.add(in_3.set("wekIn_3", 0., 0., 1.));
-    paramsWekinator.add(in_4.set("wekIn_4", 0., 0., 1.));
+    paramsWekinatorIn.setName("WekinatorInputs");
+    paramsWekinatorIn.add(in_1.set("wekIn_1", 0., 0., 1.));
+    paramsWekinatorIn.add(in_2.set("wekIn_2", 0., 0., 1.));
+    paramsWekinatorIn.add(in_3.set("wekIn_3", 0., 0., 1.));
+    paramsWekinatorIn.add(in_4.set("wekIn_4", 0., 0., 1.));
 }
 
 //--------------------------------------------------------------
@@ -259,7 +275,7 @@ void ofApp::drawGUI(){
         //right side
         guiMixer.setPosition(ofGetWidth()-guiMixer.getWidth()-15, 15);
         guiMixer.draw();
-
+        
         string info;
         info += "FPS: " + ofToString(ofGetFrameRate());
         info += "\nPOV: " + ofToString(contentPovFree.pov.getPosition());
@@ -317,7 +333,7 @@ void ofApp::keyPressed(int key){
     }
     
     if(key == 'p'){
-        contentGate.activate(ofRandom(0,40));
+        //        contentGate.activate(ofRandom(0,40));
     }
     
     if(key == 'q'){
@@ -371,7 +387,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    syphonSimOut.fbo.allocate(w, h);
+    //    syphonSimOut.fbo.allocate(w, h);
 }
 
 //--------------------------------------------------------------
@@ -415,8 +431,8 @@ void ofApp::receiveFromSensorFuse(){
             
         }else if(address[0] == "soundObject"){
             // Do something with SoundObjects id = address[1]
- 
-                objects[ofToInt(address[1])].setPosition(ofVec3f(m.getArgAsFloat(0),1.8, m.getArgAsFloat(1)));
+            
+            objects[ofToInt(address[1])].setPosition(ofVec3f(m.getArgAsFloat(0),1.8, m.getArgAsFloat(1)));
             
         }else{
             // unrecognized message: display on the bottom of the screen
