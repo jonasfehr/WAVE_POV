@@ -42,12 +42,11 @@ public:
     InputToWaveContent(){}
     
     void setup(string channelName, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, int mappingType){
-        //this->pov = pov;
         this->name = channelName;
         this->gates = gates;
         this->mappingType = mappingType;
         this->texture = texture;
-        //pov.setPosition(povPosition);
+        pov.setPosition(povPosition);
         
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fbo.begin();
@@ -69,13 +68,13 @@ public:
         inputType = INPUT_EXTERNAL;
     }
     
-    void setup(vector<Gate> * gates, ofVec3f povPosition, string shaderName, ofVec2f shaderSize, int mappingType){
-        //this->pov = pov;
+    void setup(string channelName, vector<Gate> * gates, ofVec3f povPosition, string shaderName, ofVec2f shaderSize, int mappingType){
+        this->name = channelName;
         this->gates = gates;
         this->mappingType = mappingType;
         this->shader.load("shaders/"+shaderName);
 
-        //pov.setPosition(povPosition);
+        pov.setPosition(povPosition);
         
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fbo.begin();

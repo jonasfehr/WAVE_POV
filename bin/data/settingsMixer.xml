@@ -49,11 +49,11 @@
 			<blendMode>1</blendMode>
 		</Gate>
 	<Lines>
-			<hue>0.484694</hue>
-			<saturation>0.622449</saturation>
+			<hue>0.428571</hue>
+			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0</contrast>
-			<opacity>0</opacity>
+			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</Lines>
 	<Ghosts>
@@ -105,11 +105,11 @@
 			<blendMode>1</blendMode>
 		</SyponInPovFree>
 		<ReactiveGate>
-			<hue>0.229726</hue>
-			<saturation>1</saturation>
+			<hue>1</hue>
+			<saturation>0.806122</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0</opacity>
+			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</ReactiveGate>
 		<PocketPov>
@@ -121,13 +121,21 @@
 			<blendMode>1</blendMode>
 		</PocketPov>
 	<BeadsGradients>
-			<hue>0.299061</hue>
-			<saturation>1</saturation>
+			<hue>0.637755</hue>
+			<saturation>0</saturation>
 			<brightness>1</brightness>
-			<contrast>0.5</contrast>
+			<contrast>0.239796</contrast>
 			<opacity>1</opacity>
-			<blendMode>1</blendMode>
+			<blendMode>2</blendMode>
 		</BeadsGradients>
+	<PovFrontLinesTunel>
+			<hue>0.464286</hue>
+			<saturation>0.602041</saturation>
+			<brightness>1</brightness>
+			<contrast>0</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</PovFrontLinesTunel>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

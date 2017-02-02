@@ -45,7 +45,8 @@ void ofApp::setup(){
     // setup content generators
     contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
     contentShaderLines.setup("Lines", "lines");
-    
+    contentBeadsGradients.setup("BeadsGradients", &beads);
+
     //load images
     ofImage img;
     img.load("images/Pass_1.png");
@@ -59,8 +60,8 @@ void ofApp::setup(){
     
     contentGate.setup("ReactiveGate", &imgGateContent);
     
-    contentBeadsGradients.setup("BeadsGradients", &beads);
-    
+    contentPovFront.setup("PovFrontLinesTunel", &gates, camPresets[0].pos, "smokeNoiseRipples", ofVec2f(512), POV_UV);
+
     //
     //    img.load("images/img1.png");
     //    imgPosContent.push_back(img);
@@ -82,20 +83,22 @@ void ofApp::setup(){
     //    syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
     // add POCKETS
-    pocketZone_1.setup("PocketZone", 10, 20, "stars", ofVec2f(512));
+    pocketZone_1.setup("PocketZone", 10, 20, "stars", ofVec2f(1024));
     pocketPov_1.setup("PocketPov", 10., &gates, camPresets[0].pos, "electric");
     //    pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
     
     
     
     // setup Mixer
-    textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentShaderLines.getFboPtr(), contentShaderLines.getName(), BLEND_SCREEN);
+    textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
+
+    textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentPovFront.getFboPtr(), contentPovFront.getName(), BLEND_ADD);
     
     //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
     //    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
     textureMixer.addFboChannel(contentGate.getFboPtr(), contentGate.getName(), BLEND_ADD);
-    textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
     
     textureMixer.addFboChannel(pocketPov_1.getFboPtr(), pocketPov_1.getName(), BLEND_SOFT_LIGHT);
     //    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
@@ -180,6 +183,7 @@ void ofApp::update(){
     
     // UPDATE ALL THE CONTENT
     contentPovFree.update();
+    contentPovFront.update();
     contentShaderLines.update();
     contentGate.update();
     contentBeadsGradients.update();

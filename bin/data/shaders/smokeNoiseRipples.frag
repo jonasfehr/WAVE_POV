@@ -4,6 +4,7 @@
 
 uniform vec2 iResolution;
 uniform float iGlobalTime;
+#define time iGlobalTime*0.03
 
 float random (in vec2 _st) {
     return fract( sin( dot( _st.xy, vec2(12.9898,78.233) ) ) * 43758.5453123);
@@ -27,6 +28,21 @@ float noise (in vec2 _st) {
     (d - b) * u.x * u.y;
 }
 
+float circle(in vec2 _st, in float _radius, float _feather){
+    vec2 dist = _st-vec2(0.5);
+    _radius = pow(_radius,4.);
+ return smoothstep(_radius-(_radius- 0.),
+                         _radius+(_radius*_feather),
+                         dot(dist,dist)*4.0);
+}
+float ring( vec2 _st, float _radius, float _stroke, float _feather)
+{
+   float r = 1.-circle(_st, _radius, _feather);
+    r = r + circle(_st, _radius+_stroke, _feather);
+ return 1.-r;
+
+}
+
 #define NUM_OCTAVES 2
 
 float fbm ( in vec2 _st) {
@@ -44,16 +60,14 @@ float fbm ( in vec2 _st) {
     return v;
 }
 
-#define numGates 40.
 
 void main(  ) {
     vec2 st = (gl_FragCoord.xy )/min(iResolution.x,iResolution.y);
 
-    st.x *= numGates;
-    st.x = floor(st.x)/5.;
 
 
-    st.y*=.5; // ZOOM
+
+    st*=100.; // ZOOM
 
     st.x += iGlobalTime/20.;
 
@@ -80,7 +94,16 @@ void main(  ) {
     float gain = 1.5;
    f = (f - 0.5) * max(pow(contrast*3., 4.)+0.5, 0.0) * gain;
 
-    vec3 finalColor = vec3(f*3.);
+// Create pulses
+   vec2 stDot = gl_FragCoord.xy / iResolution.xy;
+   float blackDot = circle(stDot, 0.0015, 0.1);
+   float maxSize = 1.;
+   float rings = ring(stDot, mod(time, maxSize), 0.5, 0.02);
+   rings += ring(stDot, mod(time*2.+1., 2.), 0.1, 0.02);
+   rings += ring(stDot, mod(time*2.5+3., 2.), 0.15, 0.02);
+   rings += ring(stDot, mod(time*4.+5., 2.), 0.2, 0.02);
+
+    vec3 finalColor = vec3(clamp(f*(blackDot)*(1.-rings)*10., 0., 1.));
 
     gl_FragColor = vec4( finalColor, 1.);
 }

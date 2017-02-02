@@ -39,7 +39,7 @@ public:
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         
-        povMappedContent.setup(gates, povPosition, shaderName, ofVec2f(512), POV_UV);
+        povMappedContent.setup(channelName, gates, povPosition, shaderName, ofVec2f(512), POV_UV);
     }
     
     void update(){

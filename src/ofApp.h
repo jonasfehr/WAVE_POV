@@ -88,6 +88,7 @@ class ofApp : public ofBaseApp{
     
     // create content;
     InputToWaveContent contentPovFree;
+    InputToWaveContent contentPovFront;
     WaveShaderContent contentShaderLines;
     WaveGateContent contentGate;
 //    WaveShaderContent contentShaderSmoke;

@@ -13,13 +13,13 @@
 <group/>
 <ReactiveGate>
 		<speed>0.01</speed>
-		<mode>1</mode>
+		<mode>2</mode>
 		<easing>1</easing>
 		<imageIndex>0</imageIndex>
 	</ReactiveGate>
 <BeadsGradients_gradients>
-		<blendMode>2</blendMode>
-		<opacity>0.658163</opacity>
-		<width>8.67347</width>
+		<blendMode>1</blendMode>
+		<opacity>1</opacity>
+		<width>0.0357143</width>
 	</BeadsGradients_gradients>
 </ContentControls>
