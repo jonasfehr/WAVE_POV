@@ -20,8 +20,8 @@ public:
     //float increment = 0.1;
     
     WaveShaderContent(){}
-    void setup(string shaderName){
-        
+    void setup(string channelName, string shaderName){
+        this->name = channelName;
         fbo.allocate(40, 1300, GL_RGBA32F_ARB);
         fbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);

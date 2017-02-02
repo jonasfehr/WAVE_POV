@@ -124,7 +124,6 @@
 		A2AAA8CA403479E6FCDF920E /* OscHostEndianness.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscHostEndianness.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscHostEndianness.h; sourceTree = SOURCE_ROOT; };
 		ADD194746185E2DA11468377 /* IpEndpointName.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = IpEndpointName.cpp; path = ../../../addons/ofxOsc/libs/oscpack/src/ip/IpEndpointName.cpp; sourceTree = SOURCE_ROOT; };
 		AE335EB4709BFD4671EEAC84 /* MessageMappingOscPacketListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MessageMappingOscPacketListener.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/MessageMappingOscPacketListener.h; sourceTree = SOURCE_ROOT; };
-		AEE368D4C907572305D34DFE /* User.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = User.h; path = src/User.h; sourceTree = SOURCE_ROOT; };
 		B31C608870ECEB2490A93736 /* ofxOscParameterSync.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscParameterSync.h; path = ../../../addons/ofxOsc/src/ofxOscParameterSync.h; sourceTree = SOURCE_ROOT; };
 		B87C60311EC1FE841C1ECD89 /* ofxLabel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxLabel.h; path = ../../../addons/ofxGui/src/ofxLabel.h; sourceTree = SOURCE_ROOT; };
 		BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscPrintReceivedElements.cpp; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.cpp; sourceTree = SOURCE_ROOT; };
@@ -156,11 +155,12 @@
 		F3CFD94F37ABC9182A320B79 /* ofxAutoReloadedShader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxAutoReloadedShader.h; path = ../../../addons/ofxAutoReloadedShader/src/ofxAutoReloadedShader.h; sourceTree = SOURCE_ROOT; };
 		F4F5B6B8BA2BD52C646ED908 /* OscException.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscException.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscException.h; sourceTree = SOURCE_ROOT; };
 		F7FBC56859535E597B24BB91 /* NetworkingUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = NetworkingUtils.h; path = ../../../addons/ofxOsc/libs/oscpack/src/ip/NetworkingUtils.h; sourceTree = SOURCE_ROOT; };
+		FF1148841E434A3D00C6330E /* WaveGradientOnPositionContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveGradientOnPositionContent.h; sourceTree = "<group>"; };
 		FF3ACCF31E40AC7400EAFA5C /* WaveContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveContent.h; sourceTree = "<group>"; };
 		FF5804541E3F487A00E8300C /* PocketPov.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PocketPov.h; sourceTree = "<group>"; };
 		FF5804551E3F48A000E8300C /* PocketZone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PocketZone.h; sourceTree = "<group>"; };
 		FF7C77551E40EE99000567FE /* PocketPovPositionalContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PocketPovPositionalContent.h; sourceTree = "<group>"; };
-		FF7C77561E40EFE0000567FE /* Objects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Objects.h; sourceTree = "<group>"; };
+		FF7C77561E40EFE0000567FE /* ExternalObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalObject.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -417,8 +417,7 @@
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				644116E8707DBCFCCA9B44A7 /* Gate.h */,
-				AEE368D4C907572305D34DFE /* User.h */,
-				FF7C77561E40EFE0000567FE /* Objects.h */,
+				FF7C77561E40EFE0000567FE /* ExternalObject.h */,
 				FFA8830D1E3BA66F00A7B247 /* Content */,
 				FFA8830B1E3BA64800A7B247 /* Utils */,
 				FFA8830C1E3BA65000A7B247 /* Unused */,
@@ -507,6 +506,7 @@
 				7A19B7CC9524C734799ACB3F /* InputToWaveContent.h */,
 				0D22F69848AE5937D268CDAF /* WaveGateContent.h */,
 				004E0C1B4D73003A4F773D5E /* WavePositionalContent.h */,
+				FF1148841E434A3D00C6330E /* WaveGradientOnPositionContent.h */,
 				C73BEC6862E66233447ADD18 /* WaveShaderContent.h */,
 			);
 			name = Content;

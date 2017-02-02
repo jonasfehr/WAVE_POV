@@ -11,33 +11,37 @@
 
 #include "Pocket.h"
 #include "InputToWaveContent.h"
-#include "Objects.h"
+#include "ExternalObject.h"
 
 
 
 class PocketPovPositionalContent : public Pocket{
 public:
     float minLifeSpan = 0;
-    User * user;
+    ExternalObject * externalObject;
     InputToWaveContent povMappedContent;
     float timeOfActivation;
-    float oldUserLifespan = 0;
-    int userNotUpdatedSince;
+    float oldExternalObjectLifespan = 0;
+    int externalObjectNotUpdatedSince;
+    string name;
+    string getName(){ return name; }
     
     ofFbo fboContent;
     
-    map<int, Objects> *objects;
+    map<int, ExternalObject> *externalObjects;
     
     
     PocketPovPositionalContent(){};
     
-    void setup( float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, map<int, Objects> *objects){
+    void setup(string channelName, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, map<int, ExternalObject> *externalObjects){
+        this->name = channelName;
+
         this-> minLifeSpan = minLifeSpan;
 
-        this->objects = objects;
+        this->externalObjects = externalObjects;
         this->povMappedContent.setInvisible(0.);
         
-        povMappedContent.setup(gates, povPosition, &fboContent.getTexture(), POV_UV);
+        povMappedContent.setup(channelName, gates, povPosition, &fboContent.getTexture(), POV_UV);
         
         fboContent.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA32F_ARB);
 
@@ -56,10 +60,10 @@ public:
             
                 povMappedContent.pov.begin();
                 {
-                    for(auto & o : *objects){
+                    for(auto & o : *externalObjects){
                         
-                        ofVec3f pos = o.second.position;
-                        ofVec3f size = o.second.size;
+                        ofVec3f pos = o.second.getPosition();
+                        ofVec3f size = o.second.getSize();
 
                         ofSetColor(255);
                         ofDrawSphere(pos, size.x);
@@ -76,22 +80,22 @@ public:
             
             povMappedContent.setInputTexture(&fboContent.getTexture());
             povMappedContent.update();
-            // deactivate pocket if user is lost
-            if(oldUserLifespan == user->getLifespan()) userNotUpdatedSince++;
-            if(user->getLifespan() > oldUserLifespan) userNotUpdatedSince = 0;
-            if(oldUserLifespan - user->getLifespan() > 0 || userNotUpdatedSince > 10){
+            // deactivate pocket if externalObject is lost
+            if(oldExternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
+            if(externalObject->getLifespan() > oldExternalObjectLifespan) externalObjectNotUpdatedSince = 0;
+            if(oldExternalObjectLifespan - externalObject->getLifespan() > 0 || externalObjectNotUpdatedSince > 10){
                 isActive = false;
                 povMappedContent.setInvisible();
-                oldUserLifespan = 0;
+                oldExternalObjectLifespan = 0;
                 return;
             }
-            oldUserLifespan = user->getLifespan();
+            oldExternalObjectLifespan = externalObject->getLifespan();
             
             povMappedContent.setVisible();
-            ofVec3f newPos = ofVec3f(0, 1.72, user->getPosition());
+            ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);
             ofVec3f povCurrentPos = povMappedContent.getPovPtr()->getPosition();
-            povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the users position to create a transition
-            povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, user->getPosition()+user->getVelocity()));
+            povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
+            povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, externalObject->getPosition().z+externalObject->getVelocity().z));
             
         }
         
@@ -99,8 +103,8 @@ public:
     
     float getMinLifespan(){ return minLifeSpan; };
     
-    void setUser(User * user){
-        this->user = user;
+    void setExternalObject(ExternalObject * externalObject){
+        this->externalObject = externalObject;
         isActive = true;
     };
     

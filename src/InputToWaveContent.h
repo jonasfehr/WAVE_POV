@@ -30,6 +30,7 @@ public:
     ofCamera pov;
     vector<Gate> * gates;
     int mappingType = TUBE;
+    string name;
     
     ofxAutoReloadedShader shader;
     
@@ -40,8 +41,9 @@ public:
     
     InputToWaveContent(){}
     
-    void setup(vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, int mappingType){
+    void setup(string channelName, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, int mappingType){
         //this->pov = pov;
+        this->name = channelName;
         this->gates = gates;
         this->mappingType = mappingType;
         this->texture = texture;
@@ -324,6 +326,9 @@ public:
         INPUT_EXTERNAL = 1,
         INPUT_SHADER = 2,
     };
+    
+    string getName(){ return name; }
+
 };
 
 #endif /* InputToWaveContent_h */

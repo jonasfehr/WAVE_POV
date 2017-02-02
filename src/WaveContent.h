@@ -34,6 +34,8 @@ public:
     virtual void setupParameterGroup(string name){}
     
     ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }
+    
+    string getName(){ return name; }
 
     
 private:

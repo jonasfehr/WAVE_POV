@@ -32,7 +32,8 @@ public:
     
     PocketZone(){};
     
-    void setup( int start, int stop, ofTexture *texture){
+    void setup(string channelName, int start, int stop, ofTexture *texture){
+        this->name = channelName;
         this->start = start;
         this->stop = stop;
         this->texture = texture;
@@ -45,7 +46,8 @@ public:
 
     };
     
-    void setup( int start, int stop, string shaderName, ofVec2f shaderSize){
+    void setup(string channelName, int start, int stop, string shaderName, ofVec2f shaderSize){
+        this->name = channelName;
         this->start = start;
         this->stop = stop;
                 

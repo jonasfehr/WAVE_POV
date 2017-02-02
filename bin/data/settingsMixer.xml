@@ -53,7 +53,7 @@
 			<saturation>0.622449</saturation>
 			<brightness>1</brightness>
 			<contrast>0</contrast>
-			<opacity>1</opacity>
+			<opacity>0</opacity>
 			<blendMode>1</blendMode>
 		</Lines>
 	<Ghosts>
@@ -96,6 +96,38 @@
 			<opacity>0</opacity>
 			<blendMode>1</blendMode>
 		</SyphonInPovFree>
+	<SyponInPovFree>
+			<hue>0.600725</hue>
+			<saturation>1</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>0</opacity>
+			<blendMode>1</blendMode>
+		</SyponInPovFree>
+		<ReactiveGate>
+			<hue>0.229726</hue>
+			<saturation>1</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>0</opacity>
+			<blendMode>1</blendMode>
+		</ReactiveGate>
+		<PocketPov>
+			<hue>0.00996686</hue>
+			<saturation>1</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>0</opacity>
+			<blendMode>1</blendMode>
+		</PocketPov>
+	<BeadsGradients>
+			<hue>0.299061</hue>
+			<saturation>1</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>1</opacity>
+			<blendMode>1</blendMode>
+		</BeadsGradients>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

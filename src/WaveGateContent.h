@@ -57,9 +57,10 @@ public:
 
     
     WaveGateContent(){};
-    void setup(string name, vector<ofImage> *images){
+    
+    void setup(string channelName, vector<ofImage> *images){
         this->images = images;
-        this->name = name;
+        this->name = channelName;
 
         fbo.allocate(40, 1300, GL_RGBA32F_ARB);
         fbo.begin();

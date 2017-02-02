@@ -9,7 +9,7 @@
 
 #include "Gate.h"
 #include "POV.h"
-#include "User.h"
+#include "ExternalObject.h"
 
 #include "PocketPov.h"
 #include "PocketZone.h"
@@ -19,6 +19,7 @@
 #include "WaveGateContent.h"
 #include "WaveShaderContent.h"
 #include "WavePositionalContent.h"
+#include "WaveGradientOnPositionContent.h"
 
 #include "TextureMix.h"
 #include "SyphonUtils.h"
@@ -91,6 +92,7 @@ class ofApp : public ofBaseApp{
     WaveGateContent contentGate;
 //    WaveShaderContent contentShaderSmoke;
 //    WavePositionalContent contentPosGhosts;
+    WaveGradientOnPositionContent contentBeadsGradients;
     
     // mappings
     int mappingIndx;
@@ -110,12 +112,12 @@ class ofApp : public ofBaseApp{
     
     // OSC
     ofxOscReceiver oscFromSensorFuse;
+    ofxOscReceiver oscFromWaveAudio;
     
-    void receiveFromSensorFuse();
+    void receiveOSC();
 
     
-    // Users
-    map<int, User> users;
+
     
     // Pockets
     PocketZone pocketZone_1;
@@ -126,8 +128,10 @@ class ofApp : public ofBaseApp{
     vector<ofImage> imgGateContent;
     vector<ofImage> imgPosContent;
     
-    // Objects
-    map<int, Objects> objects;
+    // External Objects
+    map<int, ExternalObject> users;
+    map<int, ExternalObject> soundObjects;
+    map<int, ExternalObject> beads;
 
 
 };

@@ -13,6 +13,7 @@
 class Pocket{
 public:
     bool isActive = false;
+
     
     Pocket( ){
     }
@@ -20,7 +21,8 @@ public:
     virtual void update() = 0;
     
     void getIsActive(){ return isActive; }
-    
+
+
 };
 
 #endif /* Pocket_h */

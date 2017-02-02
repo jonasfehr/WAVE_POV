@@ -43,8 +43,8 @@ void ofApp::setup(){
     }
     
     // setup content generators
-    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
-    contentShaderLines.setup("lines");
+    contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
+    contentShaderLines.setup("Lines", "lines");
     
     //load images
     ofImage img;
@@ -57,7 +57,10 @@ void ofApp::setup(){
     img.load("images/Pass_4.png");
     imgGateContent.push_back(img);
     
-    contentGate.setup("gate", &imgGateContent);
+    contentGate.setup("ReactiveGate", &imgGateContent);
+    
+    contentBeadsGradients.setup("BeadsGradients", &beads);
+    
     //
     //    img.load("images/img1.png");
     //    imgPosContent.push_back(img);
@@ -79,20 +82,22 @@ void ofApp::setup(){
     //    syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
     // add POCKETS
-    pocketZone_1.setup(10, 20, "stars", ofVec2f(512));
-    pocketPov_1.setup(10., &gates, camPresets[0].pos, "electric");
+    pocketZone_1.setup("PocketZone", 10, 20, "stars", ofVec2f(512));
+    pocketPov_1.setup("PocketPov", 10., &gates, camPresets[0].pos, "electric");
     //    pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
     
     
     
     // setup Mixer
-    textureMixer.addFboChannel(contentPovFree.getFboPtr(), "SyphonInPovFree", BLEND_ADD);
-    textureMixer.addFboChannel(contentShaderLines.getFboPtr(), "Lines", BLEND_SCREEN);
+    textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentShaderLines.getFboPtr(), contentShaderLines.getName(), BLEND_SCREEN);
     
     //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
     //    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
-    textureMixer.addFboChannel(contentGate.getFboPtr(), "Gate", BLEND_ADD);
-    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
+    textureMixer.addFboChannel(contentGate.getFboPtr(), contentGate.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
+    
+    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), pocketPov_1.getName(), BLEND_SOFT_LIGHT);
     //    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
     //    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
     
@@ -100,11 +105,12 @@ void ofApp::setup(){
     guiGroup.setName("General");
     guiGroup.add(paramGroup);
     
-    //    ofParameterGroup paramsControls;
-    //    paramsControls.setName("ContentControls");
-    //    paramsControls.add(contentGate.parameterGroup);
+        ofParameterGroup paramsControls;
+        paramsControls.setName("ContentControls");
+    paramsControls.add(contentGate.parameterGroup);
+    paramsControls.add(contentBeadsGradients.parameterGroup);
     //    paramsControls.add(contentPosGhosts.parameterGroup);
-    //    guiControls.setup( paramsControls );
+        guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
     
     
@@ -131,6 +137,7 @@ void ofApp::setup(){
     guiControls.loadFromFile("settingsControls.xml");
     
     oscFromSensorFuse.setup(49162);
+    oscFromWaveAudio.setup(49164);
     
     
 }
@@ -141,24 +148,41 @@ void ofApp::update(){
     
     // RECEIVE DATA FROM OUTSIDE
     wekinator.update();
-    receiveFromSensorFuse();
+    receiveOSC();
     
     
-    // UPDATE USERS
-    for(auto & u : users){
-        u.second.update();
+    // UPDATE External Objects
+    for(auto & eO : users){
+        eO.second.update();
         
-        if(u.second.isDead()) {
-            users.erase(u.first);
+        if(eO.second.isDead()) {
+            users.erase(eO.first);
             return;
         }
     }
-    
+    for(auto & eO : soundObjects){
+        eO.second.update();
+        
+        if(eO.second.isDead()) {
+            soundObjects.erase(eO.first);
+            return;
+        }
+    }
+    for(auto & eO : beads){
+        eO.second.update();
+        
+        if(eO.second.isDead()) {
+            beads.erase(eO.first);
+            return;
+        }
+    }
+
     
     // UPDATE ALL THE CONTENT
     contentPovFree.update();
     contentShaderLines.update();
     contentGate.update();
+    contentBeadsGradients.update();
     //    contentShaderSmoke.update();
     //    contentPosGhosts.update();
     //
@@ -401,8 +425,10 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 //--------------------------------------------------------------
-void ofApp::receiveFromSensorFuse(){
+void ofApp::receiveOSC(){
     //PARSE OSC
+    
+    // from SensorFuse
     while(oscFromSensorFuse.hasWaitingMessages()){
         // get the next message
         ofxOscMessage m;
@@ -418,21 +444,22 @@ void ofApp::receiveFromSensorFuse(){
             pocketZone_1.gateActivated(ofToInt(address[1]));
             
         }else if(address[0] == "User"){
-            users[ofToInt(address[1])].updateValues(m.getArgAsFloat(0), m.getArgAsFloat(1), m.getArgAsFloat(2));
+            users[ofToInt(address[1])].updateValuesFromUser(m.getArgAsFloat(0), m.getArgAsFloat(1), m.getArgAsFloat(2));
             
             //cout << "User #" << address[1] << " pos " << m.getArgAsFloat(0) << " life " << m.getArgAsFloat(1) << " vel " << m.getArgAsFloat(2) << endl;
             if( pocketPov_1.getMinLifespan() < m.getArgAsFloat(1) ){
-                pocketPov_1.setUser(&users[ ofToInt(address[1]) ]);
+                pocketPov_1.setExternalObject(&users[ ofToInt(address[1]) ]);
             }
             
             if( pocketPovPos_2.getMinLifespan() < m.getArgAsFloat(1) ){
-                pocketPovPos_2.setUser(&users[ ofToInt(address[1]) ]);
+                pocketPovPos_2.setExternalObject(&users[ ofToInt(address[1]) ]);
             }
             
-        }else if(address[0] == "soundObject"){
-            // Do something with SoundObjects id = address[1]
+        }else if(address[0] == "SoundObject"){
+            soundObjects[ofToInt(address[1])].updateValuesFromSoundObject(m.getArgAsFloat(0), m.getArgAsFloat(1));
             
-            objects[ofToInt(address[1])].setPosition(ofVec3f(m.getArgAsFloat(0),1.8, m.getArgAsFloat(1)));
+        }else if(address[0] == "Bead"){
+            beads[ofToInt(address[1])].updateValuesFromBead(m.getArgAsFloat(0), m.getArgAsFloat(1));
             
         }else{
             // unrecognized message: display on the bottom of the screen
@@ -461,6 +488,48 @@ void ofApp::receiveFromSensorFuse(){
         }
         
     }
+    
+    // from WaveAudio
+    while(oscFromWaveAudio.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        oscFromWaveAudio.getNextMessage(&m);
+        
+        std::vector<std::string> address = ofSplitString(m.getAddress(),"/",true);
+        
+        
+        // check for mouse moved message
+        if(address[0] == "Bead"){
+            beads[ofToInt(address[1])].updateValuesFromBead(m.getArgAsFloat(0), m.getArgAsFloat(1));
+            
+        }else{
+            // unrecognized message: display on the bottom of the screen
+            string msg_string;
+            msg_string = m.getAddress();
+            msg_string += ": ";
+            for(int i = 0; i < m.getNumArgs(); i++){
+                // get the argument type
+                msg_string += m.getArgTypeName(i);
+                msg_string += ":";
+                // display the argument - make sure we get the right type
+                if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+                    msg_string += ofToString(m.getArgAsInt32(i));
+                }
+                else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+                    msg_string += ofToString(m.getArgAsFloat(i));
+                }
+                else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+                    msg_string += m.getArgAsString(i);
+                }
+                else{
+                    msg_string += "unknown";
+                }
+            }
+            cout << msg_string << endl;
+        }
+        
+    }
+
     
     
 }

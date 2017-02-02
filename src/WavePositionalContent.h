@@ -9,7 +9,7 @@
 #ifndef WavePositionalContent_h
 #define WavePositionalContent_h
 #include "ofxAutoReloadedShader.h"
-#include "Objects.h"
+#include "ExternalObject.h"
 
 class WavePositionalContent : public WaveContent{
 public:
@@ -23,7 +23,7 @@ public:
     ofVbo vbo;
     
     // Positions
-    map<int, User> * objects;
+    map<int, ExternalObject> * externalObjects;
     
     // parameters
     ofParameter<int> mode;
@@ -53,10 +53,10 @@ public:
 //        
 //    }
     
-    void setup(string name, vector<ofImage> *images, map<int, User> *users){
+    void setup(string channelName, vector<ofImage> *images, map<int, ExternalObject> * externalObjects){
+        this->name = channelName;
         this->images = images;
-        this->name = name;
-        this->objects = users;
+        this->externalObjects = externalObjects;
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fboShader.allocate(78*130, 10*130, GL_RGBA32F_ARB);
         
@@ -75,10 +75,10 @@ public:
         sizes.clear();
         
         
-        for(auto & o : *objects){
+        for(auto & o : *externalObjects){
             
-            ofVec3f pos = o.second.position;
-            ofVec3f size = o.second.size;
+            ofVec3f pos = o.second.getPosition();
+            ofVec3f size = o.second.getSize();
             pos.x = pos.x*130;
             pos.y = (pos.z+7.)*130;
             pos.z = 0;
@@ -89,7 +89,7 @@ public:
         
         
         // upload the data to the vbo
-        int total = (int)objects->size();
+        int total = (int)externalObjects->size();
         vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
         vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
         

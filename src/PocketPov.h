@@ -15,23 +15,26 @@
 class PocketPov : public Pocket{
 public:
     float minLifeSpan = 0;
-    User * user;
+    ExternalObject * externalObject;
     InputToWaveContent povMappedContent;
     float timeOfActivation;
-    float oldUserLifespan = 0;
-    int userNotUpdatedSince;
+    float oldexternalObjectLifespan = 0;
+    int externalObjectNotUpdatedSince;
+    string name;
     
     PocketPov(){};
     
-    void setup( float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture){
+    void setup(string channelName, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture){
+        this->name = channelName;
         this-> minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         
-        povMappedContent.setup(gates, povPosition, texture, POV_UV);
+        povMappedContent.setup(channelName, gates, povPosition, texture, POV_UV);
     }
     
-    void setup( float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName){
+    void setup(string channelName, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName){
+        this->name = channelName;
         this-> minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
@@ -45,24 +48,24 @@ public:
         // move pov if active
         if(isActive){
             povMappedContent.update();
-            // deactivate pocket if user is lost
-            if(oldUserLifespan == user->getLifespan()) userNotUpdatedSince++;
-            if(user->getLifespan() > oldUserLifespan) userNotUpdatedSince = 0;
-            if(oldUserLifespan - user->getLifespan() > 0 || userNotUpdatedSince > 10){
+            // deactivate pocket if externalObject is lost
+            if(oldexternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
+            if(externalObject->getLifespan() > oldexternalObjectLifespan) externalObjectNotUpdatedSince = 0;
+            if(oldexternalObjectLifespan - externalObject->getLifespan() > 0 || externalObjectNotUpdatedSince > 10){
                 isActive = false;
                 povMappedContent.setInvisible();
-                oldUserLifespan = 0;
+                oldexternalObjectLifespan = 0;
                 return;
             }
-            oldUserLifespan = user->getLifespan();
+            oldexternalObjectLifespan = externalObject->getLifespan();
             
             
             
             povMappedContent.setVisible();
-            ofVec3f newPos = ofVec3f(0, 1.72, user->getPosition());
+            ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);
             ofVec3f povCurrentPos = povMappedContent.getPovPtr()->getPosition();
-            povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the users position to create a transition
-            povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, user->getPosition()+user->getVelocity()));
+            povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
+            povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, externalObject->getPosition().z+externalObject->getVelocity().z));
             
         }
         
@@ -70,13 +73,15 @@ public:
     
     float getMinLifespan(){ return minLifeSpan; };
     
-    void setUser(User * user){
-        this->user = user;
+    void setExternalObject(ExternalObject * externalObject){
+        this->externalObject = externalObject;
         isActive = true;
     };
     
     ofFbo* getFboPtr(){ return &povMappedContent.fbo; }
     
+    string getName(){ return name; }
+
 };
 
 #endif /* PocketPov_h */
