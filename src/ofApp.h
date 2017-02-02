@@ -20,6 +20,7 @@
 #include "WaveShaderContent.h"
 #include "WavePositionalContent.h"
 #include "WaveGradientOnPositionContent.h"
+#include "WaveRipplePovContent.h"
 
 #include "TextureMix.h"
 #include "SyphonUtils.h"
@@ -88,8 +89,8 @@ class ofApp : public ofBaseApp{
     
     // create content;
     InputToWaveContent contentPovFree;
-    InputToWaveContent contentPovFront;
-    InputToWaveContent contentPovBack;
+    WaveRipplePovContent contentPovFront;
+    WaveRipplePovContent contentPovBack;
     WaveShaderContent contentShaderLines;
     WaveGateContent contentGate;
 //    WaveShaderContent contentShaderSmoke;

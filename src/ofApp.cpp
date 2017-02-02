@@ -60,8 +60,8 @@ void ofApp::setup(){
     
     contentGate.setup("ReactiveGate", &imgGateContent);
     
-    contentPovFront.setup("PovFrontSmokeNoiseRipples", &gates, camPresets[0].pos, "smokeNoiseRipples", ofVec2f(512), POV_UV);
-    contentPovBack.setup("PovBackSmokeNoiseRipples", &gates, camPresets[1].pos, "smokeNoiseRipples_2", ofVec2f(512), POV_UV);
+    contentPovFront.setup("PovFrontSmokeNoiseRipples", &gates, camPresets[0].pos);
+    contentPovBack.setup("PovBackSmokeNoiseRipples", &gates, camPresets[1].pos);
 
 
     //
