@@ -229,8 +229,8 @@ public:
                 break;
                 
             case TUBE:
-                float dist = texture->getWidth()/40;
-                for(int i = 0; i <= 39; i++){
+                float dist = texture->getWidth()/39;
+                for(int i = 0; i <= 40; i++){
                     texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*145/1590));
                     texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120)/1590));
                     texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530)/1590));

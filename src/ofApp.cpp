@@ -60,7 +60,9 @@ void ofApp::setup(){
     
     contentGate.setup("ReactiveGate", &imgGateContent);
     
-    contentPovFront.setup("PovFrontLinesTunel", &gates, camPresets[0].pos, "smokeNoiseRipples", ofVec2f(512), POV_UV);
+    contentPovFront.setup("PovFrontSmokeNoiseRipples", &gates, camPresets[0].pos, "smokeNoiseRipples", ofVec2f(512), POV_UV);
+    contentPovBack.setup("PovBackSmokeNoiseRipples", &gates, camPresets[1].pos, "smokeNoiseRipples_2", ofVec2f(512), POV_UV);
+
 
     //
     //    img.load("images/img1.png");
@@ -95,6 +97,7 @@ void ofApp::setup(){
 
     textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentPovFront.getFboPtr(), contentPovFront.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentPovBack.getFboPtr(), contentPovBack.getName(), BLEND_ADD);
     
     //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
     //    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
@@ -184,6 +187,7 @@ void ofApp::update(){
     // UPDATE ALL THE CONTENT
     contentPovFree.update();
     contentPovFront.update();
+    contentPovBack.update();
     contentShaderLines.update();
     contentGate.update();
     contentBeadsGradients.update();
@@ -509,7 +513,7 @@ void ofApp::receiveOSC(){
         }else{
             // unrecognized message: display on the bottom of the screen
             string msg_string;
-            msg_string = m.getAddress();
+            msg_string = "fromWaveAudio: " + m.getAddress();
             msg_string += ": ";
             for(int i = 0; i < m.getNumArgs(); i++){
                 // get the argument type

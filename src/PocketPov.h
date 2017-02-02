@@ -26,7 +26,7 @@ public:
     
     void setup(string channelName, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture){
         this->name = channelName;
-        this-> minLifeSpan = minLifeSpan;
+        this->minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         
@@ -43,11 +43,11 @@ public:
     }
     
     void update(){
-        
+        povMappedContent.update();
+
         
         // move pov if active
         if(isActive){
-            povMappedContent.update();
             // deactivate pocket if externalObject is lost
             if(oldexternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
             if(externalObject->getLifespan() > oldexternalObjectLifespan) externalObjectNotUpdatedSince = 0;
@@ -67,6 +67,8 @@ public:
             povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
             povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, externalObject->getPosition().z+externalObject->getVelocity().z));
             
+        }else{
+            povMappedContent.setInvisible();
         }
         
     }

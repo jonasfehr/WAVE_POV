@@ -12,14 +12,14 @@
 	</Ghosts>
 <group/>
 <ReactiveGate>
-		<speed>0.01</speed>
-		<mode>2</mode>
-		<easing>1</easing>
-		<imageIndex>0</imageIndex>
+		<speed>0.00255102</speed>
+		<mode>1</mode>
+		<easing>0</easing>
+		<imageIndex>2</imageIndex>
 	</ReactiveGate>
 <BeadsGradients_gradients>
 		<blendMode>1</blendMode>
 		<opacity>1</opacity>
-		<width>0.0357143</width>
+		<width>0.0561224</width>
 	</BeadsGradients_gradients>
 </ContentControls>

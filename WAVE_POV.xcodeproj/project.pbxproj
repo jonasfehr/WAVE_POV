@@ -458,7 +458,6 @@
 				11369A6B87E423D92CA89912 /* Pocket.h */,
 				FF5804541E3F487A00E8300C /* PocketPov.h */,
 				FF5804551E3F48A000E8300C /* PocketZone.h */,
-				FF7C77551E40EE99000567FE /* PocketPovPositionalContent.h */,
 			);
 			name = Pockets;
 			sourceTree = "<group>";
@@ -491,6 +490,7 @@
 		FFA8830C1E3BA65000A7B247 /* Unused */ = {
 			isa = PBXGroup;
 			children = (
+				FF7C77551E40EE99000567FE /* PocketPovPositionalContent.h */,
 				281E94A75EB337A8B28FB2E6 /* SyphonForWave.h */,
 				EC94B242248307E4D22C3F7F /* OscUtils.h */,
 				F031C55D08CE01C7D9E32320 /* POV.h */,

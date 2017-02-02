@@ -105,7 +105,7 @@ STRINGIFY(
           
           // Add
           vec3 blendAdd(vec3 base, vec3 blend) {
-              return min(base+blend,vec3(1.0));
+              return clamp(base+blend,vec3(0.0),vec3(1.0));
           }
           
           // Multiply
@@ -166,48 +166,64 @@ STRINGIFY(
           
           
           // BLEND FUNCTION
-          vec4 blendMode( int mode, vec4 base, vec4 blend, float opacity ){
+          vec3 blendMode( int mode, vec3 base, vec3 blend, float opacity ){
               if( mode == 1 ){
-                  return vec4(blendAdd(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendAdd(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 2 ){
-                  return vec4(blendMultiply(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendMultiply(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 3 ){
-                  return vec4(blendLighten(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendLighten(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 4 ){
-                  return vec4(blendDarken(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendDarken(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 5 ){
-                  return vec4(blendSubtract(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendSubtract(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 6 ){
-                  return vec4(blendScreen(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendScreen(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 7 ){
-                  return vec4(blendAverage(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendAverage(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 8 ){
-                  return vec4(blendSoftLight(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendSoftLight(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
               }else if( mode == 9 ){
-                  return vec4(blendOverlay(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity), 1.);
+                  return blendOverlay(base.rgb, blend.rgb) * opacity + base.rgb * (1.0 - opacity);
                   
-              }else if( mode == 10 ){
-                  return vec4(blend * blend.a * opacity + base*(1.-(blend.a*opacity)));
               }
           }
           
-          // ---
+         //  ---
           
-//          vec4 postProcessing(vec4 image, vec3 hsv, float contrast) {
-//              image = ((image - vec4(0.5)) * max(contrast+0.5, 0.0)) + vec4(0.5);
-//              image *= hsv2rgb(hsv);
-//              return image;
-//          }
+                    vec3 postProcessing(vec3 image, vec3 hsv, float contrast) {
+                        image = ((image - vec3(0.5)) * max(contrast+0.5, 0.0)) + vec3(0.5);
+                        
+                        //image = mix(vec3(0.5), image, contrast);
+                        //image = vec4(contrastMatrix( 1.+contrast*2.) * vec4(image,1.)).rgb;
+                        image *= hsv2rgb(hsv);
+                        return image;
+                    }
 
-
+          vec3 ContrastSaturationBrightness(vec3 color, float brt, float sat, float con){
+              // Increase or decrease theese values to adjust r, g and b color channels seperately
+              const float AvgLumR = 0.5;
+              const float AvgLumG = 0.5;
+              const float AvgLumB = 0.5;
+              
+              const vec3 LumCoeff = vec3(0.2125, 0.7154, 0.0721);
+              
+              vec3 AvgLumin = vec3(AvgLumR, AvgLumG, AvgLumB);
+              vec3 brtColor = color * brt;
+              vec3 intensity = vec3(dot(brtColor, LumCoeff));
+              vec3 satColor = mix(intensity, brtColor, sat);
+              vec3 conColor = mix(AvgLumin, satColor, con);
+              return conColor;
+          }
+          
           );
 
 
@@ -216,24 +232,26 @@ STRINGIFY(
           void main(){
     
               vec2 st = gl_FragCoord.xy / iResolution.xy;
-              vec4 mixCol = vec4(0.);
+              vec3 mixCol = vec3(0.);
           );
               
 static string channel =
 STRINGIFY(
-          vec4 colTex_$0 = texture2DRect(tex$0, resolution_$0 * st );
-          vec3 rgb_$0 = hsv2rgb_smooth(vec3( u_H_$0, u_S_$0, u_B_$0));
+          vec3 colTex_$0 = texture2DRect(tex$0, resolution_$0 * st ).rgb;
+//          vec3 rgb_$0 = hsv2rgb_smooth(vec3( u_H_$0, u_S_$0, u_B_$0));
+//          
+//          colTex_$0 *= vec(rgb_$0);
+//          
+//          colTex_$0 = contrastMatrix( 1.+u_contrast_$0*2. ) * colTex_$0;
           
-          colTex_$0 *= vec4(rgb_$0,1.);
-          
-          colTex_$0 = contrastMatrix( 1.+u_contrast_$0*2. ) * colTex_$0;
-          
+          colTex_$0 = postProcessing(colTex_$0,vec3( u_H_$0, u_S_$0, u_B_$0), u_contrast_$0);
+        //  colTex_$0 = ContrastSaturationBrightness(hsv2rgb(vec3( u_H_$0, u_S_$0, u_B_$0)),u_B_$0, u_S_$0,u_contrast_$0);
           mixCol = blendMode( u_blendMode_$0, mixCol, colTex_$0, u_opacity_$0 );
         );
 
 static string output =
 STRINGIFY(
-              gl_FragColor =  vec4(mixCol);
+              gl_FragColor =  vec4(mixCol,1.);
           }
           );
 

@@ -13,6 +13,7 @@
 #include "TextureMixShader.h"
 
 enum BlendModes_Mixer : int {
+    BLEND_PASS = 0,
     BLEND_ADD = 1,
     BLEND_MULTIPLY = 2,
     BLEND_LIGHTEN = 3,
