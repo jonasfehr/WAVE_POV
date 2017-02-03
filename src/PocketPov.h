@@ -11,34 +11,42 @@
 
 #include "Pocket.h"
 #include "InputToWaveContent.h"
+#include "ofxOscSender.h"
 
 class PocketPov : public Pocket{
 public:
     float minLifeSpan = 0;
     ExternalObject * externalObject;
     InputToWaveContent povMappedContent;
-    float timeOfActivation;
+    float timeOfActivation = 0;
     float oldexternalObjectLifespan = 0;
     int externalObjectNotUpdatedSince;
     string name;
+    int index = 0;
+    ofxOscSender * oscSender;
+    int oldMillis = 0;
     
     PocketPov(){};
     
-    void setup(string channelName, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture){
+    void setup(string channelName, int index, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, ofxOscSender * oscSender){
         this->name = channelName;
+        this->index = index;
         this->minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
+        this->oscSender = oscSender;
         
         povMappedContent.setup(channelName, gates, povPosition, texture, POV_UV);
     }
     
-    void setup(string channelName, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName){
+    void setup(string channelName, int index, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName, ofxOscSender * oscSender){
         this->name = channelName;
+        this->index = index;
         this-> minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
-        
+        this->oscSender = oscSender;
+
         povMappedContent.setup(channelName, gates, povPosition, shaderName, ofVec2f(512), POV_UV);
     }
     
@@ -69,6 +77,17 @@ public:
             
         }else{
             povMappedContent.setInvisible();
+        }
+        
+        // SEND OSC
+        if(ofGetElapsedTimeMillis()/50 != oldMillis){
+            ofxOscMessage m;
+            m.setAddress("/PocketPov/"+ofToString(index));
+            m.addInt32Arg(isActive);
+            if(isActive) m.addFloatArg(externalObject->getPosition().z);
+            oscSender->sendMessage(m);
+            
+            oldMillis = ofGetElapsedTimeMillis()/50;
         }
         
     }

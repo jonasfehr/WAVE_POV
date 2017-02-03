@@ -47,6 +47,8 @@ public:
         this->mappingType = mappingType;
         this->texture = texture;
         pov.setPosition(povPosition);
+        pov.lookAt(ofVec3f(0., 1.72, 39));
+
         
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fbo.begin();
@@ -74,8 +76,9 @@ public:
         this->mappingType = mappingType;
         this->shader.load("shaders/"+shaderName);
 
-        pov.setPosition(povPosition);
-        
+        pov.setPosition(povPosition);        
+        pov.lookAt(ofVec3f(0., 1.72, 39));
+
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -122,7 +125,7 @@ public:
     void setInvisible(){ isVisible = false; }
     void setInvisible(float alpha){
         isVisible = false;
-        alpha = 0;
+        this->alpha = alpha;
     }
 
     

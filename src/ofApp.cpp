@@ -60,8 +60,8 @@ void ofApp::setup(){
     
     contentGate.setup("ReactiveGate", &imgGateContent);
     
-    contentPovFront.setup("PovFrontSmokeNoiseRipples", &gates, camPresets[0].pos);
-    contentPovBack.setup("PovBackSmokeNoiseRipples", &gates, camPresets[1].pos);
+    contentRipplePovFront.setup("contentRipplePovFront", 1,  &gates, camPresets[0].pos, &oscToWaveAudio);
+    contentRipplePovBack.setup("contentRipplePovBack", 2, &gates, camPresets[1].pos, &oscToWaveAudio);
 
 
     //
@@ -86,7 +86,7 @@ void ofApp::setup(){
     
     // add POCKETS
     pocketZone_1.setup("PocketZone", 10, 20, "stars", ofVec2f(1024));
-    pocketPov_1.setup("PocketPov", 10., &gates, camPresets[0].pos, "electric");
+    pocketPov_1.setup("PocketPov", 1, 10., &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
     //    pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
     
     
@@ -96,8 +96,8 @@ void ofApp::setup(){
     textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
 
     textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
-    textureMixer.addFboChannel(contentPovFront.getFboPtr(), contentPovFront.getName(), BLEND_ADD);
-    textureMixer.addFboChannel(contentPovBack.getFboPtr(), contentPovBack.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentRipplePovFront.getFboPtr(), contentRipplePovFront.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentRipplePovBack.getFboPtr(), contentRipplePovBack.getName(), BLEND_ADD);
     
     //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
     //    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
@@ -115,8 +115,8 @@ void ofApp::setup(){
         paramsControls.setName("ContentControls");
     paramsControls.add(contentGate.parameterGroup);
     paramsControls.add(contentBeadsGradients.parameterGroup);
-    paramsControls.add(contentPovFront.parameterGroup);
-    paramsControls.add(contentPovBack.parameterGroup);
+    paramsControls.add(contentRipplePovFront.parameterGroup);
+    paramsControls.add(contentRipplePovBack.parameterGroup);
     //    paramsControls.add(contentPosGhosts.parameterGroup);
         guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
@@ -146,6 +146,7 @@ void ofApp::setup(){
     
     oscFromSensorFuse.setup(49162);
     oscFromWaveAudio.setup(49164);
+    oscToWaveAudio.setup("localhost", 49165);
     
     
 }
@@ -188,8 +189,8 @@ void ofApp::update(){
     
     // UPDATE ALL THE CONTENT
     contentPovFree.update();
-    contentPovFront.update();
-    contentPovBack.update();
+    contentRipplePovFront.update();
+    contentRipplePovBack.update();
     contentShaderLines.update();
     contentGate.update();
     contentBeadsGradients.update();

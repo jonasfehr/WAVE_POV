@@ -9,7 +9,7 @@
 #ifndef WaveRipplePovContent_h
 #define WaveRipplePovContent_h
 #include "ofxAutoReloadedShader.h"
-
+#include "ofxOscSender.h"
 
 
 
@@ -25,7 +25,8 @@ public:
     
     
     
-    
+    ofxOscSender * oscSender;
+    int index;
 
     
     ofParameter<float> possibility;
@@ -33,17 +34,20 @@ public:
 
     bool createRipple = false;
     float rippleSize = 0.;
+    float timeLastActivation = 0;
     
     
     WaveRipplePovContent(){}
     
     
-    void setup(string channelName, vector<Gate> * gates, ofVec3f povPosition){
+    void setup(string channelName, int index, vector<Gate> * gates, ofVec3f povPosition, ofxOscSender * oscSender){
         this->name = channelName;
+        this->index = index;
         this->gates = gates;
         this->shader.load("shaders/WaveRipplesContent");
-
+        this->oscSender = oscSender;
         pov.setPosition(povPosition);
+        pov.lookAt(ofVec3f(0., 1.72, 39));
         
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fbo.begin();
@@ -71,6 +75,8 @@ public:
         texture = &fboShader.getTexture();
         
         setupParameterGroup(name);
+        
+        timeLastActivation = ofRandom(0., 10.);
     }
 
     
@@ -88,19 +94,37 @@ public:
     
     
     
-    
+    int oldMillis = 0;
     void update(){
 
         
         if(!createRipple){
-            if( ofRandom(0., 1.) < possibility )  createRipple = true;
+            if( ofRandom(0., 1.) < possibility && ofGetElapsedTimef()-timeLastActivation > 10.){
+                rippleSize = 0.;
+                createRipple = true;
+                timeLastActivation = ofGetElapsedTimef();
+            }
             
         }else{
             rippleSize += increment;
             
+            
+            
             if(rippleSize >= 1.){
                 createRipple = false;
-                rippleSize = 0.;
+            }
+            
+            // SEND OSC gate 1
+            if(ofGetElapsedTimeMillis()/50 != oldMillis){
+                ofxOscMessage m;
+                m.setAddress("/Ripple/"+ofToString(index));
+                m.addInt32Arg(createRipple);
+                
+                ofVec3f position = pov.getPosition() + pov.getLookAtDir().getNormalized().scale( 85.*( 1. - cubicOut(rippleSize) ) );
+                m.addFloatArg(position.z);
+                oscSender->sendMessage(m);
+                
+                oldMillis = ofGetElapsedTimeMillis()/50;
             }
         }
         
@@ -287,6 +311,11 @@ public:
         parameterGroup.add(possibility.set("possibility", 0.1, 0., 1.));
         parameterGroup.add(increment.set("increment", 0.01, 0.000001, 0.1));
 
+    }
+    
+    float cubicOut(float t) {
+        float f = t - 1.0;
+        return f * f * f + 1.0;
     }
     
 };

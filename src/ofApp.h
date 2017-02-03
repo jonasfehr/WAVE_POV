@@ -89,8 +89,8 @@ class ofApp : public ofBaseApp{
     
     // create content;
     InputToWaveContent contentPovFree;
-    WaveRipplePovContent contentPovFront;
-    WaveRipplePovContent contentPovBack;
+    WaveRipplePovContent contentRipplePovFront;
+    WaveRipplePovContent contentRipplePovBack;
     WaveShaderContent contentShaderLines;
     WaveGateContent contentGate;
 //    WaveShaderContent contentShaderSmoke;
@@ -116,9 +116,10 @@ class ofApp : public ofBaseApp{
     // OSC
     ofxOscReceiver oscFromSensorFuse;
     ofxOscReceiver oscFromWaveAudio;
+    ofxOscSender oscToWaveAudio;
     
     void receiveOSC();
-
+    void sendOSC();
     
 
     
