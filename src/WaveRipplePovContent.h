@@ -35,6 +35,7 @@ public:
     bool createRipple = false;
     float rippleSize = 0.;
     float timeLastActivation = 0;
+    float waitTime = 10.;
     
     
     WaveRipplePovContent(){}
@@ -77,6 +78,7 @@ public:
         setupParameterGroup(name);
         
         timeLastActivation = ofRandom(0., 10.);
+        waitTime = ofRandom(10., 30.)+index*5;
     }
 
     
@@ -99,10 +101,11 @@ public:
 
         
         if(!createRipple){
-            if( ofRandom(0., 1.) < possibility && ofGetElapsedTimef()-timeLastActivation > 10.){
+            if( ofRandom(0., 1.) < possibility && ofGetElapsedTimef()-timeLastActivation > waitTime){
                 rippleSize = 0.;
                 createRipple = true;
                 timeLastActivation = ofGetElapsedTimef();
+                waitTime = ofRandom(10., 30.);
             }
             
         }else{
