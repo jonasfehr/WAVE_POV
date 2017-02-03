@@ -216,15 +216,35 @@ public:
         
         switch(mappingType){
             case POV_UV:
-                for(auto& e : edges){
-                    texCoords.push_back(ofVec2f(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
+                for(int i = 0; i < edges.size(); i+=5){
+                    texCoords.push_back(ofVec2f(edges.at(i).uv.x*texture->getWidth(), edges.at(i).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+1).uv.x*texture->getWidth(), edges.at(i+1).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+2).uv.x*texture->getWidth(), edges.at(i+2).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+3).uv.x*texture->getWidth(), edges.at(i+3).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+4).uv.x*texture->getWidth(), edges.at(i+4).uv.y*texture->getHeight()));
+                    
+                    texCoords.push_back(ofVec2f(edges.at(i).uv.x*texture->getWidth(), edges.at(i).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+1).uv.x*texture->getWidth(), edges.at(i+1).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+2).uv.x*texture->getWidth(), edges.at(i+2).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+3).uv.x*texture->getWidth(), edges.at(i+3).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+4).uv.x*texture->getWidth(), edges.at(i+4).uv.y*texture->getHeight()));
                 }
                 break;
                 
             case POV_UV_NORMALIZED:
                 normalizeUV();
-                for(auto& e : edges){
-                    texCoords.push_back(ofVec2f(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
+                for(int i = 0; i < edges.size(); i+=5){
+                    texCoords.push_back(ofVec2f(edges.at(i).uv.x*texture->getWidth(), edges.at(i).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+1).uv.x*texture->getWidth(), edges.at(i+1).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+2).uv.x*texture->getWidth(), edges.at(i+2).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+3).uv.x*texture->getWidth(), edges.at(i+3).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+4).uv.x*texture->getWidth(), edges.at(i+4).uv.y*texture->getHeight()));
+                    
+                    texCoords.push_back(ofVec2f(edges.at(i).uv.x*texture->getWidth(), edges.at(i).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+1).uv.x*texture->getWidth(), edges.at(i+1).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+2).uv.x*texture->getWidth(), edges.at(i+2).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+3).uv.x*texture->getWidth(), edges.at(i+3).uv.y*texture->getHeight()));
+                    texCoords.push_back(ofVec2f(edges.at(i+4).uv.x*texture->getWidth(), edges.at(i+4).uv.y*texture->getHeight()));
                 }
                 break;
                 
@@ -236,6 +256,13 @@ public:
                     texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530)/1590));
                     texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530)/1590));
                     texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530+120)/1590));
+                    
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*145/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120)/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530)/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530)/1590));
+                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530+120)/1590));
+
                 }
                 break;
         }
@@ -272,8 +299,14 @@ public:
             mesh.addVertex(ofVec2f(i*3,650));
             mesh.addVertex(ofVec2f(i*3,1180));
             mesh.addVertex(ofVec2f(i*3,1300));
+            
+            mesh.addVertex(ofVec2f((i*3+3),0));
+            mesh.addVertex(ofVec2f((i*3+3),120));
+            mesh.addVertex(ofVec2f((i*3+3),650));
+            mesh.addVertex(ofVec2f((i*3+3),1180));
+            mesh.addVertex(ofVec2f((i*3+3),1300));
         }
-        for(int i = 0; i < 40*5; i+=5){
+        for(int i = 0; i < 40*10; i+=10){
             mesh.addIndex(i+5);
             mesh.addIndex(i+0);
             mesh.addIndex(i+6);

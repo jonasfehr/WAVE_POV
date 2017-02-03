@@ -115,6 +115,8 @@ void ofApp::setup(){
         paramsControls.setName("ContentControls");
     paramsControls.add(contentGate.parameterGroup);
     paramsControls.add(contentBeadsGradients.parameterGroup);
+    paramsControls.add(contentPovFront.parameterGroup);
+    paramsControls.add(contentPovBack.parameterGroup);
     //    paramsControls.add(contentPosGhosts.parameterGroup);
         guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );

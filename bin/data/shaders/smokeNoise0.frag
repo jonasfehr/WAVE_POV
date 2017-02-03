@@ -4,9 +4,6 @@
 
 uniform vec2 iResolution;
 uniform float iGlobalTime;
-uniform float rippleSize;
-#define time iGlobalTime*0.03
-#define TAU 6.2831853
 
 float random (in vec2 _st) {
     return fract( sin( dot( _st.xy, vec2(12.9898,78.233) ) ) * 43758.5453123);
@@ -30,27 +27,6 @@ float noise (in vec2 _st) {
     (d - b) * u.x * u.y;
 }
 
-float ring( vec2 _st, float _radius, float _stroke)
-{
-  float radius = _radius*2.;
-   float thickness = _stroke;
-   float ring = 1.-smoothstep(distance(_st,vec2(0.5)),radius, radius+thickness);
-   ring += 1.-smoothstep(distance(_st,vec2(0.5)), radius, radius-thickness);
-   return ring;
-}
-
-float cubicPulse( float c, float w, float x ){
-    x = abs(x - c);
-    if( x>w ) return 0.0;
-    x /= w;
-    return 1.0 - x*x*x*x*(3.0-2.0*x);
-}
-
-float mapNum(float s, float a1, float a2, float b1, float b2)
-{
-    return b1 + (s-a1)*(b2-b1)/(a2-a1);
-}
-
 #define NUM_OCTAVES 2
 
 float fbm ( in vec2 _st) {
@@ -68,25 +44,16 @@ float fbm ( in vec2 _st) {
     return v;
 }
 
-// easing
-float cubicIn(float t) {
-    return t * t * t;
-}
-
-float cubicOut(float t) {
-    float f = t - 1.0;
-    return f * f * f + 1.0;
-}
-
-
+#define numGates 40.
 
 void main(  ) {
     vec2 st = (gl_FragCoord.xy )/min(iResolution.x,iResolution.y);
 
+    st.x *= numGates;
+    st.x = floor(st.x)/5.;
 
-// NOISE
 
-    st*=50.; // ZOOM
+    st.y*=.5; // ZOOM
 
     st.x += iGlobalTime/20.;
 
@@ -108,23 +75,12 @@ void main(  ) {
 
 //    color = mix(vec3(1.0,.0,.0), vec3(1.,.0,0.0), clamp((f*f),0.6, 1.));
 //    color = mix(vec3(0.5,0.1,0.1), vec3(0.413,0.524,0.880), clamp(length(c.x),0., 1.));
-  float contrast = 0.9;
-  f = ((f - 0.5) * max(contrast+0.5, 0.0)) + 0.5;
 
+    float contrast = 0.10;
+    float gain = 1.5;
+   f = (f - 0.5) * max(pow(contrast*3., 4.)+0.5, 0.0) * gain;
 
-
-// Create pulses
-   vec2 stRing = gl_FragCoord.xy / iResolution.xy;
-
-  //  float rippleSize = 0.5;
-
-   float size = cubicIn(rippleSize);
-   float width = mapNum(size, 0., 1., .001, .3);
-
- 	 float rings = cubicPulse(size,width,distance(stRing, vec2(0.5)));
-
-
-    vec3 finalColor = vec3(clamp(f*(rings), 0., 1.));
+    vec3 finalColor = vec3(f*3.);
 
     gl_FragColor = vec4( finalColor, 1.);
 }

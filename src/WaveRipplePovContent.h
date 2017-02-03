@@ -13,22 +13,26 @@
 
 
 
-class WaveRipplePovContent{
+class WaveRipplePovContent : public WaveContent{
 public:
     
     
-    ofFbo fbo;
     ofFbo fboShader;
     ofMesh mesh;
     ofTexture *texture;
     ofCamera pov;
     vector<Gate> * gates;
-    string name;
     
-    ofxAutoReloadedShader shader;
     
-    bool isVisible = true;
-    float alpha = 1.;
+    
+    
+
+    
+    ofParameter<float> possibility;
+    ofParameter<float> increment;
+
+    bool createRipple = false;
+    float rippleSize = 0.;
     
     
     WaveRipplePovContent(){}
@@ -66,6 +70,7 @@ public:
         
         texture = &fboShader.getTexture();
         
+        setupParameterGroup(name);
     }
 
     
@@ -80,21 +85,27 @@ public:
         pov.setPosition(pos);
     }
     
-
-    void setVisible(){ isVisible = true; }
-    void setInvisible(){ isVisible = false; }
-    void setInvisible(float alpha){
-        isVisible = false;
-        alpha = 0;
-    }
-
     
     
     
     
     void update(){
-        if(isVisible && alpha < 1.) alpha += 0.1;
-        else if( !isVisible && alpha > 0) alpha -= 0.01;
+
+        
+        if(!createRipple){
+            if( ofRandom(0., 1.) < possibility )  createRipple = true;
+            
+        }else{
+            rippleSize += increment;
+            
+            if(rippleSize >= 1.){
+                createRipple = false;
+                rippleSize = 0.;
+            }
+        }
+        
+        
+        
         
         // Calculate the UV points
         for(auto& e : edges){
@@ -120,8 +131,8 @@ public:
                 shader.begin();
                 {
                     shader.setUniform2f("iResolution", fboShader.getWidth(), fboShader.getHeight());
-                    shader.setUniform1f("iGlobalTime",     ofGetElapsedTimef() ) ;//counter);
-                    shader.setUniform1f("rippleSize", (sin(ofGetElapsedTimef())+1)/2 );
+                    shader.setUniform1f("iGlobalTime", ofGetElapsedTimef() ) ;//counter);
+                    shader.setUniform1f("rippleSize", rippleSize );
                     
                     ofSetColor(255,255,255);
                     ofFill();
@@ -132,7 +143,7 @@ public:
             fboShader.end();
             
             texture->bind();{
-                ofSetColor(255, alpha*255);
+                ofSetColor(255);
                 mesh.draw();
             }
             texture->unbind();
@@ -163,9 +174,20 @@ public:
         
         vector<ofVec2f> texCoords;
 
-                for(auto& e : edges){
-                    texCoords.push_back(ofVec2f(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
-                }
+
+        for(int i = 0; i < edges.size(); i+=5){
+            texCoords.push_back(ofVec2f(edges.at(i).uv.x*texture->getWidth(), edges.at(i).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+1).uv.x*texture->getWidth(), edges.at(i+1).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+2).uv.x*texture->getWidth(), edges.at(i+2).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+3).uv.x*texture->getWidth(), edges.at(i+3).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+4).uv.x*texture->getWidth(), edges.at(i+4).uv.y*texture->getHeight()));
+            
+            texCoords.push_back(ofVec2f(edges.at(i).uv.x*texture->getWidth(), edges.at(i).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+1).uv.x*texture->getWidth(), edges.at(i+1).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+2).uv.x*texture->getWidth(), edges.at(i+2).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+3).uv.x*texture->getWidth(), edges.at(i+3).uv.y*texture->getHeight()));
+            texCoords.push_back(ofVec2f(edges.at(i+4).uv.x*texture->getWidth(), edges.at(i+4).uv.y*texture->getHeight()));
+        }
 
         
         mesh.clearTexCoords();
@@ -200,8 +222,14 @@ public:
             mesh.addVertex(ofVec2f(i*3,650));
             mesh.addVertex(ofVec2f(i*3,1180));
             mesh.addVertex(ofVec2f(i*3,1300));
+            
+            mesh.addVertex(ofVec2f((i*3+3),0));
+            mesh.addVertex(ofVec2f((i*3+3),120));
+            mesh.addVertex(ofVec2f((i*3+3),650));
+            mesh.addVertex(ofVec2f((i*3+3),1180));
+            mesh.addVertex(ofVec2f((i*3+3),1300));
         }
-        for(int i = 0; i < 40*5; i+=5){
+        for(int i = 0; i < 40*10; i+=10){
             mesh.addIndex(i+5);
             mesh.addIndex(i+0);
             mesh.addIndex(i+6);
@@ -254,8 +282,13 @@ public:
         INPUT_SHADER = 2,
     };
     
-    string getName(){ return name; }
+    void setupParameterGroup(string name){
+        parameterGroup.setName(name);
+        parameterGroup.add(possibility.set("possibility", 0.1, 0., 1.));
+        parameterGroup.add(increment.set("increment", 0.01, 0.000001, 0.1));
 
+    }
+    
 };
 
 #endif /* WaveRipplePovContent_h */

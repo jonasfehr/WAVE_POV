@@ -369,8 +369,6 @@ STRINGIFY(
                   }
                   
                   void createMesh(){
-                      
-                      
                       for(int i = 0; i <= 40; i++){
                           mesh.addVertex(ofVec2f(i*3,0));
                           mesh.addVertex(ofVec2f(i*3,120));
@@ -378,8 +376,13 @@ STRINGIFY(
                           mesh.addVertex(ofVec2f(i*3,1180));
                           mesh.addVertex(ofVec2f(i*3,1300));
                           
+                          mesh.addVertex(ofVec2f((i*3+3),0));
+                          mesh.addVertex(ofVec2f((i*3+3),120));
+                          mesh.addVertex(ofVec2f((i*3+3),650));
+                          mesh.addVertex(ofVec2f((i*3+3),1180));
+                          mesh.addVertex(ofVec2f((i*3+3),1300));
                       }
-                      for(int i = 0; i < 40*5; i+=5){
+                      for(int i = 0; i < 40*10; i+=10){
                           mesh.addIndex(i+5);
                           mesh.addIndex(i+0);
                           mesh.addIndex(i+6);
@@ -410,7 +413,13 @@ STRINGIFY(
                       }
                       
                       float dist = fboShader.getTexture().getWidth()/39;
-                      for(int i = 0; i <= 40; i++){
+                      for(int i = 0; i < 40; i++){
+                          mesh.addTexCoord( ofVec2f( i*dist, 0. ) );
+                          mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.1 ) );
+                          mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.5 ) );
+                          mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.9 ) );
+                          mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight() ) );
+                          
                           mesh.addTexCoord( ofVec2f( i*dist, 0. ) );
                           mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.1 ) );
                           mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.5 ) );

@@ -56,6 +56,7 @@ public:
     void setup(string channelName, vector<ofImage> *images, map<int, ExternalObject> * externalObjects){
         this->name = channelName;
         this->images = images;
+        this->name = name;
         this->externalObjects = externalObjects;
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fboShader.allocate(78*130, 10*130, GL_RGBA32F_ARB);
@@ -191,8 +192,16 @@ public:
             mesh.addIndex(i+4);
         }
         
+        
+        
         float dist = fboShader.getTexture().getWidth()/39;
-        for(int i = 0; i <= 40; i++){
+        for(int i = 0; i < 40; i++){
+            mesh.addTexCoord( ofVec2f( i*dist, 0. ) );
+            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.1 ) );
+            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.5 ) );
+            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.9 ) );
+            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight() ) );
+            
             mesh.addTexCoord( ofVec2f( i*dist, 0. ) );
             mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.1 ) );
             mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.5 ) );
