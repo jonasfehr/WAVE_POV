@@ -86,7 +86,7 @@ void ofApp::setup(){
     
     // add POCKETS
     pocketZone_1.setup("PocketZone", 10, 20, "stars", ofVec2f(1024));
-    pocketPov_1.setup("PocketPov", 1, 10., &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
+    pocketPov_1.setup("PocketPov", 1, &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
     //    pocketPovPos_2.setup( 5., &gates, camPresets[0].pos, &objects);
     
     
@@ -117,6 +117,7 @@ void ofApp::setup(){
     paramsControls.add(contentBeadsGradients.parameterGroup);
     paramsControls.add(contentRipplePovFront.parameterGroup);
     paramsControls.add(contentRipplePovBack.parameterGroup);
+    paramsControls.add(pocketPov_1.parameterGroup);
     //    paramsControls.add(contentPosGhosts.parameterGroup);
         guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );

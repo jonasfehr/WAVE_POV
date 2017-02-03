@@ -22,4 +22,15 @@
 		<opacity>1</opacity>
 		<width>0.0561224</width>
 	</BeadsGradients_gradients>
+<contentRipplePovFront>
+		<possibility>0.0612245</possibility>
+		<increment>0.00561319</increment>
+	</contentRipplePovFront>
+	<contentRipplePovBack>
+		<possibility>0.0969388</possibility>
+		<increment>0.00561319</increment>
+	</contentRipplePovBack>
+<PocketPov>
+		<minLifeSpan>5</minLifeSpan>
+	</PocketPov>
 </ContentControls>

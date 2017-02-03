@@ -49,8 +49,8 @@
 			<blendMode>1</blendMode>
 		</Gate>
 	<Lines>
-			<hue>0.234694</hue>
-			<saturation>0</saturation>
+			<hue>0.556122</hue>
+			<saturation>0.785714</saturation>
 			<brightness>1</brightness>
 			<contrast>0</contrast>
 			<opacity>1</opacity>
@@ -121,12 +121,12 @@
 			<blendMode>1</blendMode>
 		</PocketPov>
 	<BeadsGradients>
-			<hue>0.132653</hue>
-			<saturation>1</saturation>
+			<hue>0.520408</hue>
+			<saturation>0.576531</saturation>
 			<brightness>1</brightness>
 			<contrast>1</contrast>
-			<opacity>0.316327</opacity>
-			<blendMode>2</blendMode>
+			<opacity>0.336735</opacity>
+			<blendMode>5</blendMode>
 		</BeadsGradients>
 	<PovFrontLinesTunel>
 			<hue>0.5</hue>
@@ -152,6 +152,22 @@
 			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</PovBackSmokeNoiseRipples>
+	<contentRipplePovFront>
+			<hue>0.573907</hue>
+			<saturation>0.673469</saturation>
+			<brightness>1</brightness>
+			<contrast>1</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</contentRipplePovFront>
+		<contentRipplePovBack>
+			<hue>0.647996</hue>
+			<saturation>0.714286</saturation>
+			<brightness>1</brightness>
+			<contrast>1</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</contentRipplePovBack>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

@@ -119,12 +119,12 @@ void main(  ) {
   //  float rippleSize = 0.5;
 
    float size = cubicIn(rippleSize);
-   float width = mapNum(size, 0., 1., .001, .3);
+   float width = mapNum(size, 0., 1., .001, .4); // was .3 last value
 
  	 float rings = cubicPulse(size,width,distance(stRing, vec2(0.5)));
 
 
-    vec3 finalColor = vec3(clamp(f*(rings), 0., 1.));
+    vec3 finalColor = vec3(clamp(f*(rings)*2., 0., 1.));
 
     gl_FragColor = vec4( finalColor, 1.);
 }

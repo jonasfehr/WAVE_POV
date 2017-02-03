@@ -15,7 +15,6 @@
 
 class PocketPov : public Pocket{
 public:
-    float minLifeSpan = 0;
     ExternalObject * externalObject;
     InputToWaveContent povMappedContent;
     float timeOfActivation = 0;
@@ -26,28 +25,35 @@ public:
     ofxOscSender * oscSender;
     int oldMillis = 0;
     
+    ofParameter<float> minLifeSpan;
+    ofParameterGroup parameterGroup;
+
+    
+    
     PocketPov(){};
     
-    void setup(string channelName, int index, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, ofxOscSender * oscSender){
+    void setup(string channelName, int index, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, ofxOscSender * oscSender){
         this->name = channelName;
         this->index = index;
-        this->minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         this->oscSender = oscSender;
         
         povMappedContent.setup(channelName, gates, povPosition, texture, POV_UV);
+        setupParameterGroup(name);
+
     }
     
-    void setup(string channelName, int index, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName, ofxOscSender * oscSender){
+    void setup(string channelName, int index, vector<Gate> * gates, ofVec3f povPosition, string shaderName, ofxOscSender * oscSender){
         this->name = channelName;
         this->index = index;
-        this-> minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         this->oscSender = oscSender;
 
         povMappedContent.setup(channelName, gates, povPosition, shaderName, ofVec2f(512), POV_UV);
+        setupParameterGroup(name);
+
     }
     
     void update(){
@@ -102,6 +108,14 @@ public:
     ofFbo* getFboPtr(){ return &povMappedContent.fbo; }
     
     string getName(){ return name; }
+    
+    void setupParameterGroup(string name){
+        parameterGroup.setName(name);
+        parameterGroup.add(minLifeSpan.set("minLifeSpan", 5., 0., 10.));
+    }
+
+    
+    ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }
 
 };
 

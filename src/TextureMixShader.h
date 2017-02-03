@@ -105,7 +105,7 @@ STRINGIFY(
           
           // Add
           vec3 blendAdd(vec3 base, vec3 blend) {
-              return clamp(base+blend,vec3(0.0),vec3(1.0));
+              return base + blend;//min(base+blend,vec3(1.0));
           }
           
           // Multiply
@@ -200,11 +200,12 @@ STRINGIFY(
          //  ---
           
                     vec3 postProcessing(vec3 image, vec3 hsv, float contrast) {
-                        image = ((image - vec3(0.5)) * max(contrast+0.5, 0.0)) + vec3(0.5);
                         
                         //image = mix(vec3(0.5), image, contrast);
                         //image = vec4(contrastMatrix( 1.+contrast*2.) * vec4(image,1.)).rgb;
                         image *= hsv2rgb(hsv);
+                        image = ((image - vec3(0.5)) * max(contrast+0.5, 0.0)) + vec3(0.5);
+
                         return image;
                     }
 
