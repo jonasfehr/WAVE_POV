@@ -31,6 +31,8 @@ public:
     
     ofParameter<float> possibility;
     ofParameter<float> increment;
+    ofParameter<bool> deactivate;
+
 
     bool createRipple = false;
     float rippleSize = 0.;
@@ -100,12 +102,12 @@ public:
     void update(){
 
         
-        if(!createRipple){
+        if(!createRipple && !deactivate){
             if( ofRandom(0., 1.) < possibility && ofGetElapsedTimef()-timeLastActivation > waitTime){
                 rippleSize = 0.;
                 createRipple = true;
                 timeLastActivation = ofGetElapsedTimef();
-                waitTime = ofRandom(10., 30.);
+                waitTime = ofRandom(30., 60.);
             }
             
         }else{
@@ -311,6 +313,7 @@ public:
     
     void setupParameterGroup(string name){
         parameterGroup.setName(name);
+        parameterGroup.add(deactivate.set("deactivate", false));
         parameterGroup.add(possibility.set("possibility", 0.1, 0., 1.));
         parameterGroup.add(increment.set("increment", 0.01, 0.000001, 0.1));
 

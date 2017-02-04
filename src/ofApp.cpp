@@ -138,15 +138,15 @@ void ofApp::setup(){
     paramsWekinator.add(paramsWekinatorIn);
     paramsWekinator.add(paramsWekinatorOut);
     guiWekinator.setup(paramsWekinator);
+    guiWekinator.minimizeAll();
     
     
     guiGeneral.setup(guiGroup);
     
+    loadPreset(presetIndex);
     
-    guiGeneral.loadFromFile("settingsGeneral.xml");
-    guiMixer.loadFromFile("settingsMixer.xml");
-    guiControls.loadFromFile("settingsControls.xml");
     
+    // SETUP OSC CHANNELS
     oscFromSensorFuse.setup(49162);
     oscFromWaveAudio.setup(49164);
     oscToWaveAudio.setup("localhost", 49165);
@@ -322,6 +322,7 @@ void ofApp::drawGUI(){
         info += "\nPOV: " + ofToString(contentPovFree.pov.getPosition());
         info += "\nCam: " + ofToString(camera.getGlobalPosition());
         info += "\nCam: " + ofToString(camPresets[camPresetIndx].name);
+        info += "\nPreset: " + ofToString(presetIndex);
         ofDrawBitmapStringHighlight(info, 15, ofGetHeight()-4*15);
     }
 }
@@ -333,26 +334,26 @@ void ofApp::keyPressed(int key){
         hideGui = !hideGui;
     }
     
-    if(key == '1'){
+    if(key == 'r'){
         if(!wekinator.bIsRunning) {
             wekinator.startRunning();
         }else if(wekinator.bIsRunning) {
             wekinator.stopRunning();
         }
     }
-    
-    if(key == '2'){
-        wekinator.startRecording();
-    }
-    
-    if(key == '3'){
-        wekinator.train();
-    }
-    
-    if(key == '4'){
-        wekinator.deleteTraining();
-    }
-    
+//
+//    if(key == '2'){
+//        wekinator.startRecording();
+//    }
+//    
+//    if(key == '3'){
+//        wekinator.train();
+//    }
+//    
+//    if(key == '4'){
+//        wekinator.deleteTraining();
+//    }
+//    
     if(key == 'm'){
         mappingIndx++;
         mappingIndx = mappingIndx%3;
@@ -376,24 +377,35 @@ void ofApp::keyPressed(int key){
     if(key == 'p'){
         //        contentGate.activate(ofRandom(0,40));
     }
+    if(key-48 > 0 && key-48 < 10){
+        presetIndex = key-48;
+    }
     
     if(key == 'q'){
-        guiGeneral.loadFromFile("settingsGeneral.xml");
-        guiMixer.loadFromFile("settingsMixer.xml");
-        guiControls.loadFromFile("settingsControls.xml");
+        loadPreset(presetIndex);
+
     }
     if(key == 'w'){
-        guiGeneral.saveToFile("settingsGeneral.xml");
-        guiMixer.saveToFile("settingsMixer.xml");
-        guiControls.saveToFile("settingsControls.xml");
+        savePreset(presetIndex);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    if(key == '2'){
-        wekinator.stopRecording();
-    }
+//    if(key == '2'){
+//        wekinator.stopRecording();
+//    }
+}
+//--------------------------------------------------------------
+void ofApp::savePreset(int index){
+    guiGeneral.saveToFile("presets/settingsGeneral_"+ofToString(index)+".xml");
+    guiMixer.saveToFile("presets/settingsMixer_"+ofToString(index)+".xml");
+    guiControls.saveToFile("presets/settingsControls_"+ofToString(index)+".xml");
+}
+void ofApp::loadPreset(int index){
+    guiGeneral.loadFromFile("presets/settingsGeneral_"+ofToString(index)+".xml");
+    guiMixer.loadFromFile("presets/settingsMixer_"+ofToString(index)+".xml");
+    guiControls.loadFromFile("presets/settingsControls_"+ofToString(index)+".xml");
 }
 
 //--------------------------------------------------------------

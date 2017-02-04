@@ -22,6 +22,9 @@ public:
     
     UpDownCounter(){}
     
+    ofParameter<bool> deactivate;
+
+    
     void activate(){
         activated = true;
         isUp = true;
@@ -85,6 +88,8 @@ public:
             c.increase = speed;
             c.update();
         }
+        
+        if(!=deactivate){
         fbo.begin();
         {
             glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -118,12 +123,14 @@ public:
             
         }
         fbo.end();
+        }
     }
     
 
     void setupParameterGroup(string name){
         parameterGroup.setName(name);
-        parameterGroup.add(speed.set("speed", 0.01, 0., 0.1));
+        parameterGroup.add(deactivate.set("deactivate", false));
+        parameterGroup.add(speed.set("speed", 0.01, 0.001, 0.01));
         parameterGroup.add(mode.set("mode", 1, 1, 2));
         parameterGroup.add(easing.set("easing", 1, 0, 2));
         parameterGroup.add(imageIndex.set("imageIndex", 0, 0, images->size()-1));

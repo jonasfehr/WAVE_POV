@@ -141,5 +141,11 @@ class ofApp : public ofBaseApp{
     map<int, ExternalObject> beads;
 
 
+    // presets
+    int presetIndex = 1;
+    void savePreset(int presetIndex);
+    void loadPreset(int presetIndex);
+    
+    
 };
 

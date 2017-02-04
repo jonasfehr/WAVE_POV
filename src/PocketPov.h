@@ -25,9 +25,11 @@ public:
     ofxOscSender * oscSender;
     int oldMillis = 0;
     
+    ofParameter<bool> deactivate;
     ofParameter<float> minLifeSpan;
     ofParameterGroup parameterGroup;
 
+    
     
     
     PocketPov(){};
@@ -57,11 +59,12 @@ public:
     }
     
     void update(){
+
         povMappedContent.update();
 
         
         // move pov if active
-        if(isActive){
+        if(isActive && !deactivate){
             // deactivate pocket if externalObject is lost
             if(oldexternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
             if(externalObject->getLifespan() > oldexternalObjectLifespan) externalObjectNotUpdatedSince = 0;
@@ -86,7 +89,7 @@ public:
         }
         
         // SEND OSC
-        if(ofGetElapsedTimeMillis()/50 != oldMillis){
+        if(ofGetElapsedTimeMillis()/50 != oldMillis && !deactivate){
             ofxOscMessage m;
             m.setAddress("/PocketPov/"+ofToString(index));
             m.addInt32Arg(isActive);
@@ -111,6 +114,7 @@ public:
     
     void setupParameterGroup(string name){
         parameterGroup.setName(name);
+        parameterGroup.add(deactivate.set("deactivate", false));
         parameterGroup.add(minLifeSpan.set("minLifeSpan", 5., 0., 10.));
     }
 
