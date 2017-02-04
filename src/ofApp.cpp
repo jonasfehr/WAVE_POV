@@ -124,9 +124,11 @@ void ofApp::setup(){
     
     
     // setup Wekinator
+    paramsWekinatorOut.setName("WekinatorOut");
     for(auto & paramsTextureMixerChannel : textureMixer.getVectorOfParameterSubgroups()){
         paramsWekinatorOut.add(paramsTextureMixerChannel->get("saturation"));
-        paramsWekinatorOut.add(paramsTextureMixerChannel->get("brightness"));
+        paramsWekinatorOut.add(paramsTextureMixerChannel->get("opacity"));
+
         
     }
     
@@ -148,9 +150,13 @@ void ofApp::setup(){
     oscFromSensorFuse.setup(49162);
     oscFromWaveAudio.setup(49164);
     oscToWaveAudio.setup("localhost", 49165);
-    
-    
+    oscFromWaveAudioParameters.setup(49166);
+
+//    oscSyncedParameters = paramsWekinatorIn;
+    // see Tree_AI if return needed
+//    ofAddListener(oscSyncedParameters.parameterChangedE(),this,&ofApp::parameterChanged);
 }
+
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -293,10 +299,9 @@ void ofApp::setupParameterGroup(){
     paramGroup.add(drawSyphon.set("draw syphon in", true));
     
     paramsWekinatorIn.setName("WekinatorInputs");
-    paramsWekinatorIn.add(in_1.set("wekIn_1", 0., 0., 1.));
-    paramsWekinatorIn.add(in_2.set("wekIn_2", 0., 0., 1.));
-    paramsWekinatorIn.add(in_3.set("wekIn_3", 0., 0., 1.));
-    paramsWekinatorIn.add(in_4.set("wekIn_4", 0., 0., 1.));
+    paramsWekinatorIn.add(in_1.set("isDay", 0., 0., 1.));
+    paramsWekinatorIn.add(in_2.set("isDvale", 0., 0., 1.));
+
 }
 
 //--------------------------------------------------------------
@@ -510,6 +515,8 @@ void ofApp::receiveOSC(){
         std::vector<std::string> address = ofSplitString(m.getAddress(),"/",true);
         
         
+
+        
         // check for mouse moved message
         if(address[0] == "Bead"){
             beads[ofToInt(address[1])].updateValuesFromBead(m.getArgAsFloat(0), m.getArgAsFloat(1));
@@ -541,7 +548,11 @@ void ofApp::receiveOSC(){
         }
         
     }
+    while(oscFromWaveAudioParameters.hasWaitingMessages()){
 
+        oscFromWaveAudioParameters.getParameter(paramsWekinatorIn);
+
+    }
     
     
 }

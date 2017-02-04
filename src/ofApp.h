@@ -73,8 +73,7 @@ class ofApp : public ofBaseApp{
     ofParameterGroup paramsWekinatorIn;
     ofParameter<float> in_1;
     ofParameter<float> in_2;
-    ofParameter<float> in_3;
-    ofParameter<float> in_4;
+
     ofParameterGroup paramsWekinatorOut;
 
 
@@ -116,7 +115,11 @@ class ofApp : public ofBaseApp{
     // OSC
     ofxOscReceiver oscFromSensorFuse;
     ofxOscReceiver oscFromWaveAudio;
+    ofxOscReceiver oscFromWaveAudioParameters;
     ofxOscSender oscToWaveAudio;
+    
+//    ofParameterGroup oscSyncedParameters;
+
     
     void receiveOSC();
     void sendOSC();
