@@ -23,7 +23,7 @@ public:
     UpDownCounter(){}
     
     ofParameter<bool> deactivate;
-
+    
     
     void activate(){
         activated = true;
@@ -57,14 +57,15 @@ public:
     ofParameter<int> mode;
     ofParameter<int> easing;
     ofParameter<int> imageIndex;
-
+    ofParameter<bool> deactivate;
+    
     
     WaveGateContent(){};
     
     void setup(string channelName, vector<ofImage> *images){
         this->images = images;
         this->name = channelName;
-
+        
         fbo.allocate(40, 1300, GL_RGBA32F_ARB);
         fbo.begin();
         glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -80,7 +81,7 @@ public:
     }
     
     void activate(int index){
-        counters[index].activate();
+        if(!deactivate) counters[index].activate();
     }
     
     void update(){
@@ -89,44 +90,42 @@ public:
             c.update();
         }
         
-        if(!=deactivate){
-        fbo.begin();
-        {
-            glClearColor(0.0, 0.0, 0.0, 0.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-            
-
-            int i = 0;
-            while ( i < imgCounters.getPixels().size() ) {
-                imgCounters.getPixels()[i] = counters[i].get();
-                i++;
-            }
-            imgCounters.update();
-            
-            shader.begin();
+            fbo.begin();
             {
-                shader.setUniformTexture("texForSlit", images->at(imageIndex).getTexture(), 1);
-                shader.setUniformTexture("texCounters", imgCounters.getTexture(), 2);
+                glClearColor(0.0, 0.0, 0.0, 0.0);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 
-                shader.setUniform2f("u_resolution", fbo.getWidth(), fbo.getHeight());
-                shader.setUniform2f("u_texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
-                shader.setUniform1f("u_time", ofGetElapsedTimef());
-                shader.setUniform1i("u_mode", (int)mode);
-                shader.setUniform1i("u_easing", (int)easing);
-
-                ofSetColor(255,255,255);
-                ofFill();
-                ofDrawRectangle(0, 0, fbo.getWidth(), fbo.getHeight());
+                
+                
+                int i = 0;
+                while ( i < imgCounters.getPixels().size() ) {
+                    imgCounters.getPixels()[i] = counters[i].get();
+                    i++;
+                }
+                imgCounters.update();
+                
+                shader.begin();
+                {
+                    shader.setUniformTexture("texForSlit", images->at(imageIndex).getTexture(), 1);
+                    shader.setUniformTexture("texCounters", imgCounters.getTexture(), 2);
+                    
+                    shader.setUniform2f("u_resolution", fbo.getWidth(), fbo.getHeight());
+                    shader.setUniform2f("u_texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
+                    shader.setUniform1f("u_time", ofGetElapsedTimef());
+                    shader.setUniform1i("u_mode", (int)mode);
+                    shader.setUniform1i("u_easing", (int)easing);
+                    
+                    ofSetColor(255,255,255);
+                    ofFill();
+                    ofDrawRectangle(0, 0, fbo.getWidth(), fbo.getHeight());
+                }
+                shader.end();
+                
             }
-            shader.end();
-            
-        }
-        fbo.end();
-        }
+            fbo.end();
     }
     
-
+    
     void setupParameterGroup(string name){
         parameterGroup.setName(name);
         parameterGroup.add(deactivate.set("deactivate", false));
@@ -137,11 +136,11 @@ public:
     }
     
     ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }
-
-
+    
+    
     
 private:
-
+    
 };
 
 #endif /* WaveGateContent_h */
