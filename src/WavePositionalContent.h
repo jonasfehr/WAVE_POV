@@ -104,30 +104,30 @@ public:
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 
                 
-                glDepthMask(GL_FALSE);
-                
-                ofSetColor(255);
-                
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_ONE, GL_ONE);
-                glBlendEquation(GL_MAX);
-                ofEnablePointSprites();
-                
-                shader.begin();
-                {
-                    shader.setUniformTexture("texPoint", images->at(imageIndex).getTexture(), 1);
-                    shader.setUniform2f("texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
-                    
-                    shader.setUniform2f("iResolution", fboShader.getWidth(), fboShader.getHeight());
-                    shader.setUniform1f("iGlobalTime",     ofGetElapsedTimef() ) ;//counter);
-                    shader.setUniform1i("u_mode", (int)mode);
-                    
-                    vbo.draw(GL_POINTS, 0, total);
-                }
-                shader.end();
-                
-                ofDisablePointSprites();
-                
+//                glDepthMask(GL_FALSE);
+//                
+//                ofSetColor(255);
+//                
+//                glEnable(GL_BLEND);
+//                glBlendFunc(GL_ONE, GL_ONE);
+//                glBlendEquation(GL_MAX);
+//                ofEnablePointSprites();
+//                
+//                shader.begin();
+//                {
+//                    shader.setUniformTexture("texPoint", images->at(imageIndex).getTexture(), 1);
+//                    shader.setUniform2f("texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
+//                    
+//                    shader.setUniform2f("iResolution", fboShader.getWidth(), fboShader.getHeight());
+//                    shader.setUniform1f("iGlobalTime",     ofGetElapsedTimef() ) ;//counter);
+//                    shader.setUniform1i("u_mode", (int)mode);
+//                    
+//                    vbo.draw(GL_POINTS, 0, total);
+//                }
+//                shader.end();
+//                
+//                ofDisablePointSprites();
+
             }
             fboShader.end();
             

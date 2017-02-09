@@ -44,6 +44,8 @@ public:
         povMappedContent.setup(channelName, gates, povPosition, &fboContent.getTexture(), POV_UV);
         
         fboContent.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA32F_ARB);
+        
+        povMappedContent.pov.setNearClip(0);
 
     }
     
@@ -51,8 +53,8 @@ public:
     void update(){
     
         // move pov if active
-        if(isActive){
-            
+//      if(isActive){
+        if(true){
             fboContent.begin();
             {
                 glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -60,15 +62,28 @@ public:
             
                 povMappedContent.pov.begin();
                 {
+                    ofEnableAlphaBlending();
                     for(auto & o : *externalObjects){
                         
                         ofVec3f pos = o.second.getPosition();
                         ofVec3f size = o.second.getSize();
-
-                        ofSetColor(255);
-                        ofDrawSphere(pos, size.x);
+                        
+                        pos.y = 1.73;
+                        
+                        ofSetColor(255, 200);
+                        //                        ofNoFill();
+                        ofSetIcoSphereResolution(1);
+                        ofPushMatrix();
+                        ofTranslate(pos);
+                        //                ofRotateX(ofGetElapsedTimef()*10.);
+                        //                ofRotateY(ofGetElapsedTimef()*5.);
+                        //                ofDrawIcoSphere(ofVec3f(0.), 1.);
+                        ofDrawCircle(0, 0, 1.);
+                        ofPopMatrix();
+                        
                         
                     }
+                    ofDisableAlphaBlending();
                 }
                 povMappedContent.pov.end();
             }
@@ -80,22 +95,22 @@ public:
             
             povMappedContent.setInputTexture(&fboContent.getTexture());
             povMappedContent.update();
-            // deactivate pocket if externalObject is lost
-            if(oldExternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
-            if(externalObject->getLifespan() > oldExternalObjectLifespan) externalObjectNotUpdatedSince = 0;
-            if(oldExternalObjectLifespan - externalObject->getLifespan() > 0 || externalObjectNotUpdatedSince > 10){
-                isActive = false;
-                povMappedContent.setInvisible();
-                oldExternalObjectLifespan = 0;
-                return;
-            }
-            oldExternalObjectLifespan = externalObject->getLifespan();
-            
+//            // deactivate pocket if externalObject is lost
+//            if(oldExternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
+//            if(externalObject->getLifespan() > oldExternalObjectLifespan) externalObjectNotUpdatedSince = 0;
+//            if(oldExternalObjectLifespan - externalObject->getLifespan() > 0 || externalObjectNotUpdatedSince > 10){
+//                isActive = false;
+//                povMappedContent.setInvisible();
+//                oldExternalObjectLifespan = 0;
+//                return;
+//            }
+//            oldExternalObjectLifespan = externalObject->getLifespan();
+//            
             povMappedContent.setVisible();
-            ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);
-            ofVec3f povCurrentPos = povMappedContent.getPovPtr()->getPosition();
-            povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
-            povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, externalObject->getPosition().z+externalObject->getVelocity().z));
+//            ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);
+//            ofVec3f povCurrentPos = povMappedContent.getPovPtr()->getPosition();
+//            povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
+//            povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, externalObject->getPosition().z+externalObject->getVelocity().z));
             
         }
         

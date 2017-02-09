@@ -2,8 +2,8 @@
 // https://www.shadertoy.com/view/4dS3Wd
 // http://patriciogonzalezvivo.com
 
- uniform vec2 iResolution;
- uniform float iGlobalTime;
+ // uniform vec2 iResolution;
+ // uniform float iGlobalTime;
 
 #define PI 3.14159265359
 #define TWO_PI 6.28318530718

@@ -76,8 +76,6 @@ public:
             }
             oldexternalObjectLifespan = externalObject->getLifespan();
             
-            
-            
             povMappedContent.setVisible();
             ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);
             ofVec3f povCurrentPos = povMappedContent.getPovPtr()->getPosition();

@@ -21,6 +21,8 @@ STRINGIFY(
           
           uniform float u_opacity;
           uniform int u_blendMode;
+          uniform float u_audioReactivity;
+          uniform float u_minimumVisibility;
           );
 
 
@@ -28,6 +30,7 @@ static string shader_uniforms =
 STRINGIFY(
           uniform float posX_$0;
           uniform float width_$0;
+          uniform float intensity_$0;
           );
 
 static string shader_functions =
@@ -224,8 +227,9 @@ STRINGIFY(
               STRINGIFY(
                         
                         vec4 gradient_$0 = vec4(cubicPulse(posX_$0, width_$0,st.x));
-                        
-                        mixCol = blendMode( u_blendMode, mixCol, gradient_$0, u_opacity );
+                        gradient_$0 = gradient_$0 * intensity_$0 * u_audioReactivity + gradient_$0 * (1.0 - u_audioReactivity);
+                        gradient_$0 = min(gradient_$0 + u_minimumVisibility, 1.);
+                        mixCol = blendMode( u_blendMode, mixCol, gradient_$0, u_opacity*(intensity_$0+0.5) );
                         );
               
               static string shader_output =
@@ -251,7 +255,8 @@ STRINGIFY(
                   ofParameter<int> blendMode;
                   ofParameter<float> opacity;
                   ofParameter<float> width;
-                  
+                  ofParameter<float> audioReactivity;
+                  ofParameter<float> minimumVisibility;
                   int oldExternalObjectSize = 0;
                   
                   WaveGradientOnPositionContent(){}
@@ -304,11 +309,13 @@ STRINGIFY(
                               
                               shader.setUniform1f("u_opacity", opacity);
                               shader.setUniform1i("u_blendMode", blendMode);
-                              
+                              shader.setUniform1i("u_audioReactivity", audioReactivity);
+                              shader.setUniform1i("u_minimumVisibility", minimumVisibility);
                               int i = 1;
                               for(auto & externalObject : *externalObjects){
                                   shader.setUniform1f("posX_"+ofToString(i), externalObject.second.getPosition().z/78.);
                                   shader.setUniform1f("width_"+ofToString(i), width);
+                                  shader.setUniform1f("intensity_"+ofToString(i), externalObject.second.getPosition().y);
                                   i++;
                               }
                               
@@ -345,6 +352,9 @@ STRINGIFY(
                       parameterGroup.add(blendMode.set("blendMode", 0, 1, 10));
                       parameterGroup.add(opacity.set("opacity", 0, 0., 1));
                       parameterGroup.add(width.set("width", 0.1, 0., 1.));
+                      parameterGroup.add(audioReactivity.set("audioReactivity", 0.1, 0., 1.));
+                      parameterGroup.add(minimumVisibility.set("minimumVisibility", 0.1, 0., 1.));
+                      
                   }
                   
                   

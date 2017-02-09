@@ -5,6 +5,7 @@
 #include "ofxGrabCam.h"
 #include "ofxSyphon.h"
 #include "ofxAutoReloadedShader.h"
+#include "ofxOsc.h"
 
 
 #include "Gate.h"
@@ -14,13 +15,16 @@
 #include "PocketPov.h"
 #include "PocketZone.h"
 #include "PocketPovPositionalContent.h"
+#include "PocketGateReactiveContent.h"
 
 #include "InputToWaveContent.h"
 #include "WaveGateContent.h"
+#include "WaveSlitContent.h"
 #include "WaveShaderContent.h"
 #include "WavePositionalContent.h"
 #include "WaveGradientOnPositionContent.h"
 #include "WaveRipplePovContent.h"
+#include "WaveEffectContent.h"
 
 #include "TextureMix.h"
 #include "SyphonUtils.h"
@@ -67,6 +71,7 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> drawFloor;
     ofParameter<bool> drawGates;
     ofParameter<bool> drawSyphon;
+    ofParameter<bool> drawSoundObjects;
     ofVec3f center = ofVec3f(0,VIEWER_HEIGHT, 40);
     
     
@@ -88,13 +93,16 @@ class ofApp : public ofBaseApp{
     
     // create content;
     InputToWaveContent contentPovFree;
-    WaveRipplePovContent contentRipplePovFront;
-    WaveRipplePovContent contentRipplePovBack;
-    WaveShaderContent contentShaderLines;
-    WaveGateContent contentGate;
+    InputToWaveContent contentPovSun;
+    InputToWaveContent contentPovLinesTunnel;
+//    WaveEffectContent contentEffectFront;
+//    WaveRipplePovContent contentRipplePovBack;
+//    WaveShaderContent contentShaderLines;
+    WaveSlitContent contentSlit;
 //    WaveShaderContent contentShaderSmoke;
 //    WavePositionalContent contentPosGhosts;
     WaveGradientOnPositionContent contentBeadsGradients;
+//    WaveGradientOnPositionContent contentSoundObjectsGradients;
     
     // mappings
     int mappingIndx;
@@ -127,9 +135,10 @@ class ofApp : public ofBaseApp{
 
     
     // Pockets
-    PocketZone pocketZone_1;
-    PocketPov pocketPov_1;
+//    PocketZone pocketZone_1;
+//    PocketPov pocketPov_1;
     PocketPovPositionalContent pocketPovPos_2;
+    PocketGateReactiveContent pocketGateReactive_1;
     
     // Images to be loaded
     vector<ofImage> imgGateContent;

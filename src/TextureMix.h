@@ -66,10 +66,10 @@ public:
             
             for(int i = 0; i < texGroups.size(); i++){
                 shader.setUniformTexture("tex"+ofToString(i), texGroups[i].fbo->getTexture(), i);
-                shader.setUniform1f("u_contrast_"+ofToString(i), texGroups[i].contrast);
                 shader.setUniform1f("u_H_"+ofToString(i), texGroups[i].hue);
                 shader.setUniform1f("u_S_"+ofToString(i), texGroups[i].saturation);
                 shader.setUniform1f("u_B_"+ofToString(i), texGroups[i].brightness);
+                shader.setUniform1f("u_contrast_"+ofToString(i), texGroups[i].contrast);
                 shader.setUniform1f("u_opacity_"+ofToString(i), texGroups[i].opacity);
                 shader.setUniform1i("u_blendMode_"+ofToString(i), texGroups[i].blendMode);
                 shader.setUniform2f("resolution_"+ofToString(i), texGroups[i].fbo->getWidth(), texGroups[i].fbo->getHeight());

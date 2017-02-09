@@ -16,21 +16,44 @@
 		<mode>1</mode>
 		<easing>0</easing>
 		<imageIndex>2</imageIndex>
+	<deactivate>0</deactivate>
 	</ReactiveGate>
 <BeadsGradients_gradients>
 		<blendMode>1</blendMode>
 		<opacity>1</opacity>
-		<width>0.0561224</width>
+		<width>0.0357143</width>
+	<audioReactivity>0.1</audioReactivity>
+		<minimumVisibility>0.1</minimumVisibility>
 	</BeadsGradients_gradients>
 <contentRipplePovFront>
 		<possibility>0.0612245</possibility>
 		<increment>0.00561319</increment>
+	<deactivate>0</deactivate>
 	</contentRipplePovFront>
 	<contentRipplePovBack>
 		<possibility>0.0969388</possibility>
 		<increment>0.00561319</increment>
+	<deactivate>0</deactivate>
 	</contentRipplePovBack>
 <PocketPov>
 		<minLifeSpan>5</minLifeSpan>
+	<deactivate>0</deactivate>
 	</PocketPov>
+<SoundObjGradients_gradients>
+		<blendMode>0</blendMode>
+		<opacity>1</opacity>
+		<width>0.0714286</width>
+		<audioReactivity>0.1</audioReactivity>
+		<minimumVisibility>0.1</minimumVisibility>
+	</SoundObjGradients_gradients>
+<contentEffectFront>
+		<deactivate>0</deactivate>
+		<possibility>0.1</possibility>
+		<increment>0.01</increment>
+	</contentEffectFront>
+<PocketGateReactive>
+		<deactivate>0</deactivate>
+		<width>0.0357143</width>
+		<increment>0.025</increment>
+	</PocketGateReactive>
 </ContentControls>

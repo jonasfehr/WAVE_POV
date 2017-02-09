@@ -21,9 +21,9 @@ public:
         lastUpdate = 0;
     }
     
-    void updateValuesFromBead(float positionX, float distance ){
+    void updateValuesFromBead(float positionX, float distance,  float intensity ){
         this->position.z = positionX;
-        this->position.y = distance;
+        this->position.y = intensity;
         
         lastUpdate = 0;
     }
@@ -31,7 +31,7 @@ public:
     void updateValuesFromSoundObject(float posX, float posY){
         this->position.z = posX;
         this->position.x = posY;
-        
+
         lastUpdate = 0;
     }
     
@@ -40,7 +40,7 @@ public:
     }
     
     bool isDead(){
-        return lastUpdate > 10;
+        return lastUpdate < -10;
     }
     
     ofVec3f getPosition(){ return position; }
