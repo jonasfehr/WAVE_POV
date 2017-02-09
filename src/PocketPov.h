@@ -18,7 +18,7 @@ public:
     ExternalObject * externalObject;
     InputToWaveContent povMappedContent;
     float timeOfActivation = 0;
-    float oldexternalObjectLifespan = 0;
+    float oldExternalObjectLifespan = 0;
     int externalObjectNotUpdatedSince;
     string name;
     int index = 0;
@@ -66,15 +66,15 @@ public:
         // move pov if active
         if(isActive && !deactivate){
             // deactivate pocket if externalObject is lost
-            if(oldexternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
-            if(externalObject->getLifespan() > oldexternalObjectLifespan) externalObjectNotUpdatedSince = 0;
-            if(oldexternalObjectLifespan - externalObject->getLifespan() > 0 || externalObjectNotUpdatedSince > 10){
+            if(oldExternalObjectLifespan == externalObject->getLifespan()) externalObjectNotUpdatedSince++;
+            if(externalObject->getLifespan() > oldExternalObjectLifespan) externalObjectNotUpdatedSince = 0;
+            if(oldExternalObjectLifespan - externalObject->getLifespan() > 0 || externalObjectNotUpdatedSince > 10){
                 isActive = false;
                 povMappedContent.setInvisible();
-                oldexternalObjectLifespan = 0;
+                oldExternalObjectLifespan = 0;
                 return;
             }
-            oldexternalObjectLifespan = externalObject->getLifespan();
+            oldExternalObjectLifespan = externalObject->getLifespan();
             
             povMappedContent.setVisible();
             ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);

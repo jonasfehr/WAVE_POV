@@ -98,6 +98,7 @@ void main()
 {
 
     vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    float blend = smoothstep( 0.05, 0.25,st.x);
 
     vec2 countersRes = vec2(40,1);
     float counter = texture2DRect(texCounters, gl_FragCoord.xx).r;
@@ -106,16 +107,18 @@ void main()
 
     vec3 finalCol = vec3(0);
 
-        float n = noise(st+vec2(u_time/2., .1));
+        float n = noise(st*vec2(2., 5.)+vec2(u_time/2., 1.));
         n +=0.;
-        n/=100.;
-        vec2 coord = vec2( counter + n, st.y);
-        vec3 tex = texture2DRect(texForSlit, coord * vec2(u_texResolution.x, u_texResolution.y-0.5)).rgb;
-        finalCol = tex;
+        n/=5.;
+        // n=0.;
+        vec2 coord = vec2( min(counter + n, 1.), min(st.y + n*.01, 1.));
+        vec3 tex = texture2DRect(texForSlit, coord * vec2(u_texResolution.x, u_texResolution.y)).rgb;
+        finalCol = tex*vec3(blend);
 
 
 
 
 
 
-    gl_FragColor =  vec4(finalCol, brightness(finalCol));}
+    gl_FragColor =  vec4(finalCol,1.);
+  }

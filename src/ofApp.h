@@ -97,7 +97,7 @@ class ofApp : public ofBaseApp{
     InputToWaveContent contentPovLinesTunnel;
 //    WaveEffectContent contentEffectFront;
 //    WaveRipplePovContent contentRipplePovBack;
-//    WaveShaderContent contentShaderLines;
+    WaveShaderContent contentShaderSmoke;
     WaveSlitContent contentSlit;
 //    WaveShaderContent contentShaderSmoke;
 //    WavePositionalContent contentPosGhosts;
@@ -132,6 +132,7 @@ class ofApp : public ofBaseApp{
     void receiveOSC();
     void sendOSC();
     
+    int oldMillis = 0;
 
     
     // Pockets

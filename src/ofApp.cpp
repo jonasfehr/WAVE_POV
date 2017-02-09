@@ -44,7 +44,7 @@ void ofApp::setup(){
     
     // setup content generators
     contentPovSun.setup("PovSun", &gates, camPresets[0].pos, "sun", ofVec2f(1024), POV_UV);
-    contentPovLinesTunnel.setup("PovLinesTunnel", &gates, camPresets[0].pos, "LinesTunnel", ofVec2f(1024), POV_UV);
+//    contentPovLinesTunnel.setup("PovLinesTunnel", &gates, camPresets[0].pos, "LinesTunnel", ofVec2f(1024), POV_UV);
     contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
 //    contentShaderLines.setup("Lines", "lines");
     contentBeadsGradients.setup("BeadsGradients", &beads);
@@ -61,17 +61,21 @@ void ofApp::setup(){
     img.load("images/iris_3.png");
     img.update();
     imgGateContent.push_back(img);
-    img.load("images/nova_1.png");
+    img.load("images/Pass_1.png");
     img.update();
     imgGateContent.push_back(img);
     img.load("images/nova_2.png");
     img.update();
     imgGateContent.push_back(img);
-    img.load("images/tree_1.png");
+    img.load("images/tree_2.png");
     img.update();
     imgGateContent.push_back(img);
-    
     contentSlit.setup("Slit", &imgGateContent);
+
+    
+    contentShaderSmoke.setup("smokeNoise", "smokeNoise");
+    contentSlit.setup("Slit", contentShaderSmoke.getTexturePtr());
+
     
 //    contentEffectFront.setup("contentEffectFront", 1, &oscToWaveAudio);
 //    contentRipplePovBack.setup("contentRipplePovBack", 2, &gates, camPresets[1].pos, &oscToWaveAudio);
@@ -88,7 +92,6 @@ void ofApp::setup(){
 //        contentPosGhosts.setup("Ghosts", &imgPosContent, &SoundObjects);
     
     
-    //    contentShaderSmoke.setup("smokeNoise");
     
     
     // setup Syphon
@@ -99,25 +102,24 @@ void ofApp::setup(){
     
     // add POCKETS
 //    pocketPov_1.setup("PocketPov", 1, &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
-    pocketPovPos_2.setup("PocketPovGhosts" ,0., &gates, camPresets[0].pos, &beads);
+    pocketPovPos_2.setup("PocketPovSoundObj" ,1,2., &gates, camPresets[0].pos, &soundObjects,&oscToWaveAudio);
     pocketGateReactive_1.setup("PocketGateReactive", 1, &oscToWaveAudio);
     
     
     
     // setup Mixer
-//    textureMixer.addFboChannel(contentShaderLines.getFboPtr(), contentShaderLines.getName(), BLEND_SCREEN);
-    
-    textureMixer.addFboChannel(contentPovLinesTunnel.getFboPtr(), contentPovLinesTunnel.getName(), BLEND_ADD);
+//    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), contentShaderSmoke.getName(), BLEND_SCREEN);
+    textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentSlit.getFboPtr(), contentSlit.getName(), BLEND_ADD);
+//    textureMixer.addFboChannel(contentPovLinesTunnel.getFboPtr(), contentPovLinesTunnel.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentPovSun.getFboPtr(), contentPovSun.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentSoundObjectsGradients.getFboPtr(), contentSoundObjectsGradients.getName(), BLEND_ADD);
 //
-    textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentRipplePovBack.getFboPtr(), contentRipplePovBack.getName(), BLEND_ADD);
     
     //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
 //        textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
-    textureMixer.addFboChannel(contentSlit.getFboPtr(), contentSlit.getName(), BLEND_ADD);
     
 //    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), pocketPov_1.getName(), BLEND_SOFT_LIGHT);
     textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
@@ -136,7 +138,7 @@ void ofApp::setup(){
 //    paramsControls.add(contentSoundObjectsGradients.parameterGroup);
 //    paramsControls.add(contentEffectFront.parameterGroup);
 //    paramsControls.add(contentRipplePovBack.parameterGroup);
-//    paramsControls.add(pocketPov_1.parameterGroup);
+    paramsControls.add(pocketPovPos_2.parameterGroup);
     paramsControls.add(pocketGateReactive_1.parameterGroup);
 //        paramsControls.add(contentPosGhosts.parameterGroup);
         guiControls.setup( paramsControls );
@@ -216,7 +218,7 @@ void ofApp::update(){
     
     // UPDATE ALL THE CONTENT
     contentPovSun.update();
-    contentPovLinesTunnel.update();
+//    contentPovLinesTunnel.update();
     contentPovFree.update();
 //    contentEffectFront.update();
 //    contentRipplePovBack.update();
@@ -224,7 +226,7 @@ void ofApp::update(){
     contentSlit.update();
     contentBeadsGradients.update();
 //    contentSoundObjectsGradients.update();
-    //    contentShaderSmoke.update();
+        contentShaderSmoke.update();
 //        contentPosGhosts.update();
     //
     //    // UPDATE POCKETS
@@ -233,6 +235,17 @@ void ofApp::update(){
     pocketPovPos_2.update();
     pocketGateReactive_1.update();
     
+    
+    // sendOSC
+    // SEND OSC gate 1
+    if(ofGetElapsedTimeMillis()/50 != oldMillis){
+        ofxOscMessage m;
+        m.setAddress("/Sun");
+        m.addFloatArg(contentPovSun.getIntensity());
+        oscToWaveAudio.sendMessage(m);
+        
+        oldMillis = ofGetElapsedTimeMillis()/50;
+    }
     
     
     // CREATE THE OUTPUT TO MADMAPPER
@@ -264,7 +277,7 @@ void ofApp::draw(){
         }
         
         if(drawSoundObjects){
-            for(auto & o : beads){
+            for(auto & o : soundObjects){
                 ofVec3f pos = o.second.getPosition();
                 ofVec3f size = o.second.getSize();
                 pos.y = 1.7;

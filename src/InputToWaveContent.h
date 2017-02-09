@@ -32,6 +32,8 @@ public:
     int mappingType = TUBE;
     string name;
     
+    float intensityNoise;
+    
     ofxAutoReloadedShader shader;
     
     bool isVisible = true;
@@ -169,9 +171,12 @@ public:
                         glClearColor(0.0, 0.0, 0.0, 0.0);
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+                        intensityNoise = ofNoise(ofGetElapsedTimef()/2.)/2+0.5;
+                        
                         shader.begin();{
                             shader.setUniform2f("iResolution", fboShader.getWidth(), fboShader.getHeight());
                             shader.setUniform1f("iGlobalTime",     ofGetElapsedTimef() ) ;//counter);
+                            shader.setUniform1f("intensity",     intensityNoise ) ;//counter);
                             ofSetColor(255,255,255);
                             ofFill();
                             ofDrawRectangle(0, 0, fboShader.getWidth(), fboShader.getHeight());
@@ -363,6 +368,8 @@ public:
     };
     
     string getName(){ return name; }
+    
+    float getIntensity(){return intensityNoise;}
 
 };
 

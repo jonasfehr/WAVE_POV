@@ -27,7 +27,7 @@ public:
         fbo.draw(0,0, 120, 1300);
     }
     
-    ofTexture getTexture(){ return fbo.getTexture(); }
+    ofTexture* getTexturePtr(){ return &fbo.getTexture(); }
     
     ofFbo* getFboPtr(){ return &fbo; }
     

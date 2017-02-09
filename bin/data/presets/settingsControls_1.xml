@@ -56,4 +56,13 @@
 		<width>0.0357143</width>
 		<increment>0.025</increment>
 	</PocketGateReactive>
+<Slit>
+		<deactivate>0</deactivate>
+		<speed>0.01</speed>
+		<easing>1</easing>
+		<imageIndex>2</imageIndex>
+	</Slit>
+<PocketPovSoundObj>
+		<deactivate>0</deactivate>
+	</PocketPovSoundObj>
 </ContentControls>

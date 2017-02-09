@@ -1,5 +1,6 @@
 uniform vec2 iResolution;
 uniform float iGlobalTime;
+uniform float intensity;
 
 #define time iGlobalTime*0.15
 
@@ -27,6 +28,20 @@ float snoise(vec3 uv, float res)
 	return mix(r0, r1, f.z)*2.-1.;
 }
 
+float cubicIn(float t) {
+    return t * t * t;
+}
+
+float cubicOut(float t) {
+    float f = t - 1.0;
+    return f * f * f + 1.0;
+}
+
+//Circular
+float circularIn(float t) {
+    return 1.0 - sqrt(1.0 - t * t);
+}
+
 void main( )
 {
 	vec2 p = -.5 + gl_FragCoord.xy / iResolution.xy;
@@ -50,5 +65,5 @@ void main( )
 	float fire_1 = pow(max(color,0.),2.)*0.4;
 	float fire_2 = pow(max(color,0.),3.)*0.15;
 
-	gl_FragColor = vec4( vec3(fire_2*ring), 1.0);
+	gl_FragColor = vec4( vec3(fire_2*ring*cubicIn(intensity)), 1.0);
 }

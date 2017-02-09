@@ -21,12 +21,15 @@ public:
     ofFloatImage imgCounters;
     
     ofParameter<float> speed;
-    ofParameter<int> mode;
     ofParameter<int> easing;
     ofParameter<int> imageIndex;
     ofParameter<bool> deactivate;
     
     float walker;
+    
+    ofTexture * texture;
+    
+    int mode = 0;
     
     
     WaveSlitContent(){};
@@ -47,7 +50,30 @@ public:
         
         imgCounters.allocate(40, 1, OF_IMAGE_GRAYSCALE);
         
+        mode = 1;
+        
     }
+    
+    void setup(string channelName, ofTexture * texture){
+        this->name = channelName;
+        this->texture = texture;
+        
+        fbo.allocate(40, 1300, GL_RGBA32F_ARB);
+        fbo.begin();
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        fbo.end();
+        
+        shader.load("shaders/WaveSlitContent");
+        
+        setupParameterGroup(name);
+        
+        imgCounters.allocate(40, 1, OF_IMAGE_GRAYSCALE);
+        
+        mode = 2;
+        
+    }
+    
     
     void activate(int index){
         if(!deactivate) counters[index].activate();
@@ -67,22 +93,26 @@ public:
 
                 int i = 0;
                 while ( i < imgCounters.getPixels().size() ) {
-                    walker = (sin(ofGetElapsedTimef()+i*PI/40*0.001)+1)/2;
 
-                    imgCounters.getPixels()[i] = counters[i].get()/41+float(i/41.);//+walker/41;
+                    imgCounters.getPixels()[i] = counters[i].get()*(40-i)/40;
                     i++;
                 }
                 imgCounters.update();
                 
                 shader.begin();
                 {
-                    shader.setUniformTexture("texForSlit", images->at(imageIndex).getTexture(), 1);
+                    if(mode == 1){
+                        shader.setUniformTexture("texForSlit", images->at(imageIndex).getTexture(), 1);
+                        shader.setUniform2f("u_texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
+                    }else if(mode == 2){
+                        shader.setUniformTexture("texForSlit", *texture, 1);
+                        shader.setUniform2f("u_texResolution", texture->getWidth(), texture->getHeight());
+
+                    }
                     shader.setUniformTexture("texCounters", imgCounters.getTexture(), 2);
                     
                     shader.setUniform2f("u_resolution", fbo.getWidth(), fbo.getHeight());
-                    shader.setUniform2f("u_texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
                     shader.setUniform1f("u_time", ofGetElapsedTimef());
-                    shader.setUniform1i("u_mode", (int)mode);
                     shader.setUniform1i("u_easing", (int)easing);
                     
                     ofSetColor(255,255,255);
@@ -100,7 +130,6 @@ public:
         parameterGroup.setName(name);
         parameterGroup.add(deactivate.set("deactivate", false));
         parameterGroup.add(speed.set("speed", 0.01, 0.001, 0.01));
-        parameterGroup.add(mode.set("mode", 1, 1, 2));
         parameterGroup.add(easing.set("easing", 1, 0, 2));
         parameterGroup.add(imageIndex.set("imageIndex", 0, 0, images->size()-1));
     }

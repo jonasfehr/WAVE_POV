@@ -77,8 +77,8 @@
 			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0</opacity>
-			<blendMode>1</blendMode>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
 		</PovPocketPos_1>
 		<PovZone_1>
 			<hue>0.110415</hue>
@@ -97,7 +97,7 @@
 			<blendMode>1</blendMode>
 		</SyphonInPovFree>
 	<SyponInPovFree>
-			<hue>0.0663265</hue>
+			<hue>0</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
@@ -124,7 +124,7 @@
 			<hue>0.760204</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
-			<contrast>1</contrast>
+			<contrast>0.556122</contrast>
 			<opacity>1</opacity>
 			<blendMode>3</blendMode>
 		</BeadsGradients>
@@ -180,9 +180,9 @@
 			<hue>0.204082</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
-			<contrast>0.183673</contrast>
+			<contrast>0.52551</contrast>
 			<opacity>0.994898</opacity>
-			<blendMode>1</blendMode>
+			<blendMode>3</blendMode>
 		</PovSun>
 	<PovLinesTunnel>
 			<hue>0.552293</hue>
@@ -190,7 +190,7 @@
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
 			<opacity>0</opacity>
-			<blendMode>1</blendMode>
+			<blendMode>10</blendMode>
 		</PovLinesTunnel>
 		<contentEffectFront>
 			<hue>0.598136</hue>
@@ -208,6 +208,14 @@
 			<opacity>1</opacity>
 			<blendMode>3</blendMode>
 		</PocketGateReactive>
+	<Slit>
+			<hue>0.596939</hue>
+			<saturation>1</saturation>
+			<brightness>1</brightness>
+			<contrast>0.581633</contrast>
+			<opacity>0.933673</opacity>
+			<blendMode>1</blendMode>
+		</Slit>
 	</Mixer>
 <ContentControl/>
 </ContentControl>
