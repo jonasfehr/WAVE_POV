@@ -78,19 +78,19 @@ public:
         if(!deactivate){
             
             if(!isTarget){
-//                // move soft
-//                if(effectPos > reactiveGate) effectPos -= increment;
-//                else effectPos += increment;
-//                
-//                if(effectPos <= reactiveGate + increment && effectPos >= reactiveGate - increment){
-//                    isTarget = true;
-//                    autoMoveAtTime = ofRandom(10., 30.)+ofGetElapsedTimef();
-//                    
-//                }
-                // jump
-                    effectPos = reactiveGate;
+                // move soft
+                if(effectPos > reactiveGate) effectPos -= increment;
+                else effectPos += increment;
+                
+                if(effectPos <= reactiveGate + increment && effectPos >= reactiveGate - increment){
                     isTarget = true;
                     autoMoveAtTime = ofRandom(10., 30.)+ofGetElapsedTimef();
+                    
+                }
+                // jump
+//                    effectPos = reactiveGate;
+//                    isTarget = true;
+//                    autoMoveAtTime = ofRandom(10., 30.)+ofGetElapsedTimef();
                 
                 
                 

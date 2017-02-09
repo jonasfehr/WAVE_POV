@@ -93,13 +93,14 @@ class ofApp : public ofBaseApp{
     
     // create content;
     InputToWaveContent contentPovFree;
-    InputToWaveContent contentPovSun;
-    InputToWaveContent contentPovSunBack;
-    InputToWaveContent contentPovLinesTunnel;
+//    InputToWaveContent contentPovSun;
+//    InputToWaveContent contentPovSunBack;
+//    InputToWaveContent contentPovLinesTunnel;
 //    WaveEffectContent contentEffectFront;
 //    WaveRipplePovContent contentRipplePovBack;
     WaveShaderContent contentShaderSmoke;
     WaveSlitContent contentSlit;
+    WaveGateContent contentGate;
 //    WaveShaderContent contentShaderSmoke;
 //    WavePositionalContent contentPosGhosts;
     WaveGradientOnPositionContent contentBeadsGradients;

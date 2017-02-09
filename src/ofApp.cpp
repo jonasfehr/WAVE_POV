@@ -43,13 +43,13 @@ void ofApp::setup(){
     }
     
     // setup content generators
-    contentPovSun.setup("PovSun", &gates, camPresets[0].pos, "sun", ofVec2f(1024), POV_UV);
-    contentPovSunBack.setup("PovSunBack", &gates, camPresets[1].pos, "sunback", ofVec2f(1024), POV_UV);
+//    contentPovSun.setup("PovSun", &gates, camPresets[0].pos, "sun", ofVec2f(1024), POV_UV);
+//    contentPovSunBack.setup("PovSunBack", &gates, camPresets[1].pos, "sunback", ofVec2f(1024), POV_UV);
 //    contentPovLinesTunnel.setup("PovLinesTunnel", &gates, camPresets[0].pos, "LinesTunnel", ofVec2f(1024), POV_UV);
     contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
 //    contentShaderLines.setup("Lines", "lines");
     contentBeadsGradients.setup("BeadsGradients", &beads);
-//    contentSoundObjectsGradients.setup("SoundObjGradients", &soundObjects);
+    //    contentSoundObjectsGradients.setup("SoundObjGradients", &soundObjects);
     
     //load images
     ofImage img;
@@ -72,6 +72,7 @@ void ofApp::setup(){
     img.update();
     imgGateContent.push_back(img);
     contentSlit.setup("Slit", &imgGateContent);
+    contentGate.setup("Gate", &imgGateContent);
 
     
     contentShaderSmoke.setup("smokeNoise", "smokeNoise");
@@ -113,9 +114,10 @@ void ofApp::setup(){
     textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentSlit.getFboPtr(), contentSlit.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentPovLinesTunnel.getFboPtr(), contentPovLinesTunnel.getName(), BLEND_ADD);
-    textureMixer.addFboChannel(contentPovSun.getFboPtr(), contentPovSun.getName(), BLEND_ADD);
-    textureMixer.addFboChannel(contentPovSunBack.getFboPtr(), contentPovSunBack.getName(), BLEND_ADD);
+//    textureMixer.addFboChannel(contentPovSun.getFboPtr(), contentPovSun.getName(), BLEND_ADD);
+//    textureMixer.addFboChannel(contentPovSunBack.getFboPtr(), contentPovSunBack.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentGate.getFboPtr(), contentGate.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentSoundObjectsGradients.getFboPtr(), contentSoundObjectsGradients.getName(), BLEND_ADD);
 //
 //    textureMixer.addFboChannel(contentRipplePovBack.getFboPtr(), contentRipplePovBack.getName(), BLEND_ADD);
@@ -142,6 +144,7 @@ void ofApp::setup(){
 //    paramsControls.add(contentRipplePovBack.parameterGroup);
     paramsControls.add(pocketPovPos_2.parameterGroup);
     paramsControls.add(pocketGateReactive_1.parameterGroup);
+    paramsControls.add(contentGate.parameterGroup);
 //        paramsControls.add(contentPosGhosts.parameterGroup);
         guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
@@ -219,8 +222,8 @@ void ofApp::update(){
 
     
     // UPDATE ALL THE CONTENT
-    contentPovSun.update();
-    contentPovSunBack.update();
+//    contentPovSun.update();
+//    contentPovSunBack.update();
 //    contentPovLinesTunnel.update();
     contentPovFree.update();
 //    contentEffectFront.update();
@@ -230,6 +233,7 @@ void ofApp::update(){
     contentBeadsGradients.update();
 //    contentSoundObjectsGradients.update();
         contentShaderSmoke.update();
+    contentGate.update();
 //        contentPosGhosts.update();
     //
     //    // UPDATE POCKETS
@@ -241,14 +245,14 @@ void ofApp::update(){
     
     // sendOSC
     // SEND OSC gate 1
-    if(ofGetElapsedTimeMillis()/50 != oldMillis){
-        ofxOscMessage m;
-        m.setAddress("/Sun");
-        m.addFloatArg(contentPovSun.getIntensity());
-        oscToWaveAudio.sendMessage(m);
-        
-        oldMillis = ofGetElapsedTimeMillis()/50;
-    }
+//    if(ofGetElapsedTimeMillis()/50 != oldMillis){
+//        ofxOscMessage m;
+//        m.setAddress("/Sun");
+//        m.addFloatArg(contentPovSun.getIntensity());
+//        oscToWaveAudio.sendMessage(m);
+//        
+//        oldMillis = ofGetElapsedTimeMillis()/50;
+//    }
     
     
     // CREATE THE OUTPUT TO MADMAPPER
@@ -531,6 +535,7 @@ void ofApp::receiveOSC(){
         // check for mouse moved message
         if(address[0] == "Gate"){
             contentSlit.activate(ofToInt(address[1]));
+            contentGate.activate(ofToInt(address[1]));
             
 //            pocketZone_1.gateActivated(ofToInt(address[1]));
             pocketGateReactive_1.gateActivated(ofToInt(address[1]));
