@@ -94,6 +94,7 @@ class ofApp : public ofBaseApp{
     // create content;
     InputToWaveContent contentPovFree;
     InputToWaveContent contentPovSun;
+    InputToWaveContent contentPovSunBack;
     InputToWaveContent contentPovLinesTunnel;
 //    WaveEffectContent contentEffectFront;
 //    WaveRipplePovContent contentRipplePovBack;

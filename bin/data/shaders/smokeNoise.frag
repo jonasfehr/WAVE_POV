@@ -56,10 +56,10 @@ void main(  ) {
     // st.x = floor(st.x)/5.;
 
 
-    st.x*=200.;//*distance(st.y,0.5);
+    st.x*=1000.;//*distance(st.y,0.5);
 
-    st.y*=100.*distance(st.y,1.); // ZOOM
-    st.y += iGlobalTime/20.;
+    st.y*=400.*distance(st.y,1.); // ZOOM
+    // st.y += iGlobalTime/20.;
 
     vec3 color = vec3(1.);
     vec2 a = vec2(0.);
@@ -73,7 +73,7 @@ void main(  ) {
     b.y = fbm( st + 0.16*iGlobalTime);
 
     c.x = fbm( st + 7.0*b + vec2(10.7,.2)+ 0.215*iGlobalTime/10. );
-    c.y = fbm( st + 3.944*b + vec2(.3,12.8)+ 0.16*iGlobalTime);
+    c.y = fbm( st + 3.944*b + vec2(.3,12.8)+ 0.16*-iGlobalTime);
 
     float f = fbm(c+a*0.1);
 

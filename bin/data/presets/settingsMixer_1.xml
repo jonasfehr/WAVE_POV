@@ -216,6 +216,14 @@
 			<opacity>0.933673</opacity>
 			<blendMode>1</blendMode>
 		</Slit>
+	<PovSunBack>
+			<hue>0.632653</hue>
+			<saturation>0.586735</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>0.969388</opacity>
+			<blendMode>3</blendMode>
+		</PovSunBack>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

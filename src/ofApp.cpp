@@ -44,6 +44,7 @@ void ofApp::setup(){
     
     // setup content generators
     contentPovSun.setup("PovSun", &gates, camPresets[0].pos, "sun", ofVec2f(1024), POV_UV);
+    contentPovSunBack.setup("PovSunBack", &gates, camPresets[1].pos, "sun", ofVec2f(1024), POV_UV);
 //    contentPovLinesTunnel.setup("PovLinesTunnel", &gates, camPresets[0].pos, "LinesTunnel", ofVec2f(1024), POV_UV);
     contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
 //    contentShaderLines.setup("Lines", "lines");
@@ -113,6 +114,7 @@ void ofApp::setup(){
     textureMixer.addFboChannel(contentSlit.getFboPtr(), contentSlit.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentPovLinesTunnel.getFboPtr(), contentPovLinesTunnel.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentPovSun.getFboPtr(), contentPovSun.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentPovSunBack.getFboPtr(), contentPovSunBack.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentSoundObjectsGradients.getFboPtr(), contentSoundObjectsGradients.getName(), BLEND_ADD);
 //
@@ -218,6 +220,7 @@ void ofApp::update(){
     
     // UPDATE ALL THE CONTENT
     contentPovSun.update();
+    contentPovSunBack.update();
 //    contentPovLinesTunnel.update();
     contentPovFree.update();
 //    contentEffectFront.update();

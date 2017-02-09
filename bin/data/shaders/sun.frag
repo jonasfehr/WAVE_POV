@@ -59,7 +59,7 @@ void main( )
 
 	vec2 st = gl_FragCoord.xy / iResolution.xy;
 
-	float radius = 0.05;
+	float radius = 0.05-intensity/1000.;
 	float ring = smoothstep(distance(st,vec2(0.5)),0.00001, radius);
 
 	float fire_1 = pow(max(color,0.),2.)*0.4;
