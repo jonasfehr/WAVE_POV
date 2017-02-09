@@ -44,7 +44,7 @@ void ofApp::setup(){
     
     // setup content generators
     contentPovSun.setup("PovSun", &gates, camPresets[0].pos, "sun", ofVec2f(1024), POV_UV);
-    contentPovSunBack.setup("PovSunBack", &gates, camPresets[1].pos, "sun", ofVec2f(1024), POV_UV);
+    contentPovSunBack.setup("PovSunBack", &gates, camPresets[1].pos, "sunback", ofVec2f(1024), POV_UV);
 //    contentPovLinesTunnel.setup("PovLinesTunnel", &gates, camPresets[0].pos, "LinesTunnel", ofVec2f(1024), POV_UV);
     contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
 //    contentShaderLines.setup("Lines", "lines");

@@ -116,7 +116,7 @@ void main(  ) {
 // random
 vec2 st = gl_FragCoord.xy/iResolution.xy;
 
-    float resRnd = 500.;
+    float resRnd = 250.;
     st *= resRnd;
     st = floor(st)/resRnd;
   st.x += time;

@@ -146,7 +146,7 @@ public:
                 {
                     shader.setUniform2f("iResolution", fbo.getWidth(), fbo.getHeight());
                     shader.setUniform1f("iGlobalTime", ofGetElapsedTimef() ) ;//counter);
-                    shader.setUniform1f("effectPos", (effectPos-1)/39. + 0.125 );
+                    shader.setUniform1f("effectPos", effectPos*0.025 + 0.0125 );
                     shader.setUniform1f("width", width );
                     
                     ofSetColor(255,255,255);
