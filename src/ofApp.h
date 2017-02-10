@@ -89,22 +89,17 @@ class ofApp : public ofBaseApp{
     // Syphon in & out
     SyphonClientDir syphonIn;
     SyphonFbo syphonOut;
-//    SyphonFbo syphonSimOut;
-    
-    // create content;
+
+    // content
     InputToWaveContent contentPovFree;
-//    InputToWaveContent contentPovSun;
-//    InputToWaveContent contentPovSunBack;
-//    InputToWaveContent contentPovLinesTunnel;
-//    WaveEffectContent contentEffectFront;
-//    WaveRipplePovContent contentRipplePovBack;
     WaveShaderContent contentShaderSmoke;
-    WaveSlitContent contentSlit;
+//    WaveSlitContent contentSlit;
     WaveGateContent contentGate;
-//    WaveShaderContent contentShaderSmoke;
-//    WavePositionalContent contentPosGhosts;
     WaveGradientOnPositionContent contentBeadsGradients;
-//    WaveGradientOnPositionContent contentSoundObjectsGradients;
+    
+    // Pockets
+    PocketPovPositionalContent pocketPovPos_2;
+    PocketGateReactiveContent pocketGateReactive_1;
     
     // mappings
     int mappingIndx;
@@ -128,8 +123,6 @@ class ofApp : public ofBaseApp{
     ofxOscReceiver oscFromWaveAudioParameters;
     ofxOscSender oscToWaveAudio;
     
-//    ofParameterGroup oscSyncedParameters;
-
     
     void receiveOSC();
     void sendOSC();
@@ -137,11 +130,6 @@ class ofApp : public ofBaseApp{
     int oldMillis = 0;
 
     
-    // Pockets
-//    PocketZone pocketZone_1;
-//    PocketPov pocketPov_1;
-    PocketPovPositionalContent pocketPovPos_2;
-    PocketGateReactiveContent pocketGateReactive_1;
     
     // Images to be loaded
     vector<ofImage> imgGateContent;
