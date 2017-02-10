@@ -71,7 +71,6 @@ void ofApp::setup(){
     img.load("images/tree_2.png");
     img.update();
     imgGateContent.push_back(img);
-    contentSlit.setup("Slit", &imgGateContent);
     contentGate.setup("Gate", &imgGateContent);
 
     
@@ -104,7 +103,7 @@ void ofApp::setup(){
     
     // add POCKETS
 //    pocketPov_1.setup("PocketPov", 1, &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
-    pocketPovPos_2.setup("PocketPovSoundObj" ,1,2., &gates, camPresets[0].pos, &soundObjects,&oscToWaveAudio);
+    pocketPovPos_2.setup("PocketPovSoundObj" ,1,5., &gates, camPresets[0].pos, &soundObjects,&oscToWaveAudio);
     pocketGateReactive_1.setup("PocketGateReactive", 1, &oscToWaveAudio);
     
     

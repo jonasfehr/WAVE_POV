@@ -131,7 +131,7 @@ public:
         parameterGroup.add(deactivate.set("deactivate", false));
         parameterGroup.add(speed.set("speed", 0.01, 0.001, 0.01));
         parameterGroup.add(easing.set("easing", 1, 0, 2));
-        parameterGroup.add(imageIndex.set("imageIndex", 0, 0, images->size()-1));
+        if(mode == 1) parameterGroup.add(imageIndex.set("imageIndex", 0, 0, images->size()-1));
     }
     
     ofParameterGroup* getPointerToParameterGroup(){ return &parameterGroup; }

@@ -54,7 +54,9 @@
 <PocketGateReactive>
 		<deactivate>0</deactivate>
 		<width>0.0357143</width>
-		<increment>0.025</increment>
+		<increment>0.0693881</increment>
+	<minWaitTime>5.20408</minWaitTime>
+		<maxWaitTime>10.4082</maxWaitTime>
 	</PocketGateReactive>
 <Slit>
 		<deactivate>0</deactivate>

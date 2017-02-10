@@ -13,7 +13,6 @@
 
 class PocketGateReactiveContent : public Pocket, public WaveContent{
 public:
-    ofFbo fboShader;
     ofMesh mesh;
     ofTexture *texture;
     
@@ -23,13 +22,18 @@ public:
     
     ofParameter<float> increment;
     ofParameter<float> width;
+    ofParameter<float> minWaitTime;
+    ofParameter<float> maxWaitTime;
     ofParameter<bool> deactivate;
     
     
     float effectPos = 0.;
     int reactiveGate = 0;
+    int oldPos = 0;
     bool isTarget = false;
     float autoMoveAtTime = 0;
+    
+    float mover = 0;
     
     
     
@@ -54,18 +58,13 @@ public:
         fbo.end();
         
         
-        fboShader.allocate(1024, 1024, GL_RGBA32F_ARB);
-        fboShader.begin();
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        fboShader.end();
         
-        texture = &fboShader.getTexture();
+        texture = &fbo.getTexture();
         createMesh();
         
         setupParameterGroup(name);
         
-        autoMoveAtTime = ofRandom(10., 30.)+index*5;
+        autoMoveAtTime = ofRandom(minWaitTime, maxWaitTime)+index;
         
         reactiveGate = int(ofRandom(1., 40.));
         
@@ -78,27 +77,32 @@ public:
         if(!deactivate){
             
             if(!isTarget){
-                // move soft
-                if(effectPos > reactiveGate) effectPos -= increment;
-                else effectPos += increment;
                 
-                if(effectPos <= reactiveGate + increment && effectPos >= reactiveGate - increment){
+                mover+=increment;
+                
+                effectPos = oldPos+(reactiveGate-oldPos)*quadraticOut(mover);//quadraticOut cubicOut
+                
+                if(mover >= 1.){
+                    effectPos = reactiveGate;
+                    mover = 0.;
                     isTarget = true;
-                    autoMoveAtTime = ofRandom(10., 30.)+ofGetElapsedTimef();
+                    autoMoveAtTime = ofRandom(minWaitTime, maxWaitTime)+ofGetElapsedTimef();
                     
                 }
-                // jump
-//                    effectPos = reactiveGate;
-//                    isTarget = true;
-//                    autoMoveAtTime = ofRandom(10., 30.)+ofGetElapsedTimef();
-                
-                
+
                 
             } else {
                 // when at target and no reaction for some time
                 if(autoMoveAtTime <= ofGetElapsedTimef()){
-                    reactiveGate = int(ofRandom(1., 40.));
+                    oldPos = reactiveGate;
                     isTarget = false;
+                    mover = 0;
+                    
+                    if(reactiveGate <= 8) reactiveGate = int(ofRandom(25, 40.));
+                    else if(reactiveGate >= 40-8) reactiveGate = int(ofRandom(1., 15.));
+                    else reactiveGate = int(ofRandom(0., 15.));
+
+
                 }
                 
             }
@@ -114,28 +118,7 @@ public:
                 
                 oldMillis = ofGetElapsedTimeMillis()/50;
             }
-            
-//            fboShader.begin();
-//            {
-//                glClearColor(0.0, 0.0, 0.0, 0.0);
-//                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//                
-//                shader.begin();
-//                {
-//                    shader.setUniform2f("iResolution", fboShader.getWidth(), fboShader.getHeight());
-//                    shader.setUniform1f("iGlobalTime", ofGetElapsedTimef() ) ;//counter);
-//                    shader.setUniform1f("effectPos", (effectPos-1)/39. + 1./120. );
-//                    shader.setUniform1f("width", width );
-//                    
-//                    cout << (effectPos-1)/39. + 1./120.  << endl;
-//                    
-//                    ofSetColor(255,255,255);
-//                    ofFill();
-//                    ofDrawRectangle(0, 0, fboShader.getWidth(), fboShader.getHeight());
-//                }
-//                shader.end();
-//            }
-//            fboShader.end();
+
             
             fbo.begin();
             {
@@ -154,12 +137,6 @@ public:
                     ofDrawRectangle(0, 0, fbo.getWidth(), fbo.getHeight());
                 }
                 shader.end();
-                
-//                texture->bind();{
-//                    ofSetColor(255);
-//                    mesh.draw();
-//                }
-//                texture->unbind();
                 
             }
             fbo.end();
@@ -239,7 +216,9 @@ public:
             
         }
     }
-    
+    float quadraticOut(float t) {
+        return -t * (t - 2.0);
+    }
     
     
     float cubicOut(float t) {
@@ -250,7 +229,9 @@ public:
         parameterGroup.setName(name);
         parameterGroup.add(deactivate.set("deactivate", false));
         parameterGroup.add(width.set("width", 0.1, 0., 1.));
-        parameterGroup.add(increment.set("increment", 0.01, 0.000001, 1/40.));
+        parameterGroup.add(increment.set("increment", 0.01, 0.000001, 0.1));
+        parameterGroup.add(minWaitTime.set("minWaitTime", 10., 0, 60));
+        parameterGroup.add(maxWaitTime.set("maxWaitTime", 30., 0, 120));
     }
     
     void gateActivated(int g){
