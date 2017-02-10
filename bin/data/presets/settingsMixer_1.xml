@@ -224,6 +224,14 @@
 			<opacity>0.969388</opacity>
 			<blendMode>3</blendMode>
 		</PovSunBack>
+	<smokeNoise>
+			<hue>0.591837</hue>
+			<saturation>0.770408</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>1</opacity>
+			<blendMode>6</blendMode>
+		</smokeNoise>
 	</Mixer>
 <ContentControl/>
 </ContentControl>
