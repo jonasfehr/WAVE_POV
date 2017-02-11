@@ -150,6 +150,8 @@ void ofApp::setup(){
 void ofApp::update(){
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
     
+    if(int(ofGetElapsedTimef())%60 == 0 && autorunWekinator) wekinator.startRunning(); // EachMinute startWekinator
+    
     // RECEIVE DATA FROM OUTSIDE
     wekinator.update();
     receiveOSC();
@@ -289,8 +291,10 @@ void ofApp::setupParameterGroup(){
     paramGroup.setName("VIEWs");
     paramGroup.add(drawFloor.set("draw floor", true));
     paramGroup.add(drawGates.set("draw gates", true));
-    paramGroup.add(drawSyphon.set("draw syphon in", true));
-    paramGroup.add(drawSoundObjects.set("drawSoundObjects", true));
+    paramGroup.add(drawSyphon.set("draw syphon in", false));
+    paramGroup.add(drawSoundObjects.set("drawSoundObjects", false));
+    paramGroup.add(autorunWekinator.set("autorunWekinator", true));
+    
     
     paramsWekinatorIn.setName("WekinatorInputs");
     paramsWekinatorIn.add(in_1.set("isDay", 0., 0., 1.));
