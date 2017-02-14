@@ -54,7 +54,7 @@
 <PocketGateReactive>
 		<deactivate>0</deactivate>
 		<width>0.0357143</width>
-		<increment>0.0693881</increment>
+		<increment>0.0311231</increment>
 	<minWaitTime>5.20408</minWaitTime>
 		<maxWaitTime>10.4082</maxWaitTime>
 	</PocketGateReactive>
@@ -71,7 +71,7 @@
 		<deactivate>0</deactivate>
 		<speed>0.01</speed>
 		<mode>2</mode>
-		<easing>1</easing>
+		<easing>0</easing>
 		<imageIndex>0</imageIndex>
 	</Gate>
 </ContentControls>
