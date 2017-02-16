@@ -70,7 +70,7 @@
 <Gate>
 		<deactivate>0</deactivate>
 		<speed>0.01</speed>
-		<mode>2</mode>
+		<mode>3</mode>
 		<easing>1</easing>
 		<imageIndex>0</imageIndex>
 	</Gate>

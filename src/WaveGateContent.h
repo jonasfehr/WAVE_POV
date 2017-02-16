@@ -130,8 +130,8 @@ public:
         parameterGroup.setName(name);
         parameterGroup.add(deactivate.set("deactivate", false));
         parameterGroup.add(speed.set("speed", 0.01, 0.001, 0.01));
-        parameterGroup.add(mode.set("mode", 1, 1, 2));
-        parameterGroup.add(easing.set("easing", 1, 0, 2));
+        parameterGroup.add(mode.set("mode", 1, 1, 4));
+        parameterGroup.add(easing.set("easing", 1, 0, 4));
         parameterGroup.add(imageIndex.set("imageIndex", 0, 0, images->size()-1));
     }
     

@@ -46,7 +46,7 @@
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
 			<opacity>1</opacity>
-			<blendMode>1</blendMode>
+			<blendMode>3</blendMode>
 		</Gate>
 	<Lines>
 			<hue>0.556122</hue>
@@ -57,7 +57,7 @@
 			<blendMode>1</blendMode>
 		</Lines>
 	<Ghosts>
-			<hue>0.377551</hue>
+			<hue>0.882653</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
@@ -98,10 +98,10 @@
 		</SyphonInPovFree>
 	<SyponInPovFree>
 			<hue>0</hue>
-			<saturation>1</saturation>
+			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0</opacity>
+			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</SyponInPovFree>
 		<ReactiveGate>
@@ -224,6 +224,30 @@
 			<opacity>0.969388</opacity>
 			<blendMode>3</blendMode>
 		</PovSunBack>
+	<povFbo>
+			<hue>0.27629</hue>
+			<saturation>0</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</povFbo>
+	<povFboFront>
+			<hue>0.349583</hue>
+			<saturation>0</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</povFboFront>
+		<povFboBack>
+			<hue>0.435644</hue>
+			<saturation>0</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>1</opacity>
+			<blendMode>4</blendMode>
+		</povFboBack>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

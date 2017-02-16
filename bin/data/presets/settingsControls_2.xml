@@ -56,4 +56,11 @@
 		<width>1</width>
 		<increment>0.0247454</increment>
 	</PocketGateReactive>
+<Gate>
+		<deactivate>0</deactivate>
+		<speed>0.01</speed>
+		<mode>2</mode>
+		<easing>1</easing>
+		<imageIndex>0</imageIndex>
+	</Gate>
 </ContentControls>

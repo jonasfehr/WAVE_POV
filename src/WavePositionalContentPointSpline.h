@@ -1,17 +1,17 @@
 //
-//  WavePositionalContent.h
+//  WavePositionalContentPointSpline.h
 //  WAVE_POV
 //
 //  Created by Jonas Fehr on 24/01/2017.
 //
 //
 
-#ifndef WavePositionalContent_h
-#define WavePositionalContent_h
+#ifndef WavePositionalContentPointSpline_h
+#define WavePositionalContentPointSpline_h
 #include "ofxAutoReloadedShader.h"
 #include "ExternalObject.h"
 
-class WavePositionalContent : public WaveContent{
+class WavePositionalContentPointSpline : public WaveContent{
 public:
     ofFbo fboShader;
     ofMesh mesh;
@@ -32,7 +32,7 @@ public:
     vector<ofImage> *images;
 
     
-    WavePositionalContent(){}
+    WavePositionalContentPointSpline(){}
     
     
     
@@ -45,7 +45,7 @@ public:
 //        fbo.allocate(120, 1300, GL_RGBA32F_ARB);
 //        fboShader.allocate(78*130, 10*130, GL_RGBA32F_ARB);
 //        
-//        shader.load("shaders/WavePositionalContent");
+//        shader.load("shaders/WavePositionalContentPointSpline");
 //        
 //        setupParameterGroup(name);
 //        
@@ -61,7 +61,7 @@ public:
         fbo.allocate(120, 1300, GL_RGBA32F_ARB);
         fboShader.allocate(78*130, 10*130, GL_RGBA32F_ARB);
         
-        shader.load("shaders/WavePositionalContent");
+        shader.load("shaders/WavePositionalContentPointSpline");
         
         setupParameterGroup(name);
         
@@ -78,10 +78,11 @@ public:
         
         for(auto & o : *externalObjects){
             
-            ofVec3f pos = o.second.getPosition();
-            ofVec3f size = o.second.getSize();
-            pos.x = pos.x*130;
-            pos.y = (pos.z+7.)*130;
+            ofVec3f posObj = o.second.getPosition();
+            ofVec3f size = ofVec2f(1300., posObj.y);// o.second.getSize();
+            ofVec3f pos;
+            pos.x = posObj.z/78.*120;
+            pos.y = fboShader.getHeight()/2.+(posObj.x)*130;
             pos.z = 0;
             
             points.push_back(pos);
@@ -94,52 +95,57 @@ public:
         vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
         vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
         
-        fbo.begin();{
-            glClearColor(0.0, 0.0, 0.0, 0.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            fboShader.begin();
+
+        fbo.begin();//fboShader.begin();
             {
                 glClearColor(0.0, 0.0, 0.0, 0.0);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 
                 
-//                glDepthMask(GL_FALSE);
-//                
-//                ofSetColor(255);
-//                
-//                glEnable(GL_BLEND);
+                glDepthMask(GL_FALSE);
+                
+                ofSetColor(255);
+                
+                glEnable(GL_BLEND);
 //                glBlendFunc(GL_ONE, GL_ONE);
 //                glBlendEquation(GL_MAX);
-//                ofEnablePointSprites();
-//                
-//                shader.begin();
-//                {
-//                    shader.setUniformTexture("texPoint", images->at(imageIndex).getTexture(), 1);
-//                    shader.setUniform2f("texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
-//                    
-//                    shader.setUniform2f("iResolution", fboShader.getWidth(), fboShader.getHeight());
-//                    shader.setUniform1f("iGlobalTime",     ofGetElapsedTimef() ) ;//counter);
-//                    shader.setUniform1i("u_mode", (int)mode);
-//                    
-//                    vbo.draw(GL_POINTS, 0, total);
-//                }
-//                shader.end();
-//                
-//                ofDisablePointSprites();
+                ofEnablePointSprites();
+                
+                shader.begin();
+                {
+                 //   shader.setUniformTexture("texPoint", images->at(imageIndex).getTexture(), 1);
+                 //   shader.setUniform2f("texResolution", images->at(imageIndex).getWidth(), images->at(imageIndex).getHeight());
+                    
+                    shader.setUniform2f("iResolution", fbo.getWidth(), fbo.getHeight());
+                    shader.setUniform1f("iGlobalTime",     ofGetElapsedTimef() ) ;//counter);
+                    shader.setUniform1i("u_mode", (int)mode);
+                    
+                    vbo.draw(GL_POINTS, 0, total);
+                }
+                shader.end();
+                
+                ofDisablePointSprites();
 
             }
-            fboShader.end();
+        fbo.end();//fboShader.end();
+        
+//        fbo.begin();{
+//            glClearColor(0.0, 0.0, 0.0, 0.0);
+//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+//            fboShader.getTexture().bind();
+//            {
+//                ofSetColor(255);
+//                mesh.draw();
+//            }
+//            fboShader.getTexture().unbind();
+//            ofSetColor(255);
+//            ofFill();
+//            fboShader.draw(120, 1300);
             
-            fboShader.getTexture().bind();
-            {
-                ofSetColor(255);
-                mesh.draw();
-            }
-            fboShader.getTexture().unbind();
-            
-        }
-        fbo.end();
+//        }
+//        fbo.end();
     }
     
     void setupParameterGroup(string name){
@@ -152,17 +158,20 @@ public:
     
     
     void createMesh(){
-        
-        
         for(int i = 0; i <= 40; i++){
             mesh.addVertex(ofVec2f(i*3,0));
             mesh.addVertex(ofVec2f(i*3,120));
             mesh.addVertex(ofVec2f(i*3,650));
             mesh.addVertex(ofVec2f(i*3,1180));
             mesh.addVertex(ofVec2f(i*3,1300));
-
+            
+            mesh.addVertex(ofVec2f((i*3+3),0));
+            mesh.addVertex(ofVec2f((i*3+3),120));
+            mesh.addVertex(ofVec2f((i*3+3),650));
+            mesh.addVertex(ofVec2f((i*3+3),1180));
+            mesh.addVertex(ofVec2f((i*3+3),1300));
         }
-        for(int i = 0; i < 40*5; i+=5){
+        for(int i = 0; i < 40*10; i+=10){
             mesh.addIndex(i+5);
             mesh.addIndex(i+0);
             mesh.addIndex(i+6);
@@ -192,8 +201,6 @@ public:
             mesh.addIndex(i+4);
         }
         
-        
-        
         float dist = fboShader.getTexture().getWidth()/39;
         for(int i = 0; i < 40; i++){
             mesh.addTexCoord( ofVec2f( i*dist, 0. ) );
@@ -210,7 +217,7 @@ public:
         }
     }
     
-        
+    
 };
 
-#endif /* WavePositionalContent_h */
+#endif /* WavePositionalContentPointSpline_h */

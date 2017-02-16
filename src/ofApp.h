@@ -21,10 +21,13 @@
 #include "WaveGateContent.h"
 #include "WaveSlitContent.h"
 #include "WaveShaderContent.h"
-#include "WavePositionalContent.h"
 #include "WaveGradientOnPositionContent.h"
 #include "WaveRipplePovContent.h"
 #include "WaveEffectContent.h"
+#include "WavePovFboContent.h"
+#include "WaveOnPositionContent.h"
+#include "WavePositionalContentPointSpline.h"
+
 
 #include "TextureMix.h"
 #include "SyphonUtils.h"
@@ -93,17 +96,21 @@ class ofApp : public ofBaseApp{
     
     // create content;
     InputToWaveContent contentPovFree;
+    
+//    WavePovFboContent contentPovFboFront;
+//    WavePovFboContent contentPovFboBack;
+
 //    InputToWaveContent contentPovSun;
 //    InputToWaveContent contentPovSunBack;
 //    InputToWaveContent contentPovLinesTunnel;
 //    WaveEffectContent contentEffectFront;
 //    WaveRipplePovContent contentRipplePovBack;
-    WaveShaderContent contentShaderSmoke;
-    WaveSlitContent contentSlit;
+//    WaveShaderContent contentShaderSmoke;
+//    WaveSlitContent contentSlit;
     WaveGateContent contentGate;
 //    WaveShaderContent contentShaderSmoke;
-//    WavePositionalContent contentPosGhosts;
-    WaveGradientOnPositionContent contentBeadsGradients;
+    WavePositionalContentPointSpline contentPosGhosts;
+//    WaveGradientOnPositionContent contentBeadsGradients;
 //    WaveGradientOnPositionContent contentSoundObjectsGradients;
     
     // mappings
@@ -112,6 +119,7 @@ class ofApp : public ofBaseApp{
     // viewPresets
     struct CameraPos{
         ofVec3f pos;
+        ofVec3f lookAt;
         string name;
     };
     vector<CameraPos> camPresets;
@@ -140,8 +148,8 @@ class ofApp : public ofBaseApp{
     // Pockets
 //    PocketZone pocketZone_1;
 //    PocketPov pocketPov_1;
-    PocketPovPositionalContent pocketPovPos_2;
-    PocketGateReactiveContent pocketGateReactive_1;
+//    PocketPovPositionalContent pocketPovPos_2;
+//    PocketGateReactiveContent pocketGateReactive_1;
     
     // Images to be loaded
     vector<ofImage> imgGateContent;
@@ -159,5 +167,6 @@ class ofApp : public ofBaseApp{
     void loadPreset(int presetIndex);
     
     
+    ofMesh diamond;
 };
 

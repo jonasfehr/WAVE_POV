@@ -9,11 +9,11 @@ uniform sampler2DRect texCounters;
 uniform vec2 u_resolution;//100,1000;100,1000]
 uniform vec2 u_texResolution;
 uniform float u_time;
+uniform int u_easing;
 uniform int u_mode;
 
-
-
-
+#define PI 3.14159265359
+#define TWO_PI 6.28318530718
 //  Function from Iñigo Quiles
 //  www.iquilezles.org/www/articles/functions/functions.htm
 float impulse( float k, float x){
@@ -71,6 +71,9 @@ float easing( int mode, float value){
         return circularIn( value );
     }
 }
+float ring(vec2 p, float radius, float width) {
+  return abs(length(p) - radius * 0.5) - width;
+}
 
 void main()
 {
@@ -80,7 +83,7 @@ void main()
     vec2 countersRes = vec2(40,1);
     float counter = texture2DRect(texCounters, gl_FragCoord.xx).r;
 
-    counter = easing(4, counter);
+    counter = easing(u_easing, counter);
 
     vec3 finalCol = vec3(0);
 
@@ -92,6 +95,16 @@ void main()
     }else if(u_mode == 2){ // GRADIENT
         float gradient = (1.-smoothstep(st.y, 0.5, counter/2.+0.5))+(1.-smoothstep(st.y, 0.5, 0.5-counter/2.));
         finalCol = vec3(gradient);
+
+    }else if(u_mode == 3){ // Pulses
+        float counterInv = 1.-counter;
+        float gradientMask = 1.-((1.-smoothstep(st.y, 0.5, counterInv/2.+0.5))+(1.-smoothstep(st.y, 0.5, 0.5-counterInv/2.)));
+        float pulses = (sin((distance(st.y, 0.5)+u_time/20.)*20.*TWO_PI)+1.)/2;
+        finalCol = vec3(gradientMask*pulses);//floor(pulses*2.));
+
+    }else if(u_mode == 4){ // Circles
+        float circles = ring(st-vec2(st.x, 0.5), counter, 0.01);
+        finalCol = vec3(circles);
     }
 
 

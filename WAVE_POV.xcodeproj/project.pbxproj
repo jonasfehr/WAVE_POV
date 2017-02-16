@@ -71,7 +71,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		004E0C1B4D73003A4F773D5E /* WavePositionalContent.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = WavePositionalContent.h; path = src/WavePositionalContent.h; sourceTree = SOURCE_ROOT; };
+		004E0C1B4D73003A4F773D5E /* WavePositionalContentPointSpline.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = WavePositionalContentPointSpline.h; path = src/WavePositionalContentPointSpline.h; sourceTree = SOURCE_ROOT; };
 		00D6D32B84B099226431108C /* ofxOsc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOsc.h; path = ../../../addons/ofxOsc/src/ofxOsc.h; sourceTree = SOURCE_ROOT; };
 		01FAC3552E00C3620035EA2F /* ofxSyphonClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxSyphonClient.h; path = ../../../addons/ofxSyphon/src/ofxSyphonClient.h; sourceTree = SOURCE_ROOT; };
 		029684CF678F70F6D3537A29 /* OscOutboundPacketStream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscOutboundPacketStream.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.h; sourceTree = SOURCE_ROOT; };
@@ -159,6 +159,8 @@
 		FF1148841E434A3D00C6330E /* WaveGradientOnPositionContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveGradientOnPositionContent.h; sourceTree = "<group>"; };
 		FF36D29D1E4C712D001EFAC3 /* PocketGateReactiveContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PocketGateReactiveContent.h; sourceTree = "<group>"; };
 		FF3ACCF31E40AC7400EAFA5C /* WaveContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveContent.h; sourceTree = "<group>"; };
+		FF40B7E41E53213D00D3A760 /* WaveOnPositionContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveOnPositionContent.h; sourceTree = "<group>"; };
+		FF40B7E51E5321D300D3A760 /* WavePovFboContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WavePovFboContent.h; sourceTree = "<group>"; };
 		FF5804541E3F487A00E8300C /* PocketPov.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PocketPov.h; sourceTree = "<group>"; };
 		FF5804551E3F48A000E8300C /* PocketZone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PocketZone.h; sourceTree = "<group>"; };
 		FF7C77551E40EE99000567FE /* PocketPovPositionalContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PocketPovPositionalContent.h; sourceTree = "<group>"; };
@@ -509,11 +511,13 @@
 				FF5804531E3F486500E8300C /* Pockets */,
 				FF3ACCF31E40AC7400EAFA5C /* WaveContent.h */,
 				7A19B7CC9524C734799ACB3F /* InputToWaveContent.h */,
+				FF40B7E51E5321D300D3A760 /* WavePovFboContent.h */,
 				FFA9DFBB1E4BD50D00A03B6F /* WaveEffectContent.h */,
 				BBCF82191E43F3AF009F2CA0 /* WaveRipplePovContent.h */,
 				0D22F69848AE5937D268CDAF /* WaveGateContent.h */,
 				FF9BEFB91E48B17C00C70FF2 /* WaveSlitContent.h */,
-				004E0C1B4D73003A4F773D5E /* WavePositionalContent.h */,
+				004E0C1B4D73003A4F773D5E /* WavePositionalContentPointSpline.h */,
+				FF40B7E41E53213D00D3A760 /* WaveOnPositionContent.h */,
 				FF1148841E434A3D00C6330E /* WaveGradientOnPositionContent.h */,
 				C73BEC6862E66233447ADD18 /* WaveShaderContent.h */,
 			);

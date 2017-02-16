@@ -42,7 +42,7 @@
 		</PovPocket>
 		<Gate>
 			<hue>0.122449</hue>
-			<saturation>1</saturation>
+			<saturation>0.663265</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
 			<opacity>1</opacity>
@@ -57,12 +57,12 @@
 			<blendMode>1</blendMode>
 		</Lines>
 	<Ghosts>
-			<hue>0.377551</hue>
-			<saturation>1</saturation>
+			<hue>0.765306</hue>
+			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
 			<opacity>1</opacity>
-			<blendMode>1</blendMode>
+			<blendMode>3</blendMode>
 		</Ghosts>
 	<PovPocket_1>
 			<hue>0.986423</hue>
@@ -97,8 +97,8 @@
 			<blendMode>1</blendMode>
 		</SyphonInPovFree>
 	<SyponInPovFree>
-			<hue>0.0663265</hue>
-			<saturation>1</saturation>
+			<hue>0</hue>
+			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
 			<opacity>0</opacity>
@@ -208,6 +208,14 @@
 			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</PocketGateReactive>
+	<povFbo>
+			<hue>0.27629</hue>
+			<saturation>0</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>0</opacity>
+			<blendMode>3</blendMode>
+		</povFbo>
 	</Mixer>
 <ContentControl/>
 </ContentControl>
