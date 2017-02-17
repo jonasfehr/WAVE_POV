@@ -210,6 +210,18 @@ STRINGIFY(
           //              return image;
           //          }
           
+          float ring(vec2 p, float radius, float width) {
+              p.x = p.x*86.666666/1.5;
+              
+              return 1.-step(0.000001,abs(length(p) - radius + width) - width*2.);
+          }
+          
+          float smoothRing(vec2 p, float radius, float width) {
+              p.x = p.x*86.666666/1.5;
+              
+              return 1.-smoothstep(0.0001,0.1,abs(length(p) - radius + width) - width*2.);
+          }
+          
           
           );
 
@@ -226,7 +238,7 @@ STRINGIFY(
               static string shader_objectGradient =
               STRINGIFY(
                         
-                        vec4 gradient_$0 = vec4(cubicPulse(posX_$0, width_$0,st.x));
+                        vec4 gradient_$0 = vec4(cubicPulse(posX_$0, width_$0,st.x)); //vec4(smoothRing(vec2(posX_$0,0.5), width_$0, 0.2));//
                         gradient_$0 = gradient_$0 * intensity_$0 * u_audioReactivity + gradient_$0 * (1.0 - u_audioReactivity);
                         gradient_$0 = min(gradient_$0 + u_minimumVisibility, 1.);
                         mixCol = blendMode( u_blendMode, mixCol, gradient_$0, u_opacity*(intensity_$0+0.5) );

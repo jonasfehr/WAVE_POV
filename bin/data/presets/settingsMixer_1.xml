@@ -45,7 +45,7 @@
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>1</opacity>
+			<opacity>0</opacity>
 			<blendMode>3</blendMode>
 		</Gate>
 	<Lines>
@@ -122,11 +122,11 @@
 		</PocketPov>
 	<BeadsGradients>
 			<hue>0.760204</hue>
-			<saturation>1</saturation>
+			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.556122</contrast>
-			<opacity>1</opacity>
-			<blendMode>3</blendMode>
+			<opacity>0.438776</opacity>
+			<blendMode>2</blendMode>
 		</BeadsGradients>
 	<PovFrontLinesTunel>
 			<hue>0.5</hue>
@@ -248,6 +248,22 @@
 			<opacity>1</opacity>
 			<blendMode>4</blendMode>
 		</povFboBack>
+	<RipplePovBack>
+			<hue>0.735474</hue>
+			<saturation>0</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</RipplePovBack>
+		<RipplePovFront>
+			<hue>0.118415</hue>
+			<saturation>0</saturation>
+			<brightness>1</brightness>
+			<contrast>0.5</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</RipplePovFront>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

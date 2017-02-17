@@ -107,11 +107,11 @@ public:
                 
                 ofSetColor(255);
                 
-                ofEnableBlendMode(OF_BLENDMODE_ADD);
+//                ofEnableBlesndMode(OF_BLENDMODE_ADD);
 //                glEnable(GL_BLEND);
 //                glBlendFunc(GL_ONE, GL_ONE);
 //                glBlendEquation(GL_MAX);
-                ofEnablePointSprites();
+//                ofEnablePointSprites();
                 
                 shader.begin();
                 {
@@ -126,8 +126,8 @@ public:
                 }
                 shader.end();
                 
-                ofDisablePointSprites();
-                ofDisableBlendMode();
+//                ofDisablePointSprites();
+//                ofDisableBlendMode();
 
 
             }

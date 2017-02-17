@@ -147,10 +147,7 @@ public:
         
         calcMapping();
         
-        fbo.begin();
-        {
-            glClearColor(0.0, 0.0, 0.0, 0.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     
             fboShader.begin();
             {
@@ -170,7 +167,11 @@ public:
                 shader.end();
             }
             fboShader.end();
-            
+        
+        fbo.begin();
+        {
+            glClearColor(0.0, 0.0, 0.0, 0.0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             texture->bind();{
                 ofSetColor(255);
                 mesh.draw();

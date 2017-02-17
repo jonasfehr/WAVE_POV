@@ -84,6 +84,9 @@ class ofApp : public ofBaseApp{
 
     ofParameterGroup paramsWekinatorOut;
 
+    ofParameterGroup paramsVezer;
+    ofParameter<float> diamondsOpacity;
+
 
     
     // Gates
@@ -104,13 +107,14 @@ class ofApp : public ofBaseApp{
 //    InputToWaveContent contentPovSunBack;
 //    InputToWaveContent contentPovLinesTunnel;
 //    WaveEffectContent contentEffectFront;
-//    WaveRipplePovContent contentRipplePovBack;
+    WaveRipplePovContent contentRipplePovFront;
+    WaveRipplePovContent contentRipplePovBack;
 //    WaveShaderContent contentShaderSmoke;
 //    WaveSlitContent contentSlit;
     WaveGateContent contentGate;
 //    WaveShaderContent contentShaderSmoke;
-    WavePositionalContentPointSpline contentPosGhosts;
-//    WaveGradientOnPositionContent contentBeadsGradients;
+//    WaveOnPositionContent contentPosGhosts;
+    WaveGradientOnPositionContent contentBeadsGradients;
 //    WaveGradientOnPositionContent contentSoundObjectsGradients;
     
     // mappings
@@ -134,6 +138,7 @@ class ofApp : public ofBaseApp{
     ofxOscReceiver oscFromSensorFuse;
     ofxOscReceiver oscFromWaveAudio;
     ofxOscReceiver oscFromWaveAudioParameters;
+    ofxOscReceiver oscFromVezer;
     ofxOscSender oscToWaveAudio;
     
 //    ofParameterGroup oscSyncedParameters;

@@ -62,7 +62,7 @@ void ofApp::setup(){
 //    contentPovFboBack.setup("povFboBack",&gates, camPresets[5].pos);
 
 //    contentShaderLines.setup("Lines", "lines");
-//    contentBeadsGradients.setup("BeadsGradients", &beads);
+    contentBeadsGradients.setup("BeadsGradients", &beads);
     //    contentSoundObjectsGradients.setup("SoundObjGradients", &soundObjects);
     
     //load images
@@ -93,18 +93,12 @@ void ofApp::setup(){
 
     
 //    contentEffectFront.setup("contentEffectFront", 1, &oscToWaveAudio);
-//    contentRipplePovBack.setup("contentRipplePovBack", 2, &gates, camPresets[1].pos, &oscToWaveAudio);
+    contentRipplePovBack.setup("RipplePovBack", 2, &gates, camPresets[1].pos, &oscToWaveAudio);
+    contentRipplePovFront.setup("RipplePovFront", 1, &gates, camPresets[0].pos, &oscToWaveAudio);
 
 
-    //
-    //    img.load("images/img1.png");
-    //    imgPosContent.push_back(img);
-    //    img.load("images/img2.png");
-    //    imgPosContent.push_back(img);
-    //    img.load("images/img3.png");
-    //    imgPosContent.push_back(img);
-    //
-        contentPosGhosts.setup("Ghosts", &imgPosContent, &beads);
+    
+//        contentPosGhosts.setup("Ghosts", &beads);
     
     
     
@@ -131,20 +125,28 @@ void ofApp::setup(){
 //    textureMixer.addFboChannel(contentPovLinesTunnel.getFboPtr(), contentPovLinesTunnel.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentPovSun.getFboPtr(), contentPovSun.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentPovSunBack.getFboPtr(), contentPovSunBack.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentGate.getFboPtr(), contentGate.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentSoundObjectsGradients.getFboPtr(), contentSoundObjectsGradients.getName(), BLEND_ADD);
 //
-//    textureMixer.addFboChannel(contentRipplePovBack.getFboPtr(), contentRipplePovBack.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentRipplePovBack.getFboPtr(), contentRipplePovBack.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentRipplePovFront.getFboPtr(), contentRipplePovFront.getName(), BLEND_ADD);
     
     //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
-        textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
+//        textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
     
 //    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), pocketPov_1.getName(), BLEND_SOFT_LIGHT);
 //    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
 //    textureMixer.addFboChannel(pocketGateReactive_1.getFboPtr(), pocketGateReactive_1.getName(), BLEND_SOFT_LIGHT);
 
     //    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
+    
+    // setup Vezer
+    paramsVezer.setName("Vezer");
+//    for(auto & paramsTextureMixerChannel : textureMixer.getVectorOfParameterSubgroups()){
+//        paramsVezer.add(paramsTextureMixerChannel->get("opacity_povFboFront"));
+//    }
+    
     
     setupParameterGroup();
     guiGroup.setName("General");
@@ -153,15 +155,17 @@ void ofApp::setup(){
         ofParameterGroup paramsControls;
         paramsControls.setName("ContentControls");
 //    paramsControls.add(contentSlit.parameterGroup);
-//    paramsControls.add(contentBeadsGradients.parameterGroup);
+    paramsControls.add(contentBeadsGradients.parameterGroup);
 //    paramsControls.add(contentSoundObjectsGradients.parameterGroup);
 //    paramsControls.add(contentEffectFront.parameterGroup);
-//    paramsControls.add(contentRipplePovBack.parameterGroup);
+    paramsControls.add(contentRipplePovBack.parameterGroup);
+    paramsControls.add(contentRipplePovFront.parameterGroup);
 //    paramsControls.add(pocketPovPos_2.parameterGroup);
 //    paramsControls.add(pocketGateReactive_1.parameterGroup);
     paramsControls.add(contentGate.parameterGroup);
-        paramsControls.add(contentPosGhosts.parameterGroup);
-        guiControls.setup( paramsControls );
+//        paramsControls.add(contentPosGhosts.parameterGroup);
+    paramsControls.add(paramsVezer);
+    guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
     
     
@@ -170,9 +174,9 @@ void ofApp::setup(){
     for(auto & paramsTextureMixerChannel : textureMixer.getVectorOfParameterSubgroups()){
         paramsWekinatorOut.add(paramsTextureMixerChannel->get("saturation"));
         paramsWekinatorOut.add(paramsTextureMixerChannel->get("opacity"));
-
-        
     }
+    
+
     
     wekinator.setup(&paramsWekinatorIn, &paramsWekinatorOut);
     ofParameterGroup paramsWekinator;
@@ -193,11 +197,15 @@ void ofApp::setup(){
     oscFromWaveAudio.setup(49164);
     oscToWaveAudio.setup("localhost", 49165);
     oscFromWaveAudioParameters.setup(49166);
+    oscFromVezer.setup(8005);
 
 //    oscSyncedParameters = paramsWekinatorIn;
     // see Tree_AI if return needed
 //    ofAddListener(oscSyncedParameters.parameterChangedE(),this,&ofApp::parameterChanged);
     
+    
+
+
     
     createDiamondMesh();
 }
@@ -245,14 +253,15 @@ void ofApp::update(){
 //    contentPovLinesTunnel.update();
     contentPovFree.update();
 //    contentEffectFront.update();
-//    contentRipplePovBack.update();
+    contentRipplePovFront.update();
+    contentRipplePovBack.update();
 //    contentShaderLines.update();
 //    contentSlit.update();
-//    contentBeadsGradients.update();
+    contentBeadsGradients.update();
 //    contentSoundObjectsGradients.update();
 //        contentShaderSmoke.update();
     contentGate.update();
-        contentPosGhosts.update();
+//    contentPosGhosts.update();
     //
     //    // UPDATE POCKETS
     //    pocketZone_1.update();
@@ -336,6 +345,7 @@ void ofApp::draw(){
     //    {
     camera.begin();
     {
+        ofClear(0);
         ofBackground(10);
         
         // Grid
@@ -429,6 +439,7 @@ void ofApp::setupParameterGroup(){
     paramsWekinatorIn.setName("WekinatorInputs");
     paramsWekinatorIn.add(in_1.set("isDay", 0., 0., 1.));
     paramsWekinatorIn.add(in_2.set("isDvale", 0., 0., 1.));
+    
 
 }
 
@@ -737,6 +748,12 @@ void ofApp::receiveOSC(){
 
         oscFromWaveAudioParameters.getParameter(paramsWekinatorIn);
 
+    }
+    
+    while(oscFromVezer.hasWaitingMessages()){
+        
+        oscFromVezer.getParameter(paramsVezer);
+        
     }
     
     

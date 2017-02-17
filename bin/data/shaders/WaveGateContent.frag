@@ -102,7 +102,12 @@ void main()
         float pulses = (sin((distance(st.y, 0.5)+u_time/20.)*20.*TWO_PI)+1.)/2;
         finalCol = vec3(gradientMask*pulses);//floor(pulses*2.));
 
-    }else if(u_mode == 4){ // Circles
+    }else if(u_mode == 4){ // lines
+      float counterInv = (1.-counter)*2.;
+      float gradientMask = 1.-((1.-smoothstep(st.y, 0.5, counterInv/2.+0.5))+(1.-smoothstep(st.y, 0.5, 0.5-counterInv/2.)));
+      float pulses = (sin((distance(st.y, 0.5)+u_time/20.)*20.*TWO_PI)+1.)/2;
+      finalCol = vec3(fract(gradientMask*5.)*2.);//floor(pulses*2.));
+    }else if(u_mode == 5){ // Circles
         float circles = ring(st-vec2(st.x, 0.5), counter, 0.01);
         finalCol = vec3(circles);
     }

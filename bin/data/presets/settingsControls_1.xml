@@ -21,8 +21,8 @@
 <BeadsGradients_gradients>
 		<blendMode>1</blendMode>
 		<opacity>1</opacity>
-		<width>0.0357143</width>
-	<audioReactivity>0.1</audioReactivity>
+		<width>0.0714286</width>
+	<audioReactivity>1</audioReactivity>
 		<minimumVisibility>0.1</minimumVisibility>
 	</BeadsGradients_gradients>
 <contentRipplePovFront>
@@ -74,4 +74,15 @@
 		<easing>2</easing>
 		<imageIndex>0</imageIndex>
 	</Gate>
+<RipplePovBack>
+		<deactivate>0</deactivate>
+		<possibility>0.1</possibility>
+		<increment>0.01</increment>
+	</RipplePovBack>
+	<RipplePovFront>
+		<deactivate>0</deactivate>
+		<possibility>0.1</possibility>
+		<increment>0.01</increment>
+	</RipplePovFront>
+	<Vezer/>
 </ContentControls>
