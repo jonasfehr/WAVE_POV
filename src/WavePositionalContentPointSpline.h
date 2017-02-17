@@ -82,7 +82,7 @@ public:
             ofVec3f size = ofVec2f(1300., posObj.y);// o.second.getSize();
             ofVec3f pos;
             pos.x = posObj.z/78.*120;
-            pos.y = fboShader.getHeight()/2.+(posObj.x)*130;
+            pos.y = fboShader.getHeight()/2.;//+(posObj.x)*130;
             pos.z = 0;
             
             points.push_back(pos);
@@ -107,7 +107,8 @@ public:
                 
                 ofSetColor(255);
                 
-                glEnable(GL_BLEND);
+                ofEnableBlendMode(OF_BLENDMODE_ADD);
+//                glEnable(GL_BLEND);
 //                glBlendFunc(GL_ONE, GL_ONE);
 //                glBlendEquation(GL_MAX);
                 ofEnablePointSprites();
@@ -126,6 +127,8 @@ public:
                 shader.end();
                 
                 ofDisablePointSprites();
+                ofDisableBlendMode();
+
 
             }
         fbo.end();//fboShader.end();

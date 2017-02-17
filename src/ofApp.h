@@ -97,7 +97,7 @@ class ofApp : public ofBaseApp{
     // create content;
     InputToWaveContent contentPovFree;
     
-//    WavePovFboContent contentPovFboFront;
+    WavePovFboContent contentPovFboFront;
 //    WavePovFboContent contentPovFboBack;
 
 //    InputToWaveContent contentPovSun;
@@ -168,5 +168,6 @@ class ofApp : public ofBaseApp{
     
     
     ofMesh diamond;
+    void createDiamondMesh();
 };
 

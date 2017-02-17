@@ -58,7 +58,7 @@ void ofApp::setup(){
 //    contentPovSunBack.setup("PovSunBack", &gates, camPresets[1].pos, "sunback", ofVec2f(1024), POV_UV);
 //    contentPovLinesTunnel.setup("PovLinesTunnel", &gates, camPresets[0].pos, "LinesTunnel", ofVec2f(1024), POV_UV);
     contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
-//    contentPovFboFront.setup("povFboFront",&gates, camPresets[4].pos);
+    contentPovFboFront.setup("povFboFront",&gates, camPresets[0].pos);
 //    contentPovFboBack.setup("povFboBack",&gates, camPresets[5].pos);
 
 //    contentShaderLines.setup("Lines", "lines");
@@ -104,7 +104,7 @@ void ofApp::setup(){
     //    img.load("images/img3.png");
     //    imgPosContent.push_back(img);
     //
-        contentPosGhosts.setup("Ghosts", &imgPosContent, &soundObjects);
+        contentPosGhosts.setup("Ghosts", &imgPosContent, &beads);
     
     
     
@@ -125,7 +125,7 @@ void ofApp::setup(){
     // setup Mixer
 //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), contentShaderSmoke.getName(), BLEND_SCREEN);
     textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentPovFboFront.getFboPtr(), contentPovFboFront.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentPovFboFront.getFboPtr(), contentPovFboFront.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentPovFboBack.getFboPtr(), contentPovFboBack.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentSlit.getFboPtr(), contentSlit.getName(), BLEND_ADD);
 //    textureMixer.addFboChannel(contentPovLinesTunnel.getFboPtr(), contentPovLinesTunnel.getName(), BLEND_ADD);
@@ -198,6 +198,8 @@ void ofApp::setup(){
     // see Tree_AI if return needed
 //    ofAddListener(oscSyncedParameters.parameterChangedE(),this,&ofApp::parameterChanged);
     
+    
+    createDiamondMesh();
 }
 
 
@@ -259,28 +261,28 @@ void ofApp::update(){
 //    pocketGateReactive_1.update();
     
     
-//    contentPovFboFront.begin();
-//    {
-//
-//        ofEnableAlphaBlending();
-//        for(auto & o : soundObjects){
-//            
-//            ofVec3f pos = o.second.getPosition();
-//            ofVec3f size = o.second.getSize();
-//            pos.y = 2.;
-//            ofSetColor(255);
-//            ofNoFill();
-//            ofSetIcoSphereResolution(1);
-//            ofPushMatrix();
-//            ofTranslate(pos);
-//            ofRotateY(ofGetElapsedTimef()*5.);
-//            diamond.drawWireframe();
-//            ofPopMatrix();
-//   
-//        }
-//        ofDisableAlphaBlending();
-//    }
-//    contentPovFboFront.end();
+    contentPovFboFront.begin();
+    {
+
+        ofEnableAlphaBlending();
+        for(auto & o : soundObjects){
+            
+            ofVec3f pos = o.second.getPosition();
+            ofVec3f size = o.second.getSize();
+            pos.y = 2.;
+            ofSetColor(255);
+            ofNoFill();
+            ofSetIcoSphereResolution(1);
+            ofPushMatrix();
+            ofTranslate(pos);
+            ofRotateY(ofGetElapsedTimef()*5.);
+            diamond.drawWireframe();
+            ofPopMatrix();
+   
+        }
+        ofDisableAlphaBlending();
+    }
+    contentPovFboFront.end();
 //    
 //    contentPovFboBack.begin();
 //    {
@@ -533,6 +535,50 @@ void ofApp::loadPreset(int index){
     guiMixer.loadFromFile("presets/settingsMixer_"+ofToString(index)+".xml");
     guiControls.loadFromFile("presets/settingsControls_"+ofToString(index)+".xml");
 }
+
+// -------------------
+void ofApp::createDiamondMesh(){ // create the diamonds
+    diamond.addVertex(ofVec3f(0,1.5,0));
+    diamond.addVertex(ofVec3f(0.5,0,0.5));
+    diamond.addVertex(ofVec3f(0.5,0,-0.5));
+    diamond.addVertex(ofVec3f(-0.5,0,-0.5));
+    diamond.addVertex(ofVec3f(-0.5,0,0.5));
+    diamond.addVertex(ofVec3f(0,-1.5,0));
+    
+    
+    diamond.addIndex(1);
+    diamond.addIndex(0);
+    diamond.addIndex(2);
+    
+    diamond.addIndex(2);
+    diamond.addIndex(0);
+    diamond.addIndex(3);
+    
+    diamond.addIndex(3);
+    diamond.addIndex(0);
+    diamond.addIndex(4);
+    
+    diamond.addIndex(4);
+    diamond.addIndex(0);
+    diamond.addIndex(1);
+    
+    diamond.addIndex(1);
+    diamond.addIndex(5);
+    diamond.addIndex(2);
+    
+    diamond.addIndex(2);
+    diamond.addIndex(5);
+    diamond.addIndex(3);
+    
+    diamond.addIndex(3);
+    diamond.addIndex(5);
+    diamond.addIndex(4);
+    
+    diamond.addIndex(4);
+    diamond.addIndex(5);
+    diamond.addIndex(1);
+}
+
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){

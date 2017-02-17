@@ -41,7 +41,7 @@
 			<blendMode>1</blendMode>
 		</PovPocket>
 		<Gate>
-			<hue>0.122449</hue>
+			<hue>0.755102</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
@@ -57,12 +57,12 @@
 			<blendMode>1</blendMode>
 		</Lines>
 	<Ghosts>
-			<hue>0.882653</hue>
-			<saturation>1</saturation>
+			<hue>0.719388</hue>
+			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>1</opacity>
-			<blendMode>1</blendMode>
+			<opacity>0.607143</opacity>
+			<blendMode>2</blendMode>
 		</Ghosts>
 	<PovPocket_1>
 			<hue>0.986423</hue>
@@ -237,7 +237,7 @@
 			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>1</opacity>
+			<opacity>0</opacity>
 			<blendMode>3</blendMode>
 		</povFboFront>
 		<povFboBack>
