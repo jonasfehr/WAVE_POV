@@ -31,15 +31,23 @@ public:
     float timeOfActivation = 0;
     
     ofParameter<bool> deactivate;
+    
+    int oldMillis = 0;
+    
+    ofxOscSender * oscSender;
+    
+    int index = 0;
 
     
     PocketZone(){};
     
-    void setup(string channelName, int start, int stop, ofTexture *texture){
+    void setup(string channelName, int index, int start, int stop, ofTexture *texture, ofxOscSender * oscSender){
         this->name = channelName;
+        this->index = index;
         this->start = start;
         this->stop = stop;
         this->texture = texture;
+        this->oscSender = oscSender;
         
         fbo.allocate(120,1300, GL_RGBA32F_ARB);
         
@@ -49,10 +57,13 @@ public:
         
     };
     
-    void setup(string channelName, int start, int stop, string shaderName, ofVec2f shaderSize){
+    void setup(string channelName, int index, int start, int stop, string shaderName, ofVec2f shaderSize, ofxOscSender * oscSender){
         this->name = channelName;
+        this->index = index;
         this->start = start;
         this->stop = stop;
+        this->oscSender = oscSender;
+
         
         fbo.allocate(120,1300, GL_RGBA32F_ARB);
         
@@ -68,7 +79,7 @@ public:
         inputType = INPUT_SHADER;
         
         
-        texture = &fboShader.getTexture();
+        this->texture = &fboShader.getTexture();
         
         setupParameterGroup(name);
         
@@ -108,14 +119,14 @@ public:
                 
                 shader.begin();
                 {
-                    shader.setUniformTexture("tex0", fboShader.getTexture(), 0);
+                    shader.setUniformTexture("tex0", *texture, 0);
                     shader.setUniform2f("texResolution", texture->getWidth(), texture->getHeight());
                     
                     shader.setUniform2f("iResolution", fbo.getWidth(), fbo.getHeight());
                     shader.setUniform1f("iGlobalTime", ofGetElapsedTimef() );
                     shader.setUniform1f("u_opacity", alpha);
-                    shader.setUniform1f("u_center", ((start+stop)/2.)/78.);
-                    shader.setUniform1f("u_width", abs(start-stop)/78.);
+                    shader.setUniform1f("u_center", ((start+stop)/2.)/40.);
+                    shader.setUniform1f("u_width", abs(stop-start)/39.);
                     
                     
                     
@@ -129,8 +140,32 @@ public:
             fbo.end();
             
             
-            // if activated for more than 30 secs, turn off
-            if(timeOfActivation - ofGetElapsedTimef() > 30) isActive = false;
+            // if nothing is happening for more than 30 secs, turn off and change start stop
+            if(timeOfActivation - ofGetElapsedTimef() > 30){
+                isActive = false;
+                
+                start = (int)ofRandom(2, 39);
+                stop = (int)ofRandom(start-10, start+10);
+                if(stop > 40) stop = 40;
+                else if(stop < 1 ) stop = 1;
+                
+                timeOfActivation = ofGetElapsedTimef();
+                
+                cout << "Zone " << start << " - " << stop << endl;
+            }
+            
+
+        }
+        
+        // SEND OSC
+        if(ofGetElapsedTimeMillis()/50 != oldMillis && !deactivate){
+            ofxOscMessage m;
+            m.setAddress("/PocketZone/"+ofToString(index));
+            m.addInt32Arg(isActive);
+            if(isActive) m.addFloatArg(((start+stop)/2.)/40.*78.);
+            oscSender->sendMessage(m);
+            
+            oldMillis = ofGetElapsedTimeMillis()/50;
         }
         
     }
@@ -145,7 +180,18 @@ public:
             isActive = true;
             timeOfActivation = ofGetElapsedTimef();
         }
-        if(g == stop) isActive = false;
+        if(g == stop){
+            isActive = false;
+            
+            start = (int)ofRandom(2, 39);
+            stop = (int)ofRandom(start-10, start+10);
+            if(stop > 40) stop = 40;
+            else if(stop < 1 ) stop = 1;
+            
+            timeOfActivation = ofGetElapsedTimef();
+            
+            cout << "Zone " << start << " - " << stop << endl;            
+        }
     };
     
     

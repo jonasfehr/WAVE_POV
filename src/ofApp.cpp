@@ -110,6 +110,7 @@ void ofApp::setup(){
     //    syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
     // add POCKETS
+    pocketZone_1.setup("pocketZone",1, 3, 8, "smokeNoise", ofVec2f(512), &oscToWaveAudio);
 //    pocketPov_1.setup("PocketPov", 1, &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
 //    pocketPovPos_2.setup("PocketPovSoundObj" ,1,5., &gates, camPresets[0].pos, &soundObjects,&oscToWaveAudio);
 //    pocketGateReactive_1.setup("PocketGateReactive", 1, &oscToWaveAudio);
@@ -139,7 +140,7 @@ void ofApp::setup(){
 //    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
 //    textureMixer.addFboChannel(pocketGateReactive_1.getFboPtr(), pocketGateReactive_1.getName(), BLEND_SOFT_LIGHT);
 
-    //    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
+        textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
     
     // setup Vezer
     paramsVezer.setName("Vezer");
@@ -264,7 +265,7 @@ void ofApp::update(){
 //    contentPosGhosts.update();
     //
     //    // UPDATE POCKETS
-    //    pocketZone_1.update();
+        pocketZone_1.update();
 //    pocketPov_1.update();
 //    pocketPovPos_2.update();
 //    pocketGateReactive_1.update();
@@ -654,7 +655,7 @@ void ofApp::receiveOSC(){
 //            contentSlit.activate(ofToInt(address[1]));
             contentGate.activate(ofToInt(address[1]));
             
-//            pocketZone_1.gateActivated(ofToInt(address[1]));
+            pocketZone_1.gateActivated(ofToInt(address[1]));
 //            pocketGateReactive_1.gateActivated(ofToInt(address[1]));
             
         }else if(address[0] == "User"){

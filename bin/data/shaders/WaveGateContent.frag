@@ -75,6 +75,23 @@ float ring(vec2 p, float radius, float width) {
   return abs(length(p) - radius * 0.5) - width;
 }
 
+mat2 rotate2d(float _angle){
+    return mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle));
+}
+
+mat2 scale(vec2 _scale){
+    return mat2(_scale.x,0.0,
+                0.0,_scale.y);
+}
+
+float lines(vec2 p){
+  p = clamp(p, vec2(0.), vec2(1.));
+  float lines = step(0.99, sin(p.x*TWO_PI*150.));
+
+  return lines;
+}
+
 void main()
 {
 
@@ -105,8 +122,14 @@ void main()
     }else if(u_mode == 4){ // lines
       float counterInv = (1.-counter)*2.;
       float gradientMask = 1.-((1.-smoothstep(st.y, 0.5, counterInv/2.+0.5))+(1.-smoothstep(st.y, 0.5, 0.5-counterInv/2.)));
-      float pulses = (sin((distance(st.y, 0.5)+u_time/20.)*20.*TWO_PI)+1.)/2;
-      finalCol = vec3(fract(gradientMask*5.)*2.);//floor(pulses*2.));
+      st -= vec2(0.5);
+      st = scale(vec2(1.-fract(u_time/100.)))*st;
+      st = rotate2d(-PI)*st;
+      st = rotate2d( (fract(u_time/100.)-.5) * PI/6.)*st;
+      st += vec2(0.5);
+       float lines = lines(st);
+      finalCol = vec3(gradientMask*lines);//floor(pulses*2.));
+
     }else if(u_mode == 5){ // Circles
         float circles = ring(st-vec2(st.x, 0.5), counter, 0.01);
         finalCol = vec3(circles);

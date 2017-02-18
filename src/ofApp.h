@@ -151,7 +151,7 @@ class ofApp : public ofBaseApp{
 
     
     // Pockets
-//    PocketZone pocketZone_1;
+    PocketZone pocketZone_1;
 //    PocketPov pocketPov_1;
 //    PocketPovPositionalContent pocketPovPos_2;
 //    PocketGateReactiveContent pocketGateReactive_1;
