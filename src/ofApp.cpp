@@ -110,7 +110,7 @@ void ofApp::setup(){
     //    syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
     // add POCKETS
-    pocketZone_1.setup("pocketZone",1, 3, 8, "smokeNoise", ofVec2f(512), &oscToWaveAudio);
+    pocketZone_1.setup("pocketZone",1, 3, 8, "lines", ofVec2f(512), &oscToWaveAudio);
 //    pocketPov_1.setup("PocketPov", 1, &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
 //    pocketPovPos_2.setup("PocketPovSoundObj" ,1,5., &gates, camPresets[0].pos, &soundObjects,&oscToWaveAudio);
 //    pocketGateReactive_1.setup("PocketGateReactive", 1, &oscToWaveAudio);
@@ -164,6 +164,7 @@ void ofApp::setup(){
 //    paramsControls.add(pocketPovPos_2.parameterGroup);
 //    paramsControls.add(pocketGateReactive_1.parameterGroup);
     paramsControls.add(contentGate.parameterGroup);
+    paramsControls.add(pocketZone_1.parameterGroup);
 //        paramsControls.add(contentPosGhosts.parameterGroup);
     paramsControls.add(paramsVezer);
     guiControls.setup( paramsControls );

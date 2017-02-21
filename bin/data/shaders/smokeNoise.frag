@@ -47,19 +47,15 @@ float fbm ( in vec2 _st) {
 #define numGates 40.
 
 void main(  ) {
-    vec2 st = gl_FragCoord.xy / iResolution.xy;
+    vec2 st = (gl_FragCoord.xy )/min(iResolution.x,iResolution.y);
 
-    float blend = smoothstep( .1, 0.25,st.x);
-
-  	st.x *= iResolution.x/iResolution.y;
-    // st.x *= numGates;
-    // st.x = floor(st.x)/5.;
+    st.x *= numGates;
+    st.x = floor(st.x)/5.;
 
 
-    st.x*=1000.;//*distance(st.y,0.5);
+    st.y*=.5; // ZOOM
 
-    st.y*=400.*distance(st.y,1.); // ZOOM
-    // st.y += iGlobalTime/20.;
+    st.x += iGlobalTime/20.;
 
     vec3 color = vec3(1.);
     vec2 a = vec2(0.);
@@ -73,18 +69,17 @@ void main(  ) {
     b.y = fbm( st + 0.16*iGlobalTime);
 
     c.x = fbm( st + 7.0*b + vec2(10.7,.2)+ 0.215*iGlobalTime/10. );
-    c.y = fbm( st + 3.944*b + vec2(.3,12.8)+ 0.16*-iGlobalTime);
+    c.y = fbm( st + 3.944*b + vec2(.3,12.8)+ 0.16*iGlobalTime);
 
-    float f = fbm(c+a*0.1);
+    float f = fbm(c);
 
 //    color = mix(vec3(1.0,.0,.0), vec3(1.,.0,0.0), clamp((f*f),0.6, 1.));
 //    color = mix(vec3(0.5,0.1,0.1), vec3(0.413,0.524,0.880), clamp(length(c.x),0., 1.));
 
-    float contrast = 0.40;
+    float contrast = 0.10;
     float gain = 1.5;
    f = (f - 0.5) * max(pow(contrast*3., 4.)+0.5, 0.0) * gain;
 
-    //blend = 1.;
     vec3 finalColor = vec3(f*3.);
 
     gl_FragColor = vec4( finalColor, 1.);

@@ -42,10 +42,10 @@
 		</PovPocket>
 		<Gate>
 			<hue>0.755102</hue>
-			<saturation>1</saturation>
+			<saturation>0.285714</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0</opacity>
+			<opacity>0.545918</opacity>
 			<blendMode>3</blendMode>
 		</Gate>
 	<Lines>
@@ -85,7 +85,7 @@
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>1</opacity>
+			<opacity>0</opacity>
 			<blendMode>1</blendMode>
 		</PovZone_1>
 	<SyphonInPovFree>

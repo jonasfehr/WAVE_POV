@@ -69,8 +69,8 @@
 	</PocketPovSoundObj>
 <Gate>
 		<deactivate>0</deactivate>
-		<speed>0.00775</speed>
-		<mode>3</mode>
+		<speed>0.01</speed>
+		<mode>4</mode>
 		<easing>2</easing>
 		<imageIndex>0</imageIndex>
 	</Gate>
@@ -85,4 +85,7 @@
 		<increment>0.01</increment>
 	</RipplePovFront>
 	<Vezer/>
+<pocketZone>
+		<deactivate>0</deactivate>
+	</pocketZone>
 </ContentControls>

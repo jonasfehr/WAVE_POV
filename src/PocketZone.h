@@ -176,7 +176,7 @@ public:
     }
     
     void gateActivated(int g){
-        if(g == start){
+        if(g == start && !isActive){
             isActive = true;
             timeOfActivation = ofGetElapsedTimef();
         }
