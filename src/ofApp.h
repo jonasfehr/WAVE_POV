@@ -75,6 +75,8 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> drawGates;
     ofParameter<bool> drawSyphon;
     ofParameter<bool> drawSoundObjects;
+    ofParameter<bool> autorunWekinator;
+
     ofVec3f center = ofVec3f(0,VIEWER_HEIGHT, 40);
     
     

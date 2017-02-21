@@ -174,7 +174,7 @@ void ofApp::setup(){
     // setup Wekinator
     paramsWekinatorOut.setName("WekinatorOut");
     for(auto & paramsTextureMixerChannel : textureMixer.getVectorOfParameterSubgroups()){
-        paramsWekinatorOut.add(paramsTextureMixerChannel->get("saturation"));
+//        paramsWekinatorOut.add(paramsTextureMixerChannel->get("saturation"));
         paramsWekinatorOut.add(paramsTextureMixerChannel->get("opacity"));
     }
     
@@ -216,6 +216,9 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
+    
+    if(int(ofGetElapsedTimef())%60 == 0 && autorunWekinator) wekinator.startRunning(); // EachMinute startWekinator
+
     
     // RECEIVE DATA FROM OUTSIDE
     wekinator.update();
@@ -437,9 +440,11 @@ void ofApp::setupParameterGroup(){
     paramGroup.add(drawGates.set("draw gates", true));
     paramGroup.add(drawSyphon.set("draw syphon in", true));
     paramGroup.add(drawSoundObjects.set("drawSoundObjects", true));
+    paramGroup.add(autorunWekinator.set("autorunWekinator", true));
+
     
     paramsWekinatorIn.setName("WekinatorInputs");
-    paramsWekinatorIn.add(in_1.set("isDay", 0., 0., 1.));
+//    paramsWekinatorIn.add(in_1.set("isDay", 0., 0., 1.));
     paramsWekinatorIn.add(in_2.set("isDvale", 0., 0., 1.));
     
 
