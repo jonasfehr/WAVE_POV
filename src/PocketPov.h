@@ -80,7 +80,7 @@ public:
             ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);
             ofVec3f povCurrentPos = povMappedContent.getPovPtr()->getPosition();
             povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
-            povMappedContent.getPovPtr()->lookAt(ofVec3f(0, 1.72, externalObject->getPosition().z+externalObject->getVelocity().z));
+            povMappedContent.getPovPtr()->lookAt(povMappedContent.getPovPtr()->getGlobalPosition( )+ ofVec3f(0.,0.,1.));
             
         }else{
             povMappedContent.setInvisible();

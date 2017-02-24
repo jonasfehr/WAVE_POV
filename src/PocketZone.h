@@ -140,22 +140,24 @@ public:
             fbo.end();
             
             
-            // if nothing is happening for more than 30 secs, turn off and change start stop
-            if(timeOfActivation - ofGetElapsedTimef() > 30){
-                isActive = false;
-                
-                start = (int)ofRandom(2, 39);
-                stop = (int)ofRandom(start-10, start+10);
-                if(stop > 40) stop = 40;
-                else if(stop < 1 ) stop = 1;
-                
-                timeOfActivation = ofGetElapsedTimef();
-                
-                cout << "Zone " << start << " - " << stop << endl;
-            }
-            
+
 
         }
+        // if nothing is happening for more than 30 secs, turn off and change start stop
+
+        if(ofGetElapsedTimef() - timeOfActivation > 30){
+            isActive = false;
+            
+            start = (int)ofRandom(2, 39);
+            stop = (int)ofRandom(start-10, start+10);
+            if(stop > 40) stop = 40;
+            else if(stop < 1 ) stop = 1;
+            
+            timeOfActivation = ofGetElapsedTimef();
+            
+            cout << "Zone " << start << " - " << stop << endl;
+        }
+        
         
         // SEND OSC
         if(ofGetElapsedTimeMillis()/50 != oldMillis && !deactivate){

@@ -19,11 +19,11 @@
 	<deactivate>0</deactivate>
 	</ReactiveGate>
 <BeadsGradients_gradients>
-		<blendMode>1</blendMode>
+		<blendMode>3</blendMode>
 		<opacity>1</opacity>
-		<width>0.0714286</width>
+		<width>0.0867347</width>
 	<audioReactivity>1</audioReactivity>
-		<minimumVisibility>0.1</minimumVisibility>
+		<minimumVisibility>0.147959</minimumVisibility>
 	</BeadsGradients_gradients>
 <contentRipplePovFront>
 		<possibility>0.0612245</possibility>
@@ -53,7 +53,7 @@
 	</contentEffectFront>
 <PocketGateReactive>
 		<deactivate>0</deactivate>
-		<width>0.0357143</width>
+		<width>0.117347</width>
 		<increment>0.0693881</increment>
 	<minWaitTime>5.20408</minWaitTime>
 		<maxWaitTime>10.4082</maxWaitTime>
@@ -69,10 +69,10 @@
 	</PocketPovSoundObj>
 <Gate>
 		<deactivate>0</deactivate>
-		<speed>0.01</speed>
-		<mode>4</mode>
-		<easing>2</easing>
-		<imageIndex>0</imageIndex>
+		<speed>0.00563776</speed>
+		<mode>1</mode>
+		<easing>1</easing>
+		<imageIndex>4</imageIndex>
 	</Gate>
 <RipplePovBack>
 		<deactivate>0</deactivate>

@@ -222,6 +222,15 @@ STRINGIFY(
               return 1.-smoothstep(0.0001,0.1,abs(length(p) - radius + width) - width*2.);
           }
           
+          // easing
+          float cubicIn(float t) {
+              return t * t * t;
+          }
+          
+          float cubicOut(float t) {
+              float f = t - 1.0;
+              return f * f * f + 1.0;
+          }
           
           );
 
@@ -239,7 +248,7 @@ STRINGIFY(
               STRINGIFY(
                         
                         vec4 gradient_$0 = vec4(cubicPulse(posX_$0, width_$0,st.x)); //vec4(smoothRing(vec2(posX_$0,0.5), width_$0, 0.2));//
-                        gradient_$0 = gradient_$0 * intensity_$0 * u_audioReactivity + gradient_$0 * (1.0 - u_audioReactivity);
+                        gradient_$0 = gradient_$0 * cubicOut(intensity_$0) * u_audioReactivity + gradient_$0 * (1.0 - u_audioReactivity);
                         gradient_$0 = min(gradient_$0 + u_minimumVisibility, 1.);
                         mixCol = blendMode( u_blendMode, mixCol, gradient_$0, u_opacity*(intensity_$0+0.5) );
                         );

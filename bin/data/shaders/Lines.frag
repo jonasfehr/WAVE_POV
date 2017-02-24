@@ -111,6 +111,9 @@ float mapNum(float s, float a1, float a2, float b1, float b2)
     return b1 + (s-a1)*(b2-b1)/(a2-a1);
 }
 
+float stepLines(float v) {
+    return step(0.9,  fract(v*5.));
+}
 
 void main()
 {
@@ -131,11 +134,13 @@ void main()
 
     float noise = 0.;
     noise = PerlinRidged(p,  offset, freq, 1., 0.5, 0.5, 0.2) * .5;
-    noise +=  PerlinRidged(p,  offset, freq/5., 1., 0.5, 0.5, 0.2) * .5;
-    float contrast = 0.6;
-    noise = (noise - 0.5) * max(pow(contrast*3., 4.)+0.5, 0.0) + 0.5;
+    noise +=  PerlinRidged(p,  offset, freq/5., 1., 0.5, 0.5, 0.2)* .5;
+    // noise *=1.5;
+    // noise +=  PerlinRidged(p,  offset, freq/2., 1., 0.5, 0.5, 0.2)* .5;
+    // noise = smoothstep(0.5, 1., noise);
+       noise = (noise - 0.5) * max(pow(4., 2.)+0.5, 0.0) + 0.5;
 
-
+    //  noise = stepLines(noise);
 
 
     vec3 color = vec3(noise);

@@ -21,8 +21,8 @@
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.658163</contrast>
-			<opacity>1</opacity>
-			<blendMode>1</blendMode>
+			<opacity>0</opacity>
+			<blendMode>3</blendMode>
 		</Smoke>
 		<PovFree>
 			<hue>0.588713</hue>
@@ -45,7 +45,7 @@
 			<saturation>0.285714</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0.545918</opacity>
+			<opacity>1</opacity>
 			<blendMode>3</blendMode>
 		</Gate>
 	<Lines>
@@ -85,8 +85,8 @@
 			<saturation>1</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>0</opacity>
-			<blendMode>1</blendMode>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
 		</PovZone_1>
 	<SyphonInPovFree>
 			<hue>0.705525</hue>
@@ -101,7 +101,7 @@
 			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>1</opacity>
+			<opacity>0</opacity>
 			<blendMode>1</blendMode>
 		</SyponInPovFree>
 		<ReactiveGate>
@@ -124,8 +124,8 @@
 			<hue>0.760204</hue>
 			<saturation>0</saturation>
 			<brightness>1</brightness>
-			<contrast>0.556122</contrast>
-			<opacity>0.438776</opacity>
+			<contrast>0.836735</contrast>
+			<opacity>0.52551</opacity>
 			<blendMode>2</blendMode>
 		</BeadsGradients>
 	<PovFrontLinesTunel>
@@ -253,7 +253,7 @@
 			<saturation>0</saturation>
 			<brightness>1</brightness>
 			<contrast>0.5</contrast>
-			<opacity>1</opacity>
+			<opacity>0</opacity>
 			<blendMode>3</blendMode>
 		</RipplePovBack>
 		<RipplePovFront>
@@ -264,6 +264,22 @@
 			<opacity>1</opacity>
 			<blendMode>3</blendMode>
 		</RipplePovFront>
+	<smokeNoise>
+			<hue>1</hue>
+			<saturation>0</saturation>
+			<brightness>1</brightness>
+			<contrast>0.178571</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</smokeNoise>
+	<shaderLines>
+			<hue>0.642857</hue>
+			<saturation>1</saturation>
+			<brightness>1</brightness>
+			<contrast>0.377551</contrast>
+			<opacity>1</opacity>
+			<blendMode>3</blendMode>
+		</shaderLines>
 	</Mixer>
 <ContentControl/>
 </ContentControl>

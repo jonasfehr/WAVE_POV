@@ -24,7 +24,7 @@ void ofApp::setup(){
     camPos.pos = ofVec3f(10, VIEWER_HEIGHT, 40);
     camPos.lookAt = center;
     camPresets.push_back(camPos);
-
+    
     
     camPos.name = "off side";
     camPos.pos = ofVec3f(10, VIEWER_HEIGHT, -10);
@@ -54,119 +54,64 @@ void ofApp::setup(){
     }
     
     // setup content generators
-//    contentPovSun.setup("PovSun", &gates, camPresets[0].pos, "sun", ofVec2f(1024), POV_UV);
-//    contentPovSunBack.setup("PovSunBack", &gates, camPresets[1].pos, "sunback", ofVec2f(1024), POV_UV);
-//    contentPovLinesTunnel.setup("PovLinesTunnel", &gates, camPresets[0].pos, "LinesTunnel", ofVec2f(1024), POV_UV);
-    contentPovFree.setup("SyponInPovFree", &gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
-    contentPovFboFront.setup("povFboFront",&gates, camPresets[0].pos);
-//    contentPovFboBack.setup("povFboBack",&gates, camPresets[5].pos);
-
-//    contentShaderLines.setup("Lines", "lines");
+//    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
+    contentShaderLines.setup("shaderLines", "lines");
     contentBeadsGradients.setup("BeadsGradients", &beads);
-    //    contentSoundObjectsGradients.setup("SoundObjGradients", &soundObjects);
     
     //load images
     ofImage img;
-    img.load("images/iris_1.png");
-    img.update();
-    imgGateContent.push_back(img);
-    img.load("images/iris_2.png");
-    img.update();
-    imgGateContent.push_back(img);
-    img.load("images/iris_3.png");
-    img.update();
-    imgGateContent.push_back(img);
     img.load("images/Pass_1.png");
-    img.update();
     imgGateContent.push_back(img);
-    img.load("images/nova_2.png");
-    img.update();
+    img.load("images/Pass_2.png");
+    imgGateContent.push_back(img);
+    img.load("images/Pass_3.png");
+    imgGateContent.push_back(img);
+    img.load("images/Pass_4.png");
     imgGateContent.push_back(img);
     img.load("images/tree_2.png");
     img.update();
     imgGateContent.push_back(img);
     contentGate.setup("Gate", &imgGateContent);
 
-    
-//    contentShaderSmoke.setup("smokeNoise", "smokeNoise");
-//    contentSlit.setup("Slit", contentShaderSmoke.getTexturePtr());
-
-    
-//    contentEffectFront.setup("contentEffectFront", 1, &oscToWaveAudio);
     contentRipplePovBack.setup("RipplePovBack", 2, &gates, camPresets[1].pos, &oscToWaveAudio);
     contentRipplePovFront.setup("RipplePovFront", 1, &gates, camPresets[0].pos, &oscToWaveAudio);
 
-
-    
-//        contentPosGhosts.setup("Ghosts", &beads);
-    
-    
-    
+    // add POCKETS
+    pocketZone_1.setup("pocketZone",1, 3, 8, "electric", ofVec2f(512), &oscToWaveAudio);
+    pocketPov_1.setup("PocketPov", 1, &gates, camPresets[0].pos, "ringsPov",  &oscToWaveAudio);
+    pocketGateReactive_1.setup("PocketGateReactive", 1, &oscToWaveAudio);
     
     // setup Syphon
     syphonIn.setup();
     syphonIn.find("Main View", "Modul8");
     syphonOut.setup("WaveForMapping", 120, 1300);
     //    syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
-    
-    // add POCKETS
-    pocketZone_1.setup("pocketZone",1, 3, 8, "lines", ofVec2f(512), &oscToWaveAudio);
-//    pocketPov_1.setup("PocketPov", 1, &gates, camPresets[0].pos, "electric",  &oscToWaveAudio);
-//    pocketPovPos_2.setup("PocketPovSoundObj" ,1,5., &gates, camPresets[0].pos, &soundObjects,&oscToWaveAudio);
-//    pocketGateReactive_1.setup("PocketGateReactive", 1, &oscToWaveAudio);
-    
-    
+
     
     // setup Mixer
-//    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), contentShaderSmoke.getName(), BLEND_SCREEN);
-    textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
-    textureMixer.addFboChannel(contentPovFboFront.getFboPtr(), contentPovFboFront.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentPovFboBack.getFboPtr(), contentPovFboBack.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentSlit.getFboPtr(), contentSlit.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentPovLinesTunnel.getFboPtr(), contentPovLinesTunnel.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentPovSun.getFboPtr(), contentPovSun.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentPovSunBack.getFboPtr(), contentPovSunBack.getName(), BLEND_ADD);
-    textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_ADD);
+//    textureMixer.addFboChannel(contentPovFree.getFboPtr(), contentPovFree.getName(), BLEND_ADD);
+    textureMixer.addFboChannel(contentShaderLines.getFboPtr(), contentShaderLines.getName(), BLEND_SCREEN);
+    textureMixer.addFboChannel(contentBeadsGradients.getFboPtr(), contentBeadsGradients.getName(), BLEND_MULTIPLY);
     textureMixer.addFboChannel(contentGate.getFboPtr(), contentGate.getName(), BLEND_ADD);
-//    textureMixer.addFboChannel(contentSoundObjectsGradients.getFboPtr(), contentSoundObjectsGradients.getName(), BLEND_ADD);
-//
     textureMixer.addFboChannel(contentRipplePovBack.getFboPtr(), contentRipplePovBack.getName(), BLEND_ADD);
     textureMixer.addFboChannel(contentRipplePovFront.getFboPtr(), contentRipplePovFront.getName(), BLEND_ADD);
-    
-    //    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
-//        textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
-    
-//    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), pocketPov_1.getName(), BLEND_SOFT_LIGHT);
-//    textureMixer.addFboChannel(pocketPovPos_2.getFboPtr(), "PovPocketPos_1", BLEND_SOFT_LIGHT);
-//    textureMixer.addFboChannel(pocketGateReactive_1.getFboPtr(), pocketGateReactive_1.getName(), BLEND_SOFT_LIGHT);
-
-        textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
-    
-    // setup Vezer
-    paramsVezer.setName("Vezer");
-//    for(auto & paramsTextureMixerChannel : textureMixer.getVectorOfParameterSubgroups()){
-//        paramsVezer.add(paramsTextureMixerChannel->get("opacity_povFboFront"));
-//    }
+    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), pocketPov_1.getName(), BLEND_SOFT_LIGHT);
+    textureMixer.addFboChannel(pocketGateReactive_1.getFboPtr(), pocketGateReactive_1.getName(), BLEND_SOFT_LIGHT);
+    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
     
     
     setupParameterGroup();
     guiGroup.setName("General");
     guiGroup.add(paramGroup);
     
-        ofParameterGroup paramsControls;
-        paramsControls.setName("ContentControls");
-//    paramsControls.add(contentSlit.parameterGroup);
+    ofParameterGroup paramsControls;
+    paramsControls.setName("ContentControls");
     paramsControls.add(contentBeadsGradients.parameterGroup);
-//    paramsControls.add(contentSoundObjectsGradients.parameterGroup);
-//    paramsControls.add(contentEffectFront.parameterGroup);
     paramsControls.add(contentRipplePovBack.parameterGroup);
     paramsControls.add(contentRipplePovFront.parameterGroup);
-//    paramsControls.add(pocketPovPos_2.parameterGroup);
-//    paramsControls.add(pocketGateReactive_1.parameterGroup);
+    paramsControls.add(pocketGateReactive_1.parameterGroup);
     paramsControls.add(contentGate.parameterGroup);
     paramsControls.add(pocketZone_1.parameterGroup);
-//        paramsControls.add(contentPosGhosts.parameterGroup);
-    paramsControls.add(paramsVezer);
     guiControls.setup( paramsControls );
     guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
     
@@ -174,11 +119,9 @@ void ofApp::setup(){
     // setup Wekinator
     paramsWekinatorOut.setName("WekinatorOut");
     for(auto & paramsTextureMixerChannel : textureMixer.getVectorOfParameterSubgroups()){
-//        paramsWekinatorOut.add(paramsTextureMixerChannel->get("saturation"));
+        //        paramsWekinatorOut.add(paramsTextureMixerChannel->get("saturation"));
         paramsWekinatorOut.add(paramsTextureMixerChannel->get("opacity"));
     }
-    
-
     
     wekinator.setup(&paramsWekinatorIn, &paramsWekinatorOut);
     ofParameterGroup paramsWekinator;
@@ -198,16 +141,7 @@ void ofApp::setup(){
     oscFromSensorFuse.setup(49162);
     oscFromWaveAudio.setup(49164);
     oscToWaveAudio.setup("localhost", 49165);
-    oscFromWaveAudioParameters.setup(49166);
-    oscFromVezer.setup(8005);
-
-//    oscSyncedParameters = paramsWekinatorIn;
-    // see Tree_AI if return needed
-//    ofAddListener(oscSyncedParameters.parameterChangedE(),this,&ofApp::parameterChanged);
-    
-    
-
-
+    oscFromWaveAudioParameters.setup(49166);    
     
     createDiamondMesh();
 }
@@ -218,7 +152,7 @@ void ofApp::update(){
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
     
     if(int(ofGetElapsedTimef())%60 == 0 && autorunWekinator) wekinator.startRunning(); // EachMinute startWekinator
-
+    
     
     // RECEIVE DATA FROM OUTSIDE
     wekinator.update();
@@ -250,87 +184,21 @@ void ofApp::update(){
             return;
         }
     }
-
+    
     
     // UPDATE ALL THE CONTENT
-//    contentPovSun.update();
-//    contentPovSunBack.update();
-//    contentPovLinesTunnel.update();
-    contentPovFree.update();
-//    contentEffectFront.update();
+
+//    contentPovFree.update();
     contentRipplePovFront.update();
     contentRipplePovBack.update();
-//    contentShaderLines.update();
-//    contentSlit.update();
     contentBeadsGradients.update();
-//    contentSoundObjectsGradients.update();
-//        contentShaderSmoke.update();
+    contentShaderLines.update();
     contentGate.update();
-//    contentPosGhosts.update();
-    //
-    //    // UPDATE POCKETS
-        pocketZone_1.update();
-//    pocketPov_1.update();
-//    pocketPovPos_2.update();
-//    pocketGateReactive_1.update();
     
-    
-    contentPovFboFront.begin();
-    {
-
-        ofEnableAlphaBlending();
-        for(auto & o : soundObjects){
-            
-            ofVec3f pos = o.second.getPosition();
-            ofVec3f size = o.second.getSize();
-            pos.y = 2.;
-            ofSetColor(255);
-            ofNoFill();
-            ofSetIcoSphereResolution(1);
-            ofPushMatrix();
-            ofTranslate(pos);
-            ofRotateY(ofGetElapsedTimef()*5.);
-            diamond.drawWireframe();
-            ofPopMatrix();
-   
-        }
-        ofDisableAlphaBlending();
-    }
-    contentPovFboFront.end();
-//    
-//    contentPovFboBack.begin();
-//    {
-//        
-//        ofEnableAlphaBlending();
-//        for(auto & o : soundObjects){
-//            
-//            ofVec3f pos = o.second.getPosition();
-//            ofVec3f size = o.second.getSize();
-//            pos.y = 2.;
-//            ofSetColor(255);
-//            ofNoFill();
-//            ofSetIcoSphereResolution(1);
-//            ofPushMatrix();
-//            ofTranslate(pos);
-//            ofRotateY(ofGetElapsedTimef()*5.);
-//            diamond.drawWireframe();
-//            ofPopMatrix();
-//            
-//        }
-//        ofDisableAlphaBlending();
-//    }
-//    contentPovFboBack.end();
-    
-    // sendOSC
-    // SEND OSC gate 1
-//    if(ofGetElapsedTimeMillis()/50 != oldMillis){
-//        ofxOscMessage m;
-//        m.setAddress("/Sun");
-//        m.addFloatArg(contentPovSun.getIntensity());
-//        oscToWaveAudio.sendMessage(m);
-//        
-//        oldMillis = ofGetElapsedTimeMillis()/50;
-//    }
+    // UPDATE POCKETS
+    pocketZone_1.update();
+    pocketPov_1.update();
+    pocketGateReactive_1.update();
     
     
     // CREATE THE OUTPUT TO MADMAPPER
@@ -369,7 +237,7 @@ void ofApp::draw(){
                 pos.y = 2.;
                 
                 ofSetColor(255);
-                                        ofNoFill();
+                ofNoFill();
                 ofSetIcoSphereResolution(1);
                 ofPushMatrix();
                 ofTranslate(pos);
@@ -379,7 +247,7 @@ void ofApp::draw(){
                 
             }
         }
-
+        
         
         
         // Draw gates
@@ -429,8 +297,7 @@ void ofApp::draw(){
     
     // PUBLISH OUTPUT
     syphonOut.publish();
-    //    syphonSimOut.publish();
-    //syphonLayerPreview.publish();
+
 }
 
 //--------------------------------------------------------------
@@ -441,13 +308,13 @@ void ofApp::setupParameterGroup(){
     paramGroup.add(drawSyphon.set("draw syphon in", true));
     paramGroup.add(drawSoundObjects.set("drawSoundObjects", true));
     paramGroup.add(autorunWekinator.set("autorunWekinator", true));
-
+    
     
     paramsWekinatorIn.setName("WekinatorInputs");
-//    paramsWekinatorIn.add(in_1.set("isDay", 0., 0., 1.));
+    //    paramsWekinatorIn.add(in_1.set("isDay", 0., 0., 1.));
     paramsWekinatorIn.add(in_2.set("isDvale", 0., 0., 1.));
     
-
+    
 }
 
 //--------------------------------------------------------------
@@ -487,19 +354,19 @@ void ofApp::keyPressed(int key){
             wekinator.stopRunning();
         }
     }
-//
-//    if(key == '2'){
-//        wekinator.startRecording();
-//    }
-//    
-//    if(key == '3'){
-//        wekinator.train();
-//    }
-//    
-//    if(key == '4'){
-//        wekinator.deleteTraining();
-//    }
-//    
+    //
+    //    if(key == '2'){
+    //        wekinator.startRecording();
+    //    }
+    //
+    //    if(key == '3'){
+    //        wekinator.train();
+    //    }
+    //
+    //    if(key == '4'){
+    //        wekinator.deleteTraining();
+    //    }
+    //
     if(key == 'm'){
         mappingIndx++;
         mappingIndx = mappingIndx%3;
@@ -529,7 +396,7 @@ void ofApp::keyPressed(int key){
     
     if(key == 'q'){
         loadPreset(presetIndex);
-
+        
     }
     if(key == 'w'){
         savePreset(presetIndex);
@@ -538,9 +405,9 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-//    if(key == '2'){
-//        wekinator.stopRecording();
-//    }
+    //    if(key == '2'){
+    //        wekinator.stopRecording();
+    //    }
 }
 //--------------------------------------------------------------
 void ofApp::savePreset(int index){
@@ -658,22 +525,22 @@ void ofApp::receiveOSC(){
         
         // check for mouse moved message
         if(address[0] == "Gate"){
-//            contentSlit.activate(ofToInt(address[1]));
+            //            contentSlit.activate(ofToInt(address[1]));
             contentGate.activate(ofToInt(address[1]));
             
             pocketZone_1.gateActivated(ofToInt(address[1]));
-//            pocketGateReactive_1.gateActivated(ofToInt(address[1]));
+            //            pocketGateReactive_1.gateActivated(ofToInt(address[1]));
             
         }else if(address[0] == "User"){
             users[ofToInt(address[1])].updateValuesFromUser(m.getArgAsFloat(0), m.getArgAsFloat(1), m.getArgAsFloat(2));
             
-//            if( pocketPov_1.getMinLifespan() < m.getArgAsFloat(1) ){
-//                pocketPov_1.setExternalObject(&users[ ofToInt(address[1]) ]);
-//            }
+            if( pocketPov_1.getMinLifespan() < m.getArgAsFloat(1) ){
+                pocketPov_1.setExternalObject(&users[ ofToInt(address[1]) ]);
+            }
             
-//            if( pocketPovPos_2.getMinLifespan() < m.getArgAsFloat(1) ){
-//                pocketPovPos_2.setExternalObject(&users[ ofToInt(address[1]) ]);
-//            }
+            //            if( pocketPovPos_2.getMinLifespan() < m.getArgAsFloat(1) ){
+            //                pocketPovPos_2.setExternalObject(&users[ ofToInt(address[1]) ]);
+            //            }
             
         }else if(address[0] == "SoundObject"){
             soundObjects[ofToInt(address[1])].updateValuesFromSoundObject(m.getArgAsFloat(0), m.getArgAsFloat(1));
@@ -718,7 +585,7 @@ void ofApp::receiveOSC(){
         std::vector<std::string> address = ofSplitString(m.getAddress(),"/",true);
         
         
-
+        
         
         // check for mouse moved message
         if(address[0] == "Bead"){
@@ -752,14 +619,8 @@ void ofApp::receiveOSC(){
         
     }
     while(oscFromWaveAudioParameters.hasWaitingMessages()){
-
-        oscFromWaveAudioParameters.getParameter(paramsWekinatorIn);
-
-    }
-    
-    while(oscFromVezer.hasWaitingMessages()){
         
-        oscFromVezer.getParameter(paramsVezer);
+        oscFromWaveAudioParameters.getParameter(paramsWekinatorIn);
         
     }
     

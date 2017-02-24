@@ -8,7 +8,7 @@
 
 #define time iGlobalTime*0.15
 #define tau 6.2831853
-
+//
 uniform vec2 iResolution;
 uniform float iGlobalTime;
 
@@ -83,7 +83,7 @@ void main( )
 
 	//rings
 	p /= exp(mod(time*10.,3.14159));
-	rz *= pow(abs((0.1-circ(p))),.9);
+	rz *= pow(abs((0.1-circ(p))),.9);//pow(abs((0.1-circ(p))),.9);
 
 	//final color
 	vec3 col = vec3(0.15)/rz;

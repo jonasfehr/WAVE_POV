@@ -101,23 +101,11 @@ class ofApp : public ofBaseApp{
     
     // create content;
     InputToWaveContent contentPovFree;
-    
-    WavePovFboContent contentPovFboFront;
-//    WavePovFboContent contentPovFboBack;
-
-//    InputToWaveContent contentPovSun;
-//    InputToWaveContent contentPovSunBack;
-//    InputToWaveContent contentPovLinesTunnel;
-//    WaveEffectContent contentEffectFront;
     WaveRipplePovContent contentRipplePovFront;
     WaveRipplePovContent contentRipplePovBack;
-//    WaveShaderContent contentShaderSmoke;
-//    WaveSlitContent contentSlit;
+    WaveShaderContent contentShaderLines;
     WaveGateContent contentGate;
-//    WaveShaderContent contentShaderSmoke;
-//    WaveOnPositionContent contentPosGhosts;
     WaveGradientOnPositionContent contentBeadsGradients;
-//    WaveGradientOnPositionContent contentSoundObjectsGradients;
     
     // mappings
     int mappingIndx;
@@ -140,11 +128,8 @@ class ofApp : public ofBaseApp{
     ofxOscReceiver oscFromSensorFuse;
     ofxOscReceiver oscFromWaveAudio;
     ofxOscReceiver oscFromWaveAudioParameters;
-    ofxOscReceiver oscFromVezer;
     ofxOscSender oscToWaveAudio;
     
-//    ofParameterGroup oscSyncedParameters;
-
     
     void receiveOSC();
     void sendOSC();
@@ -154,9 +139,8 @@ class ofApp : public ofBaseApp{
     
     // Pockets
     PocketZone pocketZone_1;
-//    PocketPov pocketPov_1;
-//    PocketPovPositionalContent pocketPovPos_2;
-//    PocketGateReactiveContent pocketGateReactive_1;
+    PocketPov pocketPov_1;
+    PocketGateReactiveContent pocketGateReactive_1;
     
     // Images to be loaded
     vector<ofImage> imgGateContent;

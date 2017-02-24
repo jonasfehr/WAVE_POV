@@ -80,7 +80,7 @@ public:
                 
                 mover+=increment;
                 
-                effectPos = oldPos+(reactiveGate-oldPos)*quadraticOut(mover);//quadraticOut cubicOut
+                effectPos = (oldPos+(reactiveGate-oldPos))*quadraticOut(mover);//quadraticOut cubicOut
                 
                 if(mover >= 1.){
                     effectPos = reactiveGate;
