@@ -60,7 +60,6 @@ public:
     
     void update(){
 
-        povMappedContent.update();
 
         
         // move pov if active
@@ -77,15 +76,18 @@ public:
             oldExternalObjectLifespan = externalObject->getLifespan();
             
             povMappedContent.setVisible();
-            ofVec3f newPos = ofVec3f(0, 1.72, externalObject->getPosition().z);
-            ofVec3f povCurrentPos = povMappedContent.getPovPtr()->getPosition();
-            povMappedContent.getPovPtr()->setGlobalPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
-            povMappedContent.getPovPtr()->lookAt(povMappedContent.getPovPtr()->getGlobalPosition( )+ ofVec3f(0.,0.,1.));
+            ofVec3f newPos = ofVec3f(0, 1.73, externalObject->getPosition().z);
+            ofVec3f povCurrentPos = povMappedContent.pov.getPosition();
+            povMappedContent.pov.setPosition(newPos*0.1+povCurrentPos*0.9); // proximate the externalObjects position to create a transition
+            povMappedContent.pov.lookAt(povMappedContent.pov.getPosition()+ ofVec3f(0.,0.,10.),ofVec3f(0.,1.,0.));
+            
+//            cout << "pos: " <<povMappedContent.pov.getPosition()<< " lookAt: " <<povMappedContent.pov.getPosition()+ ofVec3f(0.,0.,10.)<<endl;
             
         }else{
             povMappedContent.setInvisible();
         }
-        
+        povMappedContent.update();
+
         // SEND OSC
         if(ofGetElapsedTimeMillis()/50 != oldMillis && !deactivate){
             ofxOscMessage m;
@@ -102,7 +104,7 @@ public:
     float getMinLifespan(){ return minLifeSpan; };
     
     void setExternalObject(ExternalObject * externalObject){
-        this->externalObject = externalObject;
+        if(!isActive)this->externalObject = externalObject;
         isActive = true;
     };
     

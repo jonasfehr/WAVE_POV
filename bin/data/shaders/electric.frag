@@ -6,7 +6,7 @@
 
 
 
-#define time iGlobalTime*0.15
+#define time iGlobalTime*0.245
 #define tau 6.2831853
 //
 uniform vec2 iResolution;

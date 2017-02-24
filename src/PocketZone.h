@@ -186,7 +186,7 @@ public:
             isActive = false;
             
             start = (int)ofRandom(2, 39);
-            stop = (int)ofRandom(start-10, start+10);
+            stop = (int)ofRandom(start-10, start+10)+1;
             if(stop > 40) stop = 40;
             else if(stop < 1 ) stop = 1;
             

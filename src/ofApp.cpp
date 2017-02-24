@@ -33,12 +33,12 @@ void ofApp::setup(){
     
     camPos.name = "inside/lookBack";
     camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 39);
-    camPos.lookAt = camPos.pos+ofVec3f(0,0,1.);
+    camPos.lookAt = camPos.pos+ofVec3f(0,0,1);
     camPresets.push_back(camPos);
     
     camPos.name = "inside/lookFront";
     camPos.pos = ofVec3f(0, VIEWER_HEIGHT, 39);
-    camPos.lookAt = camPos.pos+ofVec3f(0,0,-1.);
+    camPos.lookAt = camPos.pos+ofVec3f(0,0,-1);
     camPresets.push_back(camPos);
     
     
@@ -210,6 +210,8 @@ void ofApp::update(){
     }
     syphonOut.end();
     
+
+    
 }
 
 //--------------------------------------------------------------
@@ -248,7 +250,11 @@ void ofApp::draw(){
             }
         }
         
-        
+//        if(pocketPov_1.isActive) {
+//            ofDrawSphere(pocketPov_1.povMappedContent.pov.getPosition(), 0.1);
+////            ofDrawSphere(pocketPov_1.povMappedContent.pov.getLookAtDir());
+//            
+//        }
         
         // Draw gates
         if(drawGates){
@@ -377,7 +383,7 @@ void ofApp::keyPressed(int key){
         camPresetIndx++;
         camPresetIndx = camPresetIndx%camPresets.size();
         camera.setGlobalPosition(camPresets[camPresetIndx].pos );
-        camera.lookAt(center);
+        camera.lookAt(camPresets[camPresetIndx].lookAt);
     }
     if(key == 'x'){
         contentPovFree.setPov(camera);

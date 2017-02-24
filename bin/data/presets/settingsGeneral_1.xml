@@ -4,7 +4,7 @@
 		<draw_gates>1</draw_gates>
 		<draw_syphon_in>0</draw_syphon_in>
 	<drawSoundObjects>0</drawSoundObjects>
-	<autorunWekinator>1</autorunWekinator>
+	<autorunWekinator>0</autorunWekinator>
 	</VIEWs>
 <General/>
 </General>

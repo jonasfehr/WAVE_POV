@@ -125,7 +125,7 @@ public:
                 m.setAddress("/Ripple/"+ofToString(index));
                 m.addInt32Arg(createRipple);
                 
-                ofVec3f position = pov.getPosition() + pov.getLookAtDir().getNormalized().scale( 85.*( 1. - cubicOut(rippleSize) ) );
+                ofVec3f position = pov.getPosition() + pov.getLookAtDir().getNormalized().scale( 85.*( 1. - rippleSize));//cubicOut(rippleSize) ) );
                 m.addFloatArg(position.z);
                 oscSender->sendMessage(m);
                 

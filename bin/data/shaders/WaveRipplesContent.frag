@@ -74,14 +74,14 @@ float polygon(vec2 p, int vertices, float size) {
     float b = 6.28319 / float(vertices);
     return cos(floor(0.5 + a / b) * b - a) * length(p) - size;
 }
-float polygonRing(vec2 p, int vertices, float size) {
+float polygonRing(vec2 p, int vertices, float size, float width) {
     float a = atan(p.x, p.y) + 0.2;
     float b = 6.28319 / float(vertices);
-    return abs(cos((floor(0.5 + a / b) * b - a)) * length(p) - size-1.);
+    return abs(cos((floor(0.5 + a / b) * b - a)) * length(p) - size-width);
 }
 
 float stepLines(float v) {
-    return (1.-step(0.1,  fract(v*10.)))*((1.-v));
+    return (1.-step(0.1,  fract(v*15.)))*((1.-v));
 }
 
 
@@ -99,15 +99,12 @@ mat2 scale(vec2 _scale){
 
 void main(  ) {
   vec2 st = gl_FragCoord.xy/min(iResolution.x, iResolution.y);
-   float size = cubicOut(rippleSize);// fract(iGlobalTime/10.); //
+  // float rippleSize = fract(iGlobalTime/10.);;
   st -= vec2(0.5, 0.5);
-   st = scale(vec2((1.-size )*10.))*st;
-   st = rotate2d(PI*.936)*st;
+     st = scale(vec2(1.-cubicOut(rippleSize))*40.)*st;
+    st = rotate2d(PI*.936)*st;
   //st = rotate2d( (fract(iGlobalTime/100.)-.5) * PI/6.)*st;
 
-
-  float pulse = fract(time)*2.5-1.;//(sin(time)+1.)/2.;
-
-  float d = polygonRing(st,5, rippleSize);
+  float d = polygonRing(st,5, .1, .01);
   gl_FragColor = vec4( vec3(stepLines(d)), 1.);
 }

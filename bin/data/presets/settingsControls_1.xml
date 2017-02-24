@@ -53,8 +53,8 @@
 	</contentEffectFront>
 <PocketGateReactive>
 		<deactivate>0</deactivate>
-		<width>0.117347</width>
-		<increment>0.0693881</increment>
+		<width>0.0918367</width>
+		<increment>0.012756</increment>
 	<minWaitTime>5.20408</minWaitTime>
 		<maxWaitTime>10.4082</maxWaitTime>
 	</PocketGateReactive>
@@ -68,7 +68,7 @@
 		<deactivate>0</deactivate>
 	</PocketPovSoundObj>
 <Gate>
-		<deactivate>0</deactivate>
+		<deactivate>1</deactivate>
 		<speed>0.00563776</speed>
 		<mode>1</mode>
 		<easing>1</easing>
@@ -77,12 +77,12 @@
 <RipplePovBack>
 		<deactivate>0</deactivate>
 		<possibility>0.1</possibility>
-		<increment>0.01</increment>
+		<increment>0.00459279</increment>
 	</RipplePovBack>
 	<RipplePovFront>
 		<deactivate>0</deactivate>
 		<possibility>0.1</possibility>
-		<increment>0.01</increment>
+		<increment>0.00459279</increment>
 	</RipplePovFront>
 	<Vezer/>
 <pocketZone>

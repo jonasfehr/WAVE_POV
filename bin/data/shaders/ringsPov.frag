@@ -8,7 +8,7 @@ uniform vec2 iResolution;
 uniform float iGlobalTime;
 
 
-#define time iGlobalTime*0.1
+#define time iGlobalTime*0.05
 #define PI 3.14159265359
 
 
@@ -94,14 +94,14 @@ void main( )
 
   vec2 st = gl_FragCoord.xy/min(iResolution.x, iResolution.y);
   float pulse = (fract(time)*8.)-2.5;//(sin(time)+1.)/2.;
-  st -= vec2(0.5, 0.6);
+  st -= vec2(0.5, 0.5);
   //  st = scale(vec2(pulse))*st;
   //  st = rotate2d(PI*.936)*st;
   //st = rotate2d( (fract(iGlobalTime/100.)-.5) * PI/6.)*st;
 
 
 
-  float d = ring(st, pulse, 0.1);
+  float d = ring(st, pulse, 0.05);
 
   vec3 col = vec3(stepLines(d));
 

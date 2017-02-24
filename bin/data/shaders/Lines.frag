@@ -138,7 +138,7 @@ void main()
     // noise *=1.5;
     // noise +=  PerlinRidged(p,  offset, freq/2., 1., 0.5, 0.5, 0.2)* .5;
     // noise = smoothstep(0.5, 1., noise);
-       noise = (noise - 0.5) * max(pow(4., 2.)+0.5, 0.0) + 0.5;
+       noise = (noise - 0.5) * max(pow(2., 2.)+0.5, 0.0) + 0.5;
 
     //  noise = stepLines(noise);
 

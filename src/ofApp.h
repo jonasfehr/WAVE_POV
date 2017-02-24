@@ -77,7 +77,7 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> drawSoundObjects;
     ofParameter<bool> autorunWekinator;
 
-    ofVec3f center = ofVec3f(0,VIEWER_HEIGHT, 40);
+    ofVec3f center = ofVec3f(0,VIEWER_HEIGHT, 39);
     
     
     ofParameterGroup paramsWekinatorIn;
