@@ -12,14 +12,14 @@
 
 class Impulse{
 public:
-    ofVec2f position;
-    ofVec2f speed;
+    glm::vec2 position;
+    glm::vec2 speed;
     
 
     
     Impulse(){};
     
-    void setup(ofVec2f _position, ofVec2f _speed){
+    void setup(glm::vec2 _position, glm::vec2 _speed){
         position = _position;
         speed = _speed;
         //        dead = false;
@@ -41,11 +41,11 @@ public:
 
 class Position{
 public:
-    ofVec3f position = ofVec3f(0.);
-    ofVec3f size = ofVec3f(400.);
+    glm::vec3 position = glm::vec3(0.);
+    glm::vec3 size = glm::vec3(400.);
     
-    void setPosition(ofVec3f position){ this->position = position; }
-    void setSize(ofVec3f size){ this->position = size; }
+    void setPosition(glm::vec3 position){ this->position = position; }
+    void setSize(glm::vec3 size){ this->position = size; }
 };
 
 
@@ -55,8 +55,8 @@ public:
     ofMesh mesh;
     
     // vector to store all values
-    vector <ofVec3f> points;
-    vector <ofVec3f> sizes;
+    vector<glm::vec3> points;
+    vector<glm::vec3> sizes;
     
     ofVbo vbo;
     
@@ -91,10 +91,11 @@ public:
         sizes.clear();
         for (vector<Impulse>::iterator it=impulses.begin(); it!=impulses.end();)    {
             it->update();
-            points.push_back(it->position+10);
+            glm::vec3 newP = glm::vec3(it->position+10.0f,0.0f);
+            points.push_back(newP);
             
             float size = 100;
-            sizes.push_back(ofVec3f(size));
+            sizes.push_back(glm::vec3(size));
             
             if(it->position.y <= -size/2)
                 it = impulses.erase(it);
@@ -105,8 +106,8 @@ public:
         
         for(auto & p : positions){
             
-            ofVec3f pos = p.second.position;
-            ofVec3f size = p.second.size;
+            glm::vec3 pos = p.second.position;
+            glm::vec3 size = p.second.size;
             pos.x = pos.x*130;//pos.x/80.*fbo.getWidth();
             pos.y = (pos.y+7.)*130;//*130;//pos.y/14.*fbo.getHeight()+fbo.getHeight()/2;
             
@@ -182,13 +183,13 @@ public:
     void addImpulse(int gate){
         Impulse impulse;
         float posX = gate * 2.;
-        impulse.setup(ofVec2f(posX, 100), ofVec2f(0., -speed*4.));
+        impulse.setup(glm::vec2(posX, 100), glm::vec2(0., -speed*4.));
         
         impulses.push_back(impulse);
     }
     
-    void updatePosition(int identifier, ofVec2f pos){
-        positions[identifier].setPosition(ofVec3f(pos.x, pos.y, 0.));
+    void updatePosition(int identifier, glm::vec2 pos){
+        positions[identifier].setPosition(glm::vec3(pos.x, pos.y, 0.));
     }
     
     
@@ -197,17 +198,17 @@ public:
         float dist = fboShader.getTexture().getWidth()/39;
         
         for(int i = 0; i <= 40; i++){
-            mesh.addVertex(ofVec2f(i*3,0));
-            mesh.addVertex(ofVec2f(i*3,120));
-            mesh.addVertex(ofVec2f(i*3,650));
-            mesh.addVertex(ofVec2f(i*3,1180));
-            mesh.addVertex(ofVec2f(i*3,1300));
+            mesh.addVertex(glm::vec3(i*3, 0, 0));
+            mesh.addVertex(glm::vec3(i*3, 120, 0));
+            mesh.addVertex(glm::vec3(i*3, 650, 0));
+            mesh.addVertex(glm::vec3(i*3, 1180, 0));
+            mesh.addVertex(glm::vec3(i*3, 1300, 0));
             
-            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight() ) );
-            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.1 ) );
-            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.5 ) );
-            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight()*0.9 ) );
-            mesh.addTexCoord( ofVec2f( i*dist, fboShader.getTexture().getHeight() ) );
+            mesh.addTexCoord(glm::vec3( i*dist, fboShader.getTexture().getHeight() ,0) );
+            mesh.addTexCoord(glm::vec3( i*dist, fboShader.getTexture().getHeight()*0.1 ,0) );
+            mesh.addTexCoord(glm::vec3( i*dist, fboShader.getTexture().getHeight()*0.5 ,0) );
+            mesh.addTexCoord(glm::vec3( i*dist, fboShader.getTexture().getHeight()*0.9 ,0) );
+            mesh.addTexCoord(glm::vec3( i*dist, fboShader.getTexture().getHeight() ,0) );
         }
         for(int i = 0; i < 40*5; i+=5){
             mesh.addIndex(i+5);

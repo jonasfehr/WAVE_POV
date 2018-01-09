@@ -6,9 +6,13 @@
 #include "ofxSyphon.h"
 #include "ofxAutoReloadedShader.h"
 
+#include "ofxSyphonUtils.h"
+#include "ofxWekinator.h"
+#include "ofxGpuMixer.h"
+#include "ofxMad3D.h"
+#include "ofxArtNode.h"
 
 #include "Gate.h"
-#include "POV.h"
 #include "User.h"
 
 #include "PocketPov.h"
@@ -19,9 +23,7 @@
 #include "WaveShaderContent.h"
 #include "WavePositionalContent.h"
 
-#include "TextureMix.h"
-#include "SyphonUtils.h"
-#include "Wekinator.h"
+//#include "TextureMix.h"
 
 #define VIEWER_HEIGHT 1.73
 
@@ -78,21 +80,24 @@ class ofApp : public ofBaseApp{
     vector<Gate> gates;
     
     // Syphon in & out
-    SyphonClientDir syphonIn;
-    SyphonFbo syphonOut;
-    SyphonFbo syphonLayerPreview;
-    SyphonFbo syphonSimOut;
+    ofxSyphonClientDir syphonIn;
+    ofxSyphonFbo syphonOut;
+    ofxSyphonFbo syphonLayerPreview;
+    ofxSyphonFbo syphonSimOut;
     
     // create content;
     InputToWaveContent contentPovFree;
-    WaveGateContent contentGate;
-    WaveShaderContent contentShaderSmoke;
-    WaveShaderContent contentShaderLines;
-    WavePositionalContent contentPosGhosts;
+//    WaveGateContent contentGate;
+    ofxGpuMixer::ShaderChannel contentShaderSmoke;
+    ofxGpuMixer::ShaderChannel contentShaderLines;
+//    WavePositionalContent contentPosGhosts;
     
     // mappings
     int mappingIndx;
     
+    ofxMad3D::MappingImage mappingImg;
+    ofxMad3D::CsvParser csvParser;
+
     // viewPresets
     struct CameraPos{
         ofVec3f pos;
@@ -100,11 +105,12 @@ class ofApp : public ofBaseApp{
     };
     vector<CameraPos> camPresets;
     int camPresetIndx;
-    
+    int gateInfoIndx;
 
-    TextureMix textureMixer;
+
+    ofxGpuMixer::Mixer mixer;
     
-    Wekinator wekinator;
+    ofxWekinator wekinator;
     
     // OSC
     ofxOscReceiver oscFromSensorFuse;
@@ -126,6 +132,8 @@ class ofApp : public ofBaseApp{
     vector<ofImage> imgGateContent;
     vector<ofImage> imgPosContent;
     
+    // NodeProgramming
+    ofxArtNode artNode;
 
 };
 

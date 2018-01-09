@@ -1,5 +1,11 @@
+ofxArtNode
 ofxAutoReloadedShader
+ofxGpuMixer
 ofxGrabCam
 ofxGui
+ofxMad3D
+ofxNetwork
 ofxOsc
 ofxSyphon
+ofxSyphonUtils
+ofxWekinator

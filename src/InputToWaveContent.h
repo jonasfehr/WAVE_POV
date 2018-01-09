@@ -9,21 +9,23 @@
 #ifndef InputToWaveContent_h
 #define InputToWaveContent_h
 #include "ofxAutoReloadedShader.h"
+#include "ofxGpuMixer.h"
 
 
 enum waveOutputMappingType : int {
     POV_UV,
     POV_UV_NORMALIZED,
-    TUBE
+    TUBE,
+    UV
 };
 
 
 
-class InputToWaveContent{
+class InputToWaveContent: public ofx::GpuMixer::BasicChannel{
 public:
     
     
-    ofFbo fbo;
+//    ofFbo fbo;
     ofFbo fboShader;
     ofMesh mesh;
     ofTexture *texture;
@@ -40,7 +42,7 @@ public:
     
     InputToWaveContent(){}
     
-    void setup(vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture, int mappingType){
+    void setup(vector<Gate> * gates, glm::vec3 povPosition, ofTexture *texture, int mappingType){
         //this->pov = pov;
         this->gates = gates;
         this->mappingType = mappingType;
@@ -67,7 +69,7 @@ public:
         inputType = INPUT_EXTERNAL;
     }
     
-    void setup(vector<Gate> * gates, ofVec3f povPosition, string shaderName, ofVec2f shaderSize, int mappingType){
+    void setup(vector<Gate> * gates, glm::vec3 povPosition, string shaderName, glm::vec2 shaderSize, int mappingType){
         //this->pov = pov;
         this->gates = gates;
         this->mappingType = mappingType;
@@ -112,7 +114,7 @@ public:
     
     ofCamera* getPovPtr(){ return &pov; }
     
-    void setPovPosition(ofVec3f pos){
+    void setPovPosition(glm::vec3 pos){
         pov.setPosition(pos);
     }
     
@@ -134,10 +136,10 @@ public:
         
         // Calculate the UV points
         for(auto& e : edges){
-            ofVec3f coord = pov.worldToScreen(e.pos);
+            glm::vec3 coord = pov.worldToScreen(e.pos);
             coord.x /= ofGetWidth();
             coord.y /= ofGetHeight();
-            if((e.pos-pov.getPosition()).dot(pov.getLookAtDir())>0) coord.y = 1-coord.y;
+            if(glm::dot( e.pos-pov.getPosition(), pov.getLookAtDir() ) > 0 ) coord.y = 1-coord.y;
             e.uv = coord;
         }
         
@@ -195,46 +197,51 @@ public:
         fbo.draw(0,0, 120, 1300);
     }
     
-    void setTexCoords(vector<ofVec2f> texCoords){
+    void setTexCoords(vector<glm::vec2> texCoords){
         mesh.clearTexCoords();
         mesh.addTexCoords(texCoords);
     }
     
-    vector<ofVec2f> getTexCoords(){ return mesh.getTexCoords(); }
+    vector<glm::vec2> getTexCoords(){ return mesh.getTexCoords(); }
     
     void setInputTexture(ofTexture *texture){ this->texture = texture;}
-    
-    ofTexture getTexture(){ return fbo.getTexture(); }
-    
-    ofFbo* getFboPtr(){ return &fbo; }
-    
+            
     
     void calcMapping(){
         
-        vector<ofVec2f> texCoords;
+        vector<glm::vec2> texCoords;
         
+        float dist = texture->getWidth()/40;
         switch(mappingType){
             case POV_UV:
                 for(auto& e : edges){
-                    texCoords.push_back(ofVec2f(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
+                    texCoords.push_back(glm::vec2(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
                 }
                 break;
                 
             case POV_UV_NORMALIZED:
                 normalizeUV();
                 for(auto& e : edges){
-                    texCoords.push_back(ofVec2f(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
+                    texCoords.push_back(glm::vec2(e.uv.x*texture->getWidth(), e.uv.y*texture->getHeight()));
                 }
                 break;
                 
             case TUBE:
-                float dist = texture->getWidth()/40;
-                for(int i = 0; i <= 39; i++){
-                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*145/1590));
-                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120)/1590));
-                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530)/1590));
-                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530)/1590));
-                    texCoords.push_back(ofVec2f(1+i*dist,texture->getHeight()*(145+120+530+530+120)/1590));
+                                for(int i = 0; i <= 40; i++){
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*145/1590));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*(145+120)/1590));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*(145+120+530)/1590));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*(145+120+530+530)/1590));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*(145+120+530+530+120)/1590));
+                }
+                break;
+            case UV:
+                for(int i = 0; i <= 40; i++){
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*0));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*120/1300));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*650/1300));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*(650+530)/1300));
+                    texCoords.push_back(glm::vec2(i*dist,texture->getHeight()*1));
                 }
                 break;
         }
@@ -266,11 +273,11 @@ public:
     
     void createMesh(){
         for(int i = 0; i <= 40; i++){
-            mesh.addVertex(ofVec2f(i*3,0));
-            mesh.addVertex(ofVec2f(i*3,120));
-            mesh.addVertex(ofVec2f(i*3,650));
-            mesh.addVertex(ofVec2f(i*3,1180));
-            mesh.addVertex(ofVec2f(i*3,1300));
+            mesh.addVertex(ofPoint(i*3,0));
+            mesh.addVertex(ofPoint(i*3,120));
+            mesh.addVertex(ofPoint(i*3,650));
+            mesh.addVertex(ofPoint(i*3,1180));
+            mesh.addVertex(ofPoint(i*3,1300));
         }
         for(int i = 0; i < 40*5; i+=5){
             mesh.addIndex(i+5);
@@ -305,14 +312,14 @@ public:
     
     // ---   EDGE's the container for the points where the UV's are calculated
     struct Edge{
-        ofVec3f intersect;
-        ofVec3f pos;
-        ofVec2f uv;
+        glm::vec3 intersect;
+        glm::vec3 pos;
+        glm::vec2 uv;
         
     };
     
     
-    void addEdge(ofVec3f position){
+    void addEdge(glm::vec3 position){
         Edge edge;
         edge.pos = position;
         edges.push_back(edge);

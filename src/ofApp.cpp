@@ -42,8 +42,20 @@ void ofApp::setup(){
         gates.push_back(gate);
     }
     
+    // create Mapping Image
+    vector<ofx::Mad3D::Fixture> fixtures;
+    for(auto & g : gates){
+        for(auto & f : g.fixtures)
+        {
+            fixtures.push_back(f);
+        }
+    }
+    
+    mappingImg.setup(fixtures, 40, 1300);
+    mappingImg.save("mappingImg.png");
+    
     // setup content generators
-    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), TUBE);
+    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), UV);
     
     //load images
     ofImage img;
@@ -56,12 +68,11 @@ void ofApp::setup(){
     img.load("images/Pass_4.png");
     imgGateContent.push_back(img);
     
-    contentGate.setup("gate", &imgGateContent);
+//    contentGate.setup("gate", &imgGateContent);
     
-    contentShaderSmoke.setup("smokeNoise");
-    contentShaderLines.setup("lines");
-    contentPosGhosts.setup("Ghosts");
-    
+    contentShaderSmoke.setup("smokeNoise", "shaders/smokeNoise", 40, 1300, ofx::GpuMixer::SHADER_SHADERTOY);
+    contentShaderLines.setup("lines", "shaders/lines", 40, 1300, ofx::GpuMixer::SHADER_SHADERTOY);
+//    contentPosGhosts.setup("Ghosts");
     
     // setup Syphon
     syphonIn.setup();
@@ -73,16 +84,16 @@ void ofApp::setup(){
     pocketZone_1.setup(10, 25, "electric", ofVec2f(512));
     pocketPov_1.setup(5., &gates, camPresets[0].pos, "electric");
     
-    
-    
     // setup Mixer
-    textureMixer.addFboChannel(contentPovFree.getFboPtr(), "PovFree", BLEND_LIGHTEN);
-    textureMixer.addFboChannel(contentShaderSmoke.getFboPtr(), "Smoke", BLEND_SCREEN);
-    textureMixer.addFboChannel(contentShaderLines.getFboPtr(), "Lines", BLEND_SCREEN);
-    textureMixer.addFboChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
-    textureMixer.addFboChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
-    textureMixer.addFboChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
-    textureMixer.addFboChannel(contentGate.getFboPtr(), "Gate", BLEND_ADD);
+    mixer.addChannel(contentPovFree.getFbo(), "PovFree", ofxGpuMixer::BLEND_LIGHTEN);
+    mixer.addChannel(contentShaderSmoke, ofxGpuMixer::BLEND_ADD);
+    mixer.addChannel(contentShaderLines, ofxGpuMixer::BLEND_ADD);
+//    mixer.addChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
+//    mixer.addChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
+//    mixer.addChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
+//    mixer.addChannel(contentGate.getFboPtr(), "Gate", BLEND_ADD);
+    
+    mixer.setup();
     
     setupParameterGroup();
     guiGroup.setName("General");
@@ -90,13 +101,13 @@ void ofApp::setup(){
     
     ofParameterGroup paramsControls;
     paramsControls.setName("ContentControls");
-    paramsControls.add(contentGate.parameterGroup);
+//    paramsControls.add(contentGate.parameterGroup);
     guiControls.setup( paramsControls );
-    guiMixer.setup( *textureMixer.getPointerToParameterGroup() );
+    guiMixer.setup( mixer.getParameterGroup() );
     guiWekinator.setup(paramsWekinator);
     
     
-    wekinator.setup(&paramsWekinator, textureMixer.getVectorOfParameterSubgroups());
+    wekinator.setup(&paramsWekinator, mixer.getVectorOfParameterSubgroups());
     
     
     guiGeneral.setup(guiGroup);
@@ -108,7 +119,12 @@ void ofApp::setup(){
     
     oscFromSensorFuse.setup(49162);
     
+    gateInfoIndx = 0;
+    
+    csvParser.readAndParseCSV("Mapping_QuadLED.csv");
 
+    artNode.setup();
+    artNode.sendPoll();
 }
 
 //--------------------------------------------------------------
@@ -129,10 +145,10 @@ void ofApp::update(){
     
 
     contentPovFree.update();
-    contentGate.update();
+//    contentGate.update();
     contentShaderSmoke.update();
     contentShaderLines.update();
-    contentPosGhosts.update();
+//    contentPosGhosts.update();
     
     // UPDATE POCKETS
     pocketZone_1.update();
@@ -144,12 +160,18 @@ void ofApp::update(){
     {
         ofClear(0);
         ofSetColor(255);
-        textureMixer.draw(0,0,syphonOut.getWidth(), syphonOut.getHeight());
+        mixer.draw(0,0,syphonOut.getWidth(), syphonOut.getHeight());
     }
     syphonOut.end();
     
     
-    
+    // looking for artnet devices
+    if (artNode.readyFps(0.2)) { // send poll all 5 sec
+        artNode.sendPoll();
+        artNode.clearNodes();
+    }
+    artNode.update();
+
 }
 
 //--------------------------------------------------------------
@@ -164,7 +186,7 @@ void ofApp::draw(){
             if(drawFloor){
                 ofSetColor(20);
                 ofPushMatrix();
-                ofRotateX(90);
+                ofRotateXDeg(90);
                 ofDrawPlane(0, 0, 1000, 1000);
                 ofPopMatrix();
             }
@@ -203,7 +225,7 @@ void ofApp::draw(){
             syphonIn.draw();
             
             ofSetColor(ofColor::orange);
-            vector<ofVec2f> pos = contentPovFree.getTexCoords();
+            vector<glm::vec2> pos = contentPovFree.getTexCoords();
             for(auto& p : pos){
                 ofDrawCircle(p.x, syphonIn.getHeight()-p.y, 2);
             }
@@ -214,6 +236,19 @@ void ofApp::draw(){
     // Draw GUI
     drawGUI();
     
+    gates[gateInfoIndx].showFixtureInfo();
+    
+    string info;
+    info += "NumberNodes  : " + ofToString(artNode.getNumNodes());
+    if(artNode.getNumNodes() > 0){
+        info += "\nIP           : " + artNode.getNodeIp(0);
+        auto node = artNode.getNode(0);
+        info += "\nSortName     : " + ofToString(node == NULL ? "-" : node->ShortName);
+        info += "\nStartChannel : " + ofToString(node == NULL ? "-" : node->LongName);
+        info += "\nStartAddress : " + ofToString(node == NULL ? 9999 : node->getPortAddress(0));
+    }
+    ofDrawBitmapStringHighlight(info, 345, ofGetHeight()-4*15);
+
     
     // PUBLISH OUTPUT
     syphonOut.publish();
@@ -286,10 +321,14 @@ void ofApp::keyPressed(int key){
     
     if(key == 'm'){
         mappingIndx++;
-        mappingIndx = mappingIndx%3;
+        mappingIndx = mappingIndx%4;
         contentPovFree.setMappingType(mappingIndx);
     }
     
+    if(key == 'i' || key == 's'){
+        syphonIn.next();
+    }
+
     if(key == 'c'){
         camPresetIndx++;
         camPresetIndx = camPresetIndx%camPresets.size();
@@ -300,13 +339,6 @@ void ofApp::keyPressed(int key){
         contentPovFree.setPov(camera);
     }
     
-    if(key == 's'){
-        syphonIn.next();
-    }
-    
-    if(key == 'p'){
-        contentGate.activate(ofRandom(0,40));
-    }
     
     if(key == 'q'){
         guiGeneral.loadFromFile("settingsGeneral.xml");
@@ -317,6 +349,27 @@ void ofApp::keyPressed(int key){
         guiGeneral.saveToFile("settingsGeneral.xml");
         guiMixer.saveToFile("settingsMixer.xml");
         guiControls.saveToFile("settingsControls.xml");
+    }
+    
+    if(key == 'o'){
+        gateInfoIndx--;
+        if(gateInfoIndx<0) gateInfoIndx = 39;
+    }
+    if(key == 'p'){
+        gateInfoIndx++;
+        if(gateInfoIndx>39) gateInfoIndx = 0;
+    }
+    if(key == 'l'){
+        // send new config to connected node
+        if((artNode.getNumNodes()>0) && (artNode.getNumNodes()<2) ){
+            artNode.setNodeAddress(0, gates[gateInfoIndx].fixtures[0].startUniverse, "G_"+ofToString(gateInfoIndx+1), "Gate_"+ofToString(gateInfoIndx+1));
+            artNode.sendPoll();
+            artNode.clearNodes();
+            cout << "readressed node" << endl;
+            
+        } else cout << "more than one node connected node" << endl;
+
+        
     }
 }
 
@@ -378,14 +431,14 @@ void ofApp::receiveFromSensorFuse(){
     while(oscFromSensorFuse.hasWaitingMessages()){
         // get the next message
         ofxOscMessage m;
-        oscFromSensorFuse.getNextMessage(&m);
+        oscFromSensorFuse.getNextMessage(m);
         
         std::vector<std::string> address = ofSplitString(m.getAddress(),"/",true);
         
         
         // check for mouse moved message
         if(address[0] == "Gate"){
-            contentGate.activate(ofToInt(address[1]));
+//            contentGate.activate(ofToInt(address[1]));
             
             pocketZone_1.gateActivated(ofToInt(address[1]));
             
@@ -398,7 +451,7 @@ void ofApp::receiveFromSensorFuse(){
             }
         }else if(address[0] == "soundObject"){
             // Do something with SoundObjects id = address[1]
-            contentPosGhosts.updatePosition(ofToInt(address[1]), ofVec2f(m.getArgAsFloat(0), m.getArgAsFloat(1)));
+//            contentPosGhosts.updatePosition(ofToInt(address[1]), ofVec2f(m.getArgAsFloat(0), m.getArgAsFloat(1)));
             
             
         }else{

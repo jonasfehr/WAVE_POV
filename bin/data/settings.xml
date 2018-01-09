@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <ContentControl>
 	<VIEWs>
 		<draw_floor>1</draw_floor>
@@ -48,7 +49,7 @@
 			<opacity>1</opacity>
 			<blendMode>1</blendMode>
 		</Gate>
-	<Lines>
+		<Lines>
 			<hue>0.10454</hue>
 			<saturation>0.458559</saturation>
 			<brightness>1</brightness>
@@ -56,7 +57,7 @@
 			<opacity>0</opacity>
 			<blendMode>3</blendMode>
 		</Lines>
-	<Ghosts>
+		<Ghosts>
 			<hue>0.377551</hue>
 			<saturation>1</saturation>
 			<brightness>1</brightness>
@@ -65,5 +66,34 @@
 			<blendMode>1</blendMode>
 		</Ghosts>
 	</Mixer>
-<ContentControl/>
+	<ContentControl />
 </ContentControl>
+<Mixer>
+	<PovFree>
+		<hue>0.236284</hue>
+		<saturation>0</saturation>
+		<brightness>0.408163</brightness>
+		<gain>1.79592</gain>
+		<contrast>2</contrast>
+		<opacity>1</opacity>
+		<blendMode>1</blendMode>
+	</PovFree>
+	<smokeNoise>
+		<hue>0.229766</hue>
+		<saturation>1</saturation>
+		<brightness>1</brightness>
+		<gain>1</gain>
+		<contrast>0.5</contrast>
+		<opacity>0</opacity>
+		<blendMode>1</blendMode>
+	</smokeNoise>
+	<lines>
+		<hue>0.678041</hue>
+		<saturation>1</saturation>
+		<brightness>1</brightness>
+		<gain>1</gain>
+		<contrast>0.5</contrast>
+		<opacity>0</opacity>
+		<blendMode>1</blendMode>
+	</lines>
+</Mixer>
