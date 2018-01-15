@@ -10,34 +10,34 @@
 #define PocketPov_h
 
 #include "Pocket.h"
-#include "InputToWaveContent.h"
+#include "TextureToPovContent.h"
 
 class PocketPov : public Pocket{
 public:
     float minLifeSpan = 0;
     User * user;
-    InputToWaveContent povMappedContent;
+    TextureToPovContent povMappedContent;
     float timeOfActivation;
     float oldUserLifespan = 0;
     int userNotUpdatedSince;
     
     PocketPov(){};
     
-    void setup( float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture){
+    void setup(string name, float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, ofTexture *texture){
         this-> minLifeSpan = minLifeSpan;
         this->povMappedContent = povMappedContent;
         this->povMappedContent.setInvisible(0.);
         
-        povMappedContent.setup(gates, povPosition, texture, TUBE);
+        povMappedContent.setup(name, gates, povPosition, texture, TUBE);
     }
     
-    void setup( float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName){
-        this-> minLifeSpan = minLifeSpan;
-        this->povMappedContent = povMappedContent;
-        this->povMappedContent.setInvisible(0.);
-        
-        povMappedContent.setup(gates, povPosition, shaderName, ofVec2f(512), TUBE);
-    }
+//    void setup( float minLifeSpan, vector<Gate> * gates, ofVec3f povPosition, string shaderName){
+//        this-> minLifeSpan = minLifeSpan;
+//        this->povMappedContent = povMappedContent;
+//        this->povMappedContent.setInvisible(0.);
+//        
+//        povMappedContent.setup(gates, povPosition, shaderName, ofVec2f(512), TUBE);
+//    }
     
     void update(){
         

@@ -1,12 +1,10 @@
 #include "ofApp.h"
-ofVec3f viewDirection;
 //--------------------------------------------------------------
 void ofApp::setup(){
     
     ofBackground(80);
     ofEnableSmoothing();
     //ofDisableArbTex();
-    
     
     // create presets for camera
     CameraPos camPos;
@@ -36,6 +34,7 @@ void ofApp::setup(){
     camera.setGlobalPosition(camPresets[camPresetIndx].pos );
     camera.lookAt(center);
     
+    
     // Add gates
     for(int i = 0; i < 40; i++){
         Gate gate = Gate(ofVec3f(0,0, i*2), i);
@@ -55,24 +54,7 @@ void ofApp::setup(){
     mappingImg.save("mappingImg.png");
     
     // setup content generators
-    contentPovFree.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), UV);
-    
-    //load images
-    ofImage img;
-    img.load("images/Pass_1.png");
-    imgGateContent.push_back(img);
-    img.load("images/Pass_2.png");
-    imgGateContent.push_back(img);
-    img.load("images/Pass_3.png");
-    imgGateContent.push_back(img);
-    img.load("images/Pass_4.png");
-    imgGateContent.push_back(img);
-    
-//    contentGate.setup("gate", &imgGateContent);
-    
-    contentShaderSmoke.setup("smokeNoise", "shaders/smokeNoise", 40, 1300, ofx::GpuMixer::SHADER_SHADERTOY);
-    contentShaderLines.setup("lines", "shaders/lines", 40, 1300, ofx::GpuMixer::SHADER_SHADERTOY);
-//    contentPosGhosts.setup("Ghosts");
+    //syphonInLayer_1.setup(&gates, camPresets[0].pos, &syphonIn.getTexture(), UV);
     
     // setup Syphon
     syphonIn.setup();
@@ -80,14 +62,47 @@ void ofApp::setup(){
     syphonOut.setup("WaveForMapping", 120, 1300);
     syphonSimOut.setup("WaveSimulation", ofGetWidth(), ofGetHeight());
     
+    syphonDir.setup();
+    ofAddListener(syphonDir.events.serverAnnounced, this, &ofApp::serverAnnounced);
+    ofAddListener(syphonDir.events.serverRetired, this, &ofApp::serverRetired);
+    
+    for(int i = 0; i < NUMOFLAYERS; i++){
+        syphonInLayers[i].setup("syphonIn_"+ofToString(i+1),&gates, camPresets[0].pos, &syphonDir, "Main View", "Modul8", UV);
+    }
+//    syphonInLayer_1.setup("syphonIn_1",&gates, camPresets[0].pos, &syphonDir, "Modul8", "Main View", UV);
+//    syphonInLayer_2.setup("syphonIn_2",&gates, camPresets[0].pos, &syphonDir, "Modul8", "Main View", UV);
+//    syphonInLayer_3.setup("syphonIn_3",&gates, camPresets[0].pos, &syphonDir, "Modul8", "Main View", UV);
+//    syphonInLayer_4.setup("syphonIn_4",&gates, camPresets[0].pos, &syphonDir, "Modul8", "Main View", UV);
+
+    //load images
+//    ofImage img;
+//    img.load("images/Pass_1.png");
+//    imgGateContent.push_back(img);
+//    img.load("images/Pass_2.png");
+//    imgGateContent.push_back(img);
+//    img.load("images/Pass_3.png");
+//    imgGateContent.push_back(img);
+//    img.load("images/Pass_4.png");
+//    imgGateContent.push_back(img);
+    
+//    contentGate.setup("gate", &imgGateContent);
+    
+//    contentShaderSmoke.setup("smokeNoise", "shaders/smokeNoise", 40, 1300, ofx::GpuMixer::SHADER_SHADERTOY);
+//    contentShaderLines.setup("lines", "shaders/lines", 40, 1300, ofx::GpuMixer::SHADER_SHADERTOY);
+//    contentPosGhosts.setup("Ghosts");
+    
+    
     // add POCKETS
-    pocketZone_1.setup(10, 25, "electric", ofVec2f(512));
-    pocketPov_1.setup(5., &gates, camPresets[0].pos, "electric");
+//    pocketZone_1.setup(10, 25, "electric", ofVec2f(512));
+//    pocketPov_1.setup(5., &gates, camPresets[0].pos, "electric");
     
     // setup Mixer
-    mixer.addChannel(contentPovFree.getFbo(), "PovFree", ofxGpuMixer::BLEND_LIGHTEN);
-    mixer.addChannel(contentShaderSmoke, ofxGpuMixer::BLEND_ADD);
-    mixer.addChannel(contentShaderLines, ofxGpuMixer::BLEND_ADD);
+    for(int i = 0; i < NUMOFLAYERS; i++){
+        mixer.addChannel(syphonInLayers[i], ofxGpuMixer::BLEND_ADD);
+    }
+
+//    mixer.addChannel(contentShaderSmoke, ofxGpuMixer::BLEND_ADD);
+//    mixer.addChannel(contentShaderLines, ofxGpuMixer::BLEND_ADD);
 //    mixer.addChannel(pocketPov_1.getFboPtr(), "PovPocket_1", BLEND_SOFT_LIGHT);
 //    mixer.addChannel(pocketZone_1.getFboPtr(), "PovZone_1", BLEND_ADD);
 //    mixer.addChannel(contentPosGhosts.getFboPtr(), "Ghosts", BLEND_ADD);
@@ -99,15 +114,22 @@ void ofApp::setup(){
     guiGroup.setName("General");
     guiGroup.add(paramGroup);
     
-    ofParameterGroup paramsControls;
     paramsControls.setName("ContentControls");
-//    paramsControls.add(contentGate.parameterGroup);
+    
+    for(int i = 0; i < NUMOFLAYERS; i++){
+        paramsControls.add(syphonInLayers[i].getParameterGroup());
+
+//        paramsControls.add(syphonInLayers[i].parameterGroup.get("inputSelect"));
+//        paramsControls.add(syphonInLayers[i].parameterGroup.get("mappingMode"));
+//        paramsControls.add(syphonInLayers[i].parameterGroup.get("speedRPM"));
+    }
+    
     guiControls.setup( paramsControls );
     guiMixer.setup( mixer.getParameterGroup() );
-    guiWekinator.setup(paramsWekinator);
+//    guiWekinator.setup(paramsWekinator);
     
     
-    wekinator.setup(&paramsWekinator, mixer.getVectorOfParameterSubgroups());
+//    wekinator.setup(&paramsWekinator, mixer.getVectorOfParameterSubgroups());
     
     
     guiGeneral.setup(guiGroup);
@@ -119,10 +141,11 @@ void ofApp::setup(){
     
     oscFromSensorFuse.setup(49162);
     
+//    oscLayerControl.setup(paramsControls, 49164, "localhost", 49165);
+    oscLayerControl.setup(49166);
+    
     gateInfoIndx = 0;
     
-    csvParser.readAndParseCSV("Mapping_QuadLED.csv");
-
     artNode.setup();
     artNode.sendPoll();
 }
@@ -131,9 +154,11 @@ void ofApp::setup(){
 void ofApp::update(){
     ofSetWindowTitle("FPS: " + ofToString(ofGetFrameRate()));
     
-    wekinator.update();
-    receiveFromSensorFuse();
     
+//    wekinator.update();
+    receiveFromSensorFuse();
+    receiveLayerControl();
+
     for(auto & u : users){
         u.second.update();
         
@@ -143,16 +168,18 @@ void ofApp::update(){
         }
     }
     
+    for(int i = 0; i < NUMOFLAYERS; i++){
+        syphonInLayers[i].update();
+    }
 
-    contentPovFree.update();
 //    contentGate.update();
-    contentShaderSmoke.update();
-    contentShaderLines.update();
+//    contentShaderSmoke.update();
+//    contentShaderLines.update();
 //    contentPosGhosts.update();
     
     // UPDATE POCKETS
-    pocketZone_1.update();
-    pocketPov_1.update();
+//    pocketZone_1.update();
+//    pocketPov_1.update();
     
     
     
@@ -206,6 +233,11 @@ void ofApp::draw(){
                     g.drawMeshProfile();
                 }
             }
+            if(drawOrbiter){
+                for(int i = 0; i < NUMOFLAYERS; i++){
+                    syphonInLayers[i].cameraOrbiter.drawOrbiter();
+                }
+            }
         }
         camera.end();
     }
@@ -215,22 +247,9 @@ void ofApp::draw(){
     
     // Draw Syphon
     if(drawSyphon){
-        ofPushMatrix();
-        {
-            float s = 0.2;
-            ofTranslate(0, ofGetHeight()-syphonIn.getHeight()*s);
-            ofScale(s,s, 0);
-            //            ofSetColor(255,10);
-            //            ofScale(ofGetWidth()/syphonIn.getWidth(), ofGetHeight()/syphonIn.getHeight());
-            syphonIn.draw();
-            
-            ofSetColor(ofColor::orange);
-            vector<glm::vec2> pos = contentPovFree.getTexCoords();
-            for(auto& p : pos){
-                ofDrawCircle(p.x, syphonIn.getHeight()-p.y, 2);
-            }
+        for(int i = 0; i < NUMOFLAYERS; i++){
+            syphonInLayers[i].drawInputPreview(220, 170+i*170, 155, 155);
         }
-        ofPopMatrix();
     }
     
     // Draw GUI
@@ -262,12 +281,14 @@ void ofApp::setupParameterGroup(){
     paramGroup.add(drawFloor.set("draw floor", true));
     paramGroup.add(drawGates.set("draw gates", true));
     paramGroup.add(drawSyphon.set("draw syphon in", true));
+    paramGroup.add(drawOrbiter.set("drawOrbiterCams", true));
     
-    paramsWekinator.setName("WekinatorInputs");
-    paramsWekinator.add(in_1.set("wekIn_1", 0., 0., 1.));
-    paramsWekinator.add(in_2.set("wekIn_2", 0., 0., 1.));
-    paramsWekinator.add(in_3.set("wekIn_3", 0., 0., 1.));
-    paramsWekinator.add(in_4.set("wekIn_4", 0., 0., 1.));
+    
+//    paramsWekinator.setName("WekinatorInputs");
+//    paramsWekinator.add(in_1.set("wekIn_1", 0., 0., 1.));
+//    paramsWekinator.add(in_2.set("wekIn_2", 0., 0., 1.));
+//    paramsWekinator.add(in_3.set("wekIn_3", 0., 0., 1.));
+//    paramsWekinator.add(in_4.set("wekIn_4", 0., 0., 1.));
 }
 
 //--------------------------------------------------------------
@@ -276,8 +297,8 @@ void ofApp::drawGUI(){
         guiGeneral.draw();
         guiControls.setPosition(guiGeneral.getPosition().x, guiGeneral.getPosition().y + guiGeneral.getHeight() + 15);
         guiControls.draw();
-        guiWekinator.setPosition(guiControls.getPosition().x, guiControls.getPosition().y + guiControls.getHeight() + 15);
-        guiWekinator.draw();
+//        guiWekinator.setPosition(guiControls.getPosition().x, guiControls.getPosition().y + guiControls.getHeight() + 15);
+//        guiWekinator.draw();
         
         //right side
         guiMixer.setPosition(ofGetWidth()-guiMixer.getWidth()-15, 15);
@@ -285,7 +306,7 @@ void ofApp::drawGUI(){
 
         string info;
         info += "FPS: " + ofToString(ofGetFrameRate());
-        info += "\nPOV: " + ofToString(contentPovFree.pov.getPosition());
+//        info += "\nPOV: " + ofToString(syphonInLayer_1.pov.getPosition());
         info += "\nCam: " + ofToString(camera.getGlobalPosition());
         info += "\nCam: " + ofToString(camPresets[camPresetIndx].name);
         ofDrawBitmapStringHighlight(info, 15, ofGetHeight()-4*15);
@@ -299,32 +320,32 @@ void ofApp::keyPressed(int key){
         hideGui = !hideGui;
     }
     
-    if(key == '1'){
-        if(!wekinator.bIsRunning) {
-            wekinator.startRunning();
-        }else if(wekinator.bIsRunning) {
-            wekinator.stopRunning();
-        }
-    }
+//    if(key == '1'){
+//        if(!wekinator.bIsRunning) {
+//            wekinator.startRunning();
+//        }else if(wekinator.bIsRunning) {
+//            wekinator.stopRunning();
+//        }
+//    }
+//
+//    if(key == '2'){
+//        wekinator.startRecording();
+//    }
+//
+//    if(key == '3'){
+//        wekinator.train();
+//    }
+//
+//    if(key == '4'){
+//        wekinator.deleteTraining();
+//    }
     
-    if(key == '2'){
-        wekinator.startRecording();
-    }
-    
-    if(key == '3'){
-        wekinator.train();
-    }
-    
-    if(key == '4'){
-        wekinator.deleteTraining();
-    }
-    
-    if(key == 'm'){
-        mappingIndx++;
-        mappingIndx = mappingIndx%4;
-        contentPovFree.setMappingType(mappingIndx);
-    }
-    
+//    if(key == 'm'){
+//        mappingIndx++;
+//        mappingIndx = mappingIndx%4;
+//        syphonInLayer_1.setMappingMode(mappingIndx);
+//    }
+//
     if(key == 'i' || key == 's'){
         syphonIn.next();
     }
@@ -335,9 +356,9 @@ void ofApp::keyPressed(int key){
         camera.setGlobalPosition(camPresets[camPresetIndx].pos );
         camera.lookAt(center);
     }
-    if(key == 'x'){
-        contentPovFree.setPov(camera);
-    }
+//    if(key == 'x'){
+//        syphonInLayer_1.setPov(camera);
+//    }
     
     
     if(key == 'q'){
@@ -376,7 +397,7 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
     if(key == '2'){
-        wekinator.stopRecording();
+//        wekinator.stopRecording();
     }
 }
 
@@ -424,6 +445,19 @@ void ofApp::gotMessage(ofMessage msg){
 void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
+//--------------------------------------------------------------
+// Event handlers for syphonDir
+void ofApp::serverAnnounced(ofxSyphonServerDirectoryEventArgs &arg){
+    for( auto& syphonDir : arg.servers ){
+        ofLogNotice("ofxSyphonServerDirectory Server Announced")<<" Server Name: "<<syphonDir.serverName <<" | App Name: "<<syphonDir.appName;
+    }
+};
+void ofApp::serverRetired(ofxSyphonServerDirectoryEventArgs &arg){
+    for( auto& syphonDir : arg.servers ){
+        ofLogNotice("ofxSyphonServerDirectory Server Retired")<<" Server Name: "<<syphonDir.serverName <<" | App Name: "<<syphonDir.appName;
+    }
+};
+
 
 //--------------------------------------------------------------
 void ofApp::receiveFromSensorFuse(){
@@ -440,15 +474,15 @@ void ofApp::receiveFromSensorFuse(){
         if(address[0] == "Gate"){
 //            contentGate.activate(ofToInt(address[1]));
             
-            pocketZone_1.gateActivated(ofToInt(address[1]));
+//            pocketZone_1.gateActivated(ofToInt(address[1]));
             
         }else if(address[0] == "User"){
             users[ofToInt(address[1])].updateValues(m.getArgAsFloat(0), m.getArgAsFloat(1), m.getArgAsFloat(2));
             
             //cout << "User #" << address[1] << " pos " << m.getArgAsFloat(0) << " life " << m.getArgAsFloat(1) << " vel " << m.getArgAsFloat(2) << endl;
-            if( pocketPov_1.getMinLifespan() < m.getArgAsFloat(1) ){
-                pocketPov_1.setUser(&users[ ofToInt(address[1]) ]);
-            }
+//            if( pocketPov_1.getMinLifespan() < m.getArgAsFloat(1) ){
+//                pocketPov_1.setUser(&users[ ofToInt(address[1]) ]);
+//            }
         }else if(address[0] == "soundObject"){
             // Do something with SoundObjects id = address[1]
 //            contentPosGhosts.updatePosition(ofToInt(address[1]), ofVec2f(m.getArgAsFloat(0), m.getArgAsFloat(1)));
@@ -483,4 +517,25 @@ void ofApp::receiveFromSensorFuse(){
     }
     
     
+}
+void ofApp::receiveLayerControl(){
+    while(oscLayerControl.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        oscLayerControl.getNextMessage(m);
+        
+        std::vector<std::string> address = ofSplitString(m.getAddress(),"/",true);
+        
+        for(int i = 0; i < NUMOFLAYERS; i++){
+            if(address[0] == "Layer_"+ofToString(i+1)){
+                if(address[1] == "speed") syphonInLayers[i].cameraOrbiter.setSpeed(m.getArgAsFloat(0));
+                if(address[1] == "viewerHeight") syphonInLayers[i].cameraOrbiter.setViewerHeight(m.getArgAsFloat(0));
+                if(address[1] == "maxOrbitX") syphonInLayers[i].cameraOrbiter.setMaxOrbitX(m.getArgAsFloat(0));
+                if(address[1] == "maxOrbitZ") syphonInLayers[i].cameraOrbiter.setMaxOrbitZ(m.getArgAsFloat(0));
+                if(address[1] == "angle") syphonInLayers[i].cameraOrbiter.setAngle(m.getArgAsFloat(0));
+                if(address[1] == "center") syphonInLayers[i].cameraOrbiter.setCenter(glm::vec3(m.getArgAsFloat(0),m.getArgAsFloat(1),m.getArgAsFloat(2)));
+                return;
+            }
+        }
+    }
 }

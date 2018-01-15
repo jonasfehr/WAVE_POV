@@ -1,9 +1,0 @@
-<ContentControls>
-	<gate>
-		<speed>0.01</speed>
-		<mode>2</mode>
-		<easing>1</easing>
-		<imageIndex>1</imageIndex>
-	</gate>
-<ContentControls/>
-</ContentControls>
