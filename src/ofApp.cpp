@@ -248,7 +248,7 @@ void ofApp::draw(){
     // Draw Syphon
     if(drawSyphon){
         for(int i = 0; i < NUMOFLAYERS; i++){
-            syphonInLayers[i].drawInputPreview(220, 170+i*170, 155, 155);
+            syphonInLayers[i].drawInputPreview(220, 168+i*160, 155, 155);
         }
     }
     

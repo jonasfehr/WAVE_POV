@@ -30,7 +30,7 @@
 
 #define VIEWER_HEIGHT 1.73
 
-#define NUMOFLAYERS 2
+#define NUMOFLAYERS 4
 
 
 class ofApp : public ofBaseApp{
