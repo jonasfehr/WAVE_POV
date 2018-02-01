@@ -41,8 +41,10 @@ public:
         
         this->dir = dir;
         
-        syphonClient.setup();
 
+        syphonClient.setup();
+        if(!syphonClient.isSetup()) cout << "isSetup";
+        
         int index = find(serverName, appName);
 
         

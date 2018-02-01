@@ -28,6 +28,8 @@ void ofApp::setup(){
     }
     
     syphonIn.setup("Master", "MadMapper");
+    
+    simulationFBO.allocate(ofGetWidth(), ofGetHeight());
 
     // create presets for camera
     CameraPos camPos;
@@ -173,10 +175,6 @@ void ofApp::drawGUI(){
         guiGeneral.draw();
         guiControls.setPosition(guiGeneral.getPosition().x, guiGeneral.getPosition().y + guiGeneral.getHeight() + 15);
         guiControls.draw();
-
-        //right side
-        guiMixer.setPosition(ofGetWidth()-guiMixer.getWidth()-15, 15);
-        guiMixer.draw();
 
         string info;
         info += "FPS: " + ofToString(ofGetFrameRate());

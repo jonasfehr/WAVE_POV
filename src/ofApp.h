@@ -63,15 +63,9 @@ class ofApp : public ofBaseApp{
     // GUI
     bool hideGui = false;
     ofxPanel guiGeneral;
-    ofxPanel guiMixer;
     ofxPanel guiControls;
-//    ofxPanel guiWekinator;
-
     ofParameterGroup guiGroup;
-    
     ofParameterGroup paramsControls;
-
-
     ofParameterGroup paramGroup;
     ofParameter<bool> drawFloor;
     ofParameter<bool> drawGates;
