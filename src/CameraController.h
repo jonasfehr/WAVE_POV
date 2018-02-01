@@ -136,20 +136,28 @@ public:
     void setAngle(float angle){ this->theta = glm::radians(angle); }
     //    float getAngle(){ return (glm::mod(glm::degrees(theta),360.0)); }
     
-    void setCenter(glm::vec3 center){
-        lookAtX = center.x;
-        lookAtY = center.y;
-        lookAtZ = center.z;
+    void setLookAt(glm::vec3 lookAt){
+        lookAtX = lookAt.x;
+        lookAtY = lookAt.y;
+        lookAtZ = lookAt.z;
     }
     
-    glm::vec3 getCenter(){
-        glm::vec3 center;
-        center.x = lookAtX;
-        center.y = lookAtY;
-        center.z = lookAtZ;
-        return center;
-        
+    glm::vec3 getLookAt(){
+        return glm::vec3(lookAtX,lookAtY,lookAtZ);
     }
+    
+    void setPosition(glm::vec3 position){
+        posX = position.x;
+        posY = position.y;
+        posZ = position.z;
+    }
+    
+    glm::vec3 getPosition(){
+        return glm::vec3(posX,posY,posZ);
+    }
+    
+    
+    
     
     void setFov(float fov){ this->fov = fov; }
     float getFov(){ return fov; }

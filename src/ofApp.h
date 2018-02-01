@@ -78,15 +78,7 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> drawSyphon;
     ofParameter<bool> drawOrbiter;
     ofVec3f center = ofVec3f(0,1.2+0.3, 39);
-    
-    
-//    ofParameterGroup paramsWekinator;
-//    ofParameter<float> in_1;
-//    ofParameter<float> in_2;
-//    ofParameter<float> in_3;
-//    ofParameter<float> in_4;
 
-    
     // Gates
     vector<Gate> gates;
     
@@ -96,30 +88,14 @@ class ofApp : public ofBaseApp{
     void serverRetired(ofxSyphonServerDirectoryEventArgs &arg);
     
     ofxSyphonClientDir syphonIn;
-//    ofxSyphonFbo syphonOut;
     ofxSyphonServer syphonOutLayers[NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED];
-//    ofxSyphonFbo syphonSimOut;
     ofFbo simulationFBO;
-    // create content;
-//    ofxGpuMixer::Mixer mixer;
 
     SyphonToPovContent syphonInLayers[NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED];
     
-//    WaveGateContent contentGate;
-//    ofxGpuMixer::ShaderChannel contentShaderSmoke;
-//    ofxGpuMixer::ShaderChannel contentShaderLines;
-//    WavePositionalContent contentPosGhosts;
-    
-    // Pockets
-//    PocketZone pocketZone_1;
-//    PocketPov pocketPov_1;
-    
     // mappings
     int mappingIndx;
-//
-//    ofxMad3D::MappingImage mappingImg;
-//    ofxMad3D::CsvParser csvParser;
-
+    
     // viewPresets
     struct CameraPos{
         glm::vec3 pos;
@@ -128,23 +104,10 @@ class ofApp : public ofBaseApp{
     vector<CameraPos> camPresets;
     int camPresetIndx;
     string camPresetName;
-//    int gateInfoIndx;
 
-    // Wekinator control
-    //ofxWekinator wekinator;
-    
     // OSC
-  //  ofxOscReceiver oscFromSensorFuse;
-  //  void receiveFromSensorFuse();
-    
     ofxOscReceiver oscLayerControl;
     void receiveLayerControl();
 
-
-    // Users
-   // map<int, User> users;
-    
-    // NodeProgramming
-   // ofxArtNode artNode;
 };
 
