@@ -177,7 +177,7 @@
 		D58DCB2C0AEFDE6171E29540 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Syphon.framework; path = ../../../addons/ofxSyphon/libs/Syphon/lib/osx/Syphon.framework; sourceTree = "<group>"; };
 		D67FE8EDE92985070F3FD992 /* ofxUDPSettings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxUDPSettings.h; path = ../../../addons/ofxNetwork/src/ofxUDPSettings.h; sourceTree = SOURCE_ROOT; };
 		D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscTypes.cpp; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.cpp; sourceTree = SOURCE_ROOT; };
-		DD76A391200B7DCF0087E290 /* CameraOrbiter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraOrbiter.h; sourceTree = "<group>"; };
+		DD76A391200B7DCF0087E290 /* CameraController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		DDDA33152005316300C54751 /* ShaderToPovContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderToPovContent.h; sourceTree = "<group>"; };
 		DDDA33162005316300C54751 /* SyphonToPovContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyphonToPovContent.h; sourceTree = "<group>"; };
 		DDDA33172005316300C54751 /* TextureToPovContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureToPovContent.h; sourceTree = "<group>"; };
@@ -640,7 +640,7 @@
 				AEE368D4C907572305D34DFE /* User.h */,
 				644116E8707DBCFCCA9B44A7 /* Gate.h */,
 				C73BEC6862E66233447ADD18 /* WaveShaderContent.h */,
-				DD76A391200B7DCF0087E290 /* CameraOrbiter.h */,
+				DD76A391200B7DCF0087E290 /* CameraController.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

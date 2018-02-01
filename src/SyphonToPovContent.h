@@ -11,7 +11,8 @@
 #include "TextureToPovContent.h"
 #include "ofxSyphon.h"
 
-#include "CameraOrbiter.h"
+#include "CameraController.h"
+
 
 
 
@@ -28,12 +29,15 @@ public:
     ofParameter<float> speed;
     ofParameter<int> imageIndex;
     
-    CameraOrbiter cameraOrbiter;
-    glm::vec3 center;
+    CameraController camera;
+    
+    glm::vec3 camPos;
+    
+    int cameraMode;
     
     SyphonToPovContent(){}
     
-    void setup(string name, vector<Gate> * gates, glm::vec3 povPosition, ofxSyphonServerDirectory *dir, string serverName, string appName, int initialMappingMode){
+    void setup(string name, vector<Gate> * gates, ofxSyphonServerDirectory *dir, string serverName, string appName, int initialMappingMode, int cameraMode){
         
         this->dir = dir;
         
@@ -44,9 +48,9 @@ public:
         
         setupParameterGroup(name, index, initialMappingMode);
         
+        camera.setup(name, cameraMode);
         
-        
-        TextureToPovContent::setup(name, gates, povPosition, &syphonClient.getTexture(), initialMappingMode);
+        TextureToPovContent::setup(name, gates, camera.getPosition(), &syphonClient.getTexture(), initialMappingMode);
         
         
         ofAddListener(parameterGroup.parameterChangedE(), this, &SyphonToPovContent::inputChange);
@@ -54,15 +58,18 @@ public:
         ofAddListener(dir->events.serverAnnounced, this, &SyphonToPovContent::serverAnnounced);
         ofAddListener(dir->events.serverRetired, this, &SyphonToPovContent::serverRetired);
 
-        center = glm::vec3(0,1.2+0.3, 39);
 
-        cameraOrbiter.setup(name);
     }
     
     void update(){
-        cameraOrbiter.update();
+        if(!syphonClient.isSetup()){
+            cout << "got here";
+            return;
+        }
+        camera.update();
+        camPos = camera.getPosition();
         
-        pov = cameraOrbiter;
+        pov = camera;
 
         if(isVisible && alpha < 1.) alpha += 0.1;
         else if( !isVisible && alpha > 0) alpha -= 0.01;
@@ -107,6 +114,7 @@ public:
             }
         }
         ofLogNotice("ofxSyphonServerDirectory coudn't find: "+serverName+" | "+appName);
+        if(dir->size()>0) return 0;
         return -1;
         
         
@@ -121,7 +129,7 @@ public:
 //        parameterGroup.add(mode.set("mode", 1, 1, 2));
 //        parameterGroup.add(easing.set("easing", 1, 1, 2));
 //        parameterGroup.add(imageIndex.set("imageIndex", 1, 1, image->size()));
-        parameterGroup.add(cameraOrbiter.getParameterGroup());
+        parameterGroup.add(camera.getParameterGroup());
     }
     
     

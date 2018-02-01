@@ -19,18 +19,19 @@
 #include "TextureToPovContent.h"
 #include "ShaderToPovContent.h"
 #include "SyphonToPovContent.h"
-#include "CameraOrbiter.h"
+#include "CameraController.h"
 
-#include "PocketPov.h"
-#include "PocketZone.h"
-#include "WaveGateContent.h"
-#include "WaveShaderContent.h"
-#include "WavePositionalContent.h"
+//#include "PocketPov.h"
+//#include "PocketZone.h"
+//#include "WaveGateContent.h"
+//#include "WaveShaderContent.h"
+//#include "WavePositionalContent.h"
 
 
 #define VIEWER_HEIGHT 1.73
 
-#define NUMOFLAYERS 4
+#define NUMOFLAYERS_ORBIT 1
+#define NUMOFLAYERS_FIXED 2
 
 
 class ofApp : public ofBaseApp{
@@ -95,14 +96,14 @@ class ofApp : public ofBaseApp{
     void serverRetired(ofxSyphonServerDirectoryEventArgs &arg);
     
     ofxSyphonClientDir syphonIn;
-    ofxSyphonFbo syphonOut;
-    ofxSyphonFbo syphonLayerPreview;
-    ofxSyphonFbo syphonSimOut;
-    
+//    ofxSyphonFbo syphonOut;
+    ofxSyphonServer syphonOutLayers[NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED];
+//    ofxSyphonFbo syphonSimOut;
+    ofFbo simulationFBO;
     // create content;
-    ofxGpuMixer::Mixer mixer;
+//    ofxGpuMixer::Mixer mixer;
 
-    SyphonToPovContent syphonInLayers[NUMOFLAYERS];
+    SyphonToPovContent syphonInLayers[NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED];
     
 //    WaveGateContent contentGate;
 //    ofxGpuMixer::ShaderChannel contentShaderSmoke;
@@ -115,34 +116,35 @@ class ofApp : public ofBaseApp{
     
     // mappings
     int mappingIndx;
-    
-    ofxMad3D::MappingImage mappingImg;
-    ofxMad3D::CsvParser csvParser;
+//
+//    ofxMad3D::MappingImage mappingImg;
+//    ofxMad3D::CsvParser csvParser;
 
     // viewPresets
     struct CameraPos{
-        ofVec3f pos;
+        glm::vec3 pos;
         string name;
     };
     vector<CameraPos> camPresets;
     int camPresetIndx;
-    int gateInfoIndx;
+    string camPresetName;
+//    int gateInfoIndx;
 
     // Wekinator control
     //ofxWekinator wekinator;
     
     // OSC
-    ofxOscReceiver oscFromSensorFuse;
-    void receiveFromSensorFuse();
+  //  ofxOscReceiver oscFromSensorFuse;
+  //  void receiveFromSensorFuse();
     
     ofxOscReceiver oscLayerControl;
     void receiveLayerControl();
 
 
     // Users
-    map<int, User> users;
+   // map<int, User> users;
     
     // NodeProgramming
-    ofxArtNode artNode;
+   // ofxArtNode artNode;
 };
 
