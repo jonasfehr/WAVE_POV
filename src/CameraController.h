@@ -86,12 +86,12 @@ public:
         if(cameraMode == ORBIT_CAM){
             theta +=  (TWO_PI/ (3600))* speedRPM;
             
-            posX =lookAtX+cos(theta)*MaxOrbitCamX/2;
-            posZ =lookAtZ+sin(theta)*MaxOrbitCamZ/2;
+            posX = lookAtX+cos(theta)*MaxOrbitCamX/2;
+            posZ = lookAtZ+sin(theta)*MaxOrbitCamZ/2;
         }
 
-        bool posChanged = oldPosX != posX || oldPosY != posY || oldPosZ != posZ;
-        bool lookAtChanged = oldLookAtX != lookAtX || oldLookAtY != lookAtY || oldLookAtZ != lookAtZ;
+        bool posChanged = (oldPosX != posX || oldPosY != posY || oldPosZ != posZ);
+        bool lookAtChanged = (oldLookAtX != lookAtX || oldLookAtY != lookAtY || oldLookAtZ != lookAtZ);
         
         if(posChanged || lookAtChanged || oldFov!=fov ){
             this->setGlobalPosition(glm::vec3(posX,posY,posZ));
@@ -146,13 +146,13 @@ public:
         return glm::vec3(lookAtX,lookAtY,lookAtZ);
     }
     
-    void setPosition(glm::vec3 position){
+    void setCamPos(glm::vec3 position){
         posX = position.x;
         posY = position.y;
         posZ = position.z;
     }
     
-    glm::vec3 getPosition(){
+    glm::vec3 getCamPos(){
         return glm::vec3(posX,posY,posZ);
     }
     

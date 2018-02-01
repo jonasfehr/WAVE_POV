@@ -83,7 +83,6 @@ class ofApp : public ofBaseApp{
     
     ofxSyphonClientDir syphonIn;
     ofxSyphonServer syphonOutLayers[NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED];
-    ofFbo simulationFBO;
 
     SyphonToPovContent syphonInLayers[NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED];
     
