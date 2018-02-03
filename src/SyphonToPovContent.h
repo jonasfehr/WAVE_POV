@@ -45,10 +45,10 @@ public:
         syphonClient.setup();
         if(!syphonClient.isSetup()) cout << "isSetup";
         
-        int index = find(serverName, appName);
 
+        inputSelect.set("input", find(serverName, appName), 0, dir->size()-1);
         
-        setupParameterGroup(name, index, initialMappingMode);
+        setupParameterGroup(name, initialMappingMode);
         
         camera.setup(name, cameraMode);
         
@@ -122,9 +122,28 @@ public:
         
     }
     
-    void setupParameterGroup(string name, int dirIndx, int mapping){
+    void next(){
+//        if (dir.size() > 0)
+//        {
+//            dirIdx++;
+//            if(dirIdx > dir.size() - 1)
+//                dirIdx = 0;
+//
+//            set(dir.getDescription(dirIdx));
+//        }
+        
+        int index = inputSelect;
+        index++;
+        index = index%(inputSelect.getMax()+1);
+        inputSelect = index;
+        syphonClient.set(dir->getDescription(inputSelect));
+        setMappingMode(mappingMode);
+    }
+    
+    void setupParameterGroup(string name, int mapping){
+    
         parameterGroup.setName(name);
-        parameterGroup.add(inputSelect.set("input", dirIndx, 0, dir->size()-1));
+       // parameterGroup.add(inputSelect.set("input", dirIndx, 0, dir->size()-1));
         parameterGroup.add(mappingMode.set("mappingMode", mapping, 0, 3));
 
   //      parameterGroup.add(speed.set("speed", 0.01, 0., 0.2));

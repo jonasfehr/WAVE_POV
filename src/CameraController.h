@@ -58,7 +58,7 @@ public:
         MaxOrbitCamZ.set("MaxOrbitCamZ", 100, 1, 100);
      
         posY.set("posY", 1.72, 0, 10);
-        posX.set("posX", 0, -10, 10);
+        posX.set("posX", 0, -100, 100);
         posZ.set("posZ", 100, -20, 100);
         lookAtY.set("lookAtY", 1.72, 0, 10);
         lookAtX.set("lookAtX", 0, -100, 100);

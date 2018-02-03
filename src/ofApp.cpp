@@ -17,17 +17,17 @@ void ofApp::setup(){
     ofAddListener(syphonDir.events.serverRetired, this, &ofApp::serverRetired);
     
     for(int i = 0; i < NUMOFLAYERS_ORBIT; i++){
-        syphonInLayers[i].setup("syphonIn_"+ofToString(i+1),&gates, &syphonDir, "POV"+ofToString(i+1)+" - Output", "MadMapper", POV_UV_NORMALIZED, ORBIT_CAM);
+        syphonInLayers[i].setup("syphonIn_"+ofToString(i+1),&gates, &syphonDir, "POV"+ofToString(i+1), "MadMapper", POV_UV_NORMALIZED, ORBIT_CAM);
     }
     for(int i = NUMOFLAYERS_ORBIT; i < NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED; i++){
-        syphonInLayers[i].setup("syphonIn_"+ofToString(i+1),&gates, &syphonDir, "POV"+ofToString(i+1)+" - Output", "MadMapper", POV_UV_NORMALIZED, FIXED_CAM);
+        syphonInLayers[i].setup("syphonIn_"+ofToString(i+1),&gates, &syphonDir, "POV"+ofToString(i+1), "MadMapper", POV_UV_NORMALIZED, FIXED_CAM);
     }
     
     for(int i = 0; i < NUMOFLAYERS_ORBIT+NUMOFLAYERS_FIXED; i++){
         syphonOutLayers[i].setName("syphonIn_"+ofToString(i+1));
     }
     
-    syphonIn.setup("MASTER - Output", "MadMapper");
+    syphonIn.setup("MASTER", "MadMapper");
     
 
     // create presets for camera
@@ -217,8 +217,17 @@ void ofApp::keyPressed(int key){
         }
     }
 
-    if(key == 'i' || key == 's'){
+    if(key == 'u'){
         syphonIn.next();
+    }
+    if(key == 'i'){
+        syphonInLayers[0].next();
+    }
+    if(key == 'o'){
+        syphonInLayers[1].next();
+    }
+    if(key == 'p'){
+        syphonInLayers[2].next();
     }
 
     if(key == 'c'){
@@ -232,11 +241,11 @@ void ofApp::keyPressed(int key){
         }
     }
     
-    if(key == 'q'){
+    if(key == 'l'){
         guiGeneral.loadFromFile("settingsGeneral.xml");
         guiControls.loadFromFile("settingsControls.xml");
     }
-    if(key == 'w'){
+    if(key == 's'){
         guiGeneral.saveToFile("settingsGeneral.xml");
         guiControls.saveToFile("settingsControls.xml");
     }
@@ -320,9 +329,28 @@ void ofApp::receiveLayerControl(){
                 if(address[1] == "maxOrbitX") syphonInLayers[i].camera.setMaxOrbitCamX(m.getArgAsFloat(0));
                 if(address[1] == "maxOrbitZ") syphonInLayers[i].camera.setMaxOrbitCamZ(m.getArgAsFloat(0));
                 if(address[1] == "angle") syphonInLayers[i].camera.setAngle(m.getArgAsFloat(0));
-                if(address[1] == "center") syphonInLayers[i].camera.setLookAt(glm::vec3(m.getArgAsFloat(0),m.getArgAsFloat(1),m.getArgAsFloat(2)));
-                if(address[1] == "lookAt") syphonInLayers[i].camera.setLookAt(glm::vec3(m.getArgAsFloat(0),m.getArgAsFloat(1),m.getArgAsFloat(2)));
-                if(address[1] == "position") syphonInLayers[i].camera.setCamPos(glm::vec3(m.getArgAsFloat(0),m.getArgAsFloat(1),m.getArgAsFloat(2)));
+                if(address[1] == "center" || address[1] == "lookAt"){
+                    if(!(address.size()>2)){
+                        syphonInLayers[i].camera.setLookAt(glm::vec3(m.getArgAsFloat(0),m.getArgAsFloat(1),m.getArgAsFloat(2)));
+                    } else if( address[2] == "x" ){
+                        syphonInLayers[i].camera.lookAtX = m.getArgAsFloat(0);
+                    } else if( address[2] == "y" ){
+                        syphonInLayers[i].camera.lookAtY = m.getArgAsFloat(0);
+                    } else if( address[2] == "z" ){
+                        syphonInLayers[i].camera.lookAtZ = m.getArgAsFloat(0);
+                    }
+                }
+                if(address[1] == "position"){
+                    if(!(address.size()>2)){
+                        syphonInLayers[i].camera.setCamPos(glm::vec3(m.getArgAsFloat(0),m.getArgAsFloat(1),m.getArgAsFloat(2)));
+                    } else if( address[2] == "x" ){
+                        syphonInLayers[i].camera.posX = m.getArgAsFloat(0);
+                    } else if( address[2] == "y" ){
+                        syphonInLayers[i].camera.posY = m.getArgAsFloat(0);
+                    } else if( address[2] == "z" ){
+                        syphonInLayers[i].camera.posZ = m.getArgAsFloat(0);
+                    }
+                }
                 if(address[1] == "fov") syphonInLayers[i].camera.setFov(m.getArgAsFloat(0));
             }
         }
